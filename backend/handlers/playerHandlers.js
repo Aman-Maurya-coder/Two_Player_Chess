@@ -62,7 +62,7 @@ export class playerFunctions {
     onPlayerJoin(socket, games) {
         socket.on("onPlayerJoin", ({ playerId }) => {
             console.log(playerId);
-            if (playerId === undefined) {
+            if (playerId === "") {
                 playerId = randomUUID(); // Generate a random player ID
                 this.players[playerId] = { 
                     gameId: null,
@@ -74,12 +74,26 @@ export class playerFunctions {
             else if (this.players[playerId] === undefined) {
                 socket.emit("playerDoesNotExist"); // Notify the client if player is not found
             }
-            if (this.players[playerId] !== undefined && this.players[playerId]["gameId"] !== null) {
+            else if (this.players[playerId] !== undefined && this.players[playerId]["gameId"] !== null) {
                 socket.join(this.players[playerId]["gameId"]); // Join the player to the game room
-                games[this.players[playerId]["gameId"]]["gameStatus"] = this.players[playerId]["playerStatus"] === "inRoom" ? "not started" : "playing";
+                // games[this.players[playerId]["gameId"]]["gameStatus"] = this.players[playerId]["playerStatus"] === "inRoom" ? "not started" : "playing";
+                console.log(this.players[playerId]["gameId"]);
+                console.log(games);
+                const gameId = this.players[playerId]["gameId"];
+                console.log(games[gameId]);
+                if (this.players[playerId]["playerStatus"] === "disconnected from room") {
+                    games[gameId]["gameStatus"] = "not started"; // Update game status if player is in room
+                    this.players[playerId]["playerStatus"] = "inRoom"; // Update player status to inGame
+                } else {
+                    games[gameId]["gameStatus"] = "playing"; // Update game status if player is playing
+                    this.players[playerId]["playerStatus"] = "playing"; // Update player status to playing
+                }
                 console.log(
                     "Player joined game room",this.players[playerId]["gameId"]
                 );
+            }
+            else if (this.players[playerId] !== undefined && this.players[playerId]["gameId"] === null){
+                socket.emit("playerAlreadyJoined");
             }
         });
     }
@@ -103,19 +117,19 @@ export class playerFunctions {
                     const gameId = this.players[playerId]["gameId"];
                     const gameStatus = games[gameId]["gameStatus"];
                     this.players[playerId]["playerStatus"] = gameStatus === "not started" ? "disconnected from room" : "disconnected from game"; // Update player status
-                    gameStatus = "disconnected";
-                    socket
-                        .to(gameId)
-                        .emit(this.players[playerId]["playerStatus"] === "disconnected from room" ? "playerDisconnectedFromRoom" : "playerDisconnectedFromGame", playerId);
+                    games[gameId]["gameStatus"] = "disconnected";
+                    socket.emit(this.players[playerId]["playerStatus"] === "disconnected from room" ? "playerDisconnectedFromRoom" : "playerDisconnectedFromGame", playerId);
                     console.log(
                         "Player disconnected from game",
                         playerId,
                         gameId
                     );
                 }
-                socket.emit("playerDisconnected"); // Notify the client about disconnection
+                else{
+                socket.emit("playerLeft"); // Notify the client about disconnection
                 delete this.players[playerId]; // Remove the player from the players object
-                console.log("Player disconnected", playerId);
+                console.log("Player left", playerId);
+                }
             } else {
                 console.log("Player not found", playerId);
                 socket.emit("playerNotFound");

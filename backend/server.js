@@ -26,7 +26,7 @@ io.on("connection", (socket) => {
     // onPlayerJoin(socket, players); // Handle player joining
     // onDisconnect(socket, players, games); // Handle player disconnection
     // getPlayerData(socket, players); // Handle getting player data
-    playerHandler.onPlayerJoin(socket); // Handle player joining
+    playerHandler.onPlayerJoin(socket, games); // Handle player joining
     playerHandler.getPlayerData(socket); // Handle getting player data
     playerHandler.onDisconnect(socket, games); // Handle player disconnection
 

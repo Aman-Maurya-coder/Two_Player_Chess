@@ -26,10 +26,6 @@ export class gameFunctions {
                     black: playerSide === "black" ? playerId : null
                 }
             };
-            // this.games[gameId]["players"] = {
-            //     white: playerSide === "white" ? playerId : null,
-            //     black: playerSide === "black" ? playerId : null,
-            // };
             this.players[playerId]["gameId"] = gameId; // Associate the player with the game ID
             this.players[playerId]["playerStatus"] = "inRoom"; // Initialize player status
             socket.join(gameId); // Join the player to the game room
@@ -49,12 +45,7 @@ export class gameFunctions {
         socket.on("roomData", ({ gameId }) => {
             if (this.games[gameId] !== undefined) {
                 const gameData = this.games[gameId];
-                socket.emit("roomDataResponse", {
-                    gameId: gameId,
-                    moveNumber: gameData.moveNumber,
-                    gameStatus: gameData.gameStatus,
-                    room_players: gameData.room_players,
-                });
+                socket.emit("roomDataResponse", this.games[gameId]); // Send room data back to the client
                 console.log("Room data sent for game", gameId);
             } else {
                 console.log("Game not found", gameId);
@@ -65,27 +56,34 @@ export class gameFunctions {
 
     joinGame(socket) {
         socket.on("joinGame", ({ roomId, playerId }) => {
+            console.log(roomId);
+            console.log(this.games);
             if (this.games[roomId] === undefined) {
-                socket.to(roomId).emit("gameNotFound", "Game not found");
+                socket.emit("gameNotFound", "Game not found");
                 return;
-            } else {
-                if (this.games[roomId].room_players.white === null) {
-                    this.games[roomId].room_players.white = playerId;
-                } else if (this.games[roomId].room_players.black === null) {
-                    this.games[roomId].room_players.black = playerId;
-                } else {
+            } 
+            else {
+                socket.join(roomId); // Join the player to the game room
+                if (this.games[roomId]["room_players"]["white"] === null) {
+                    this.games[roomId]["room_players"]["white"] = playerId;
+                } 
+                else if (this.games[roomId]["room_players"]["black"] === null) {
+                    this.games[roomId]["room_players"]["black"] = playerId;
+                } 
+                else {
                     socket.emit("gameFull", "Game is already full");
                     return;
                 }
-                console.log(this.players[playerId]);
-                this.players[playerId][gameId]= roomId; // Associate the player with the game ID
-                this.players.playerId[playerStatus] = "inRoom"; // Initialize player status
+                // console.log(this.players[playerId]);
+                this.players[playerId]["gameId"]= roomId; // Associate the player with the game ID
+                this.players[playerId]["playerStatus"] = "inRoom"; // Initialize player status
+                socket.emit("playerJoinedRoom", roomId);
             }
         });
     }
 
     makeMove(socket) {
-        socket.on("move", ({ move }) => {
+        socket.on("move", ({ move, gameId }) => {
             const currentGameData = this.games[gameId];
             if (currentGameData.gameStatus === "not started") {
                 const moveResult = currentGameData.game.move(move);
