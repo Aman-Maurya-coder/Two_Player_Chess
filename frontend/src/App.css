@@ -1,0 +1,114 @@
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html{
+  height: 100%;
+  font-size: 2.5vmin;
+}
+
+body{
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+ 
+
+#root {
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.navbar{
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 10vh;
+  width: 100vw;
+  background-color: cadetblue;
+}
+.navbar ul{
+  display: flex;
+  justify-content: space-around;
+  gap: 4.5vw;
+}
+.navbar ul li{
+  list-style: none;
+}
+
+.navbar img{
+  width: 5vmin;
+  height: 5vmin;
+  background-color: red;
+}
+
+.logo{
+  border-radius: 50%;
+  height: 50px;
+  width: 50px;
+}
+
+.game{
+  display: flex;
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 80vh;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+  background-color: wheat;
+}
+
+.board{
+  width: 30vw;
+}
+
+.menu{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  /* background-color: darkgray; */
+  overflow: hidden;
+  width: 30vw;
+  height: 55vh;
+}
+
+.menu button {
+  width: 20vw;
+  height: 10vh;
+  background-color: cadetblue;
+  border-radius: 1vmin;
+  /* border: none; */
+  color: aliceblue;
+  font-size: 1.5rem;
+}
+
+.menu p{
+  font-size: 1.5rem;
+  color: black;
+}
+
+footer{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 10vh;
+  gap: 7vw;
+  color: aliceblue;
+}
+
+footer li{
+  list-style: none;
+}

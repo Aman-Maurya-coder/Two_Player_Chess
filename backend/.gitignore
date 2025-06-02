@@ -1,0 +1,42 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.env
+.env.local
+
+# Logs
+logs
+*.log
+*.log.*
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor settings
+.vscode/
+.idea/
+*.swp
+
+# React build (frontend)
+build/
+dist/
+coverage/
+
+# Optional for monorepo setups (if using root folder)
+**/node_modules/
+**/build/
+**/dist/
+
+# Socket.IO optional cache
+.socket.io/
+
+# React Native or Expo (if you plan to go mobile later)
+.expo/
+.expo-shared/
