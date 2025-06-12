@@ -12,11 +12,14 @@ const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, { cors: { origin: "*" } });
 
+global.io = io;
+
 const games = {}; // Store games by room ID
 const players = {}; // Store players by player ID
+const timers = {};
 
 const playerHandler = new playerFunctions(players); // Create an instance of player functions
-const gameHandler = new gameFunctions(players, games); // Create an instance of game handler
+const gameHandler = new gameFunctions(players, games, timers); // Create an instance of game handler
 
 app.use(cors());
 
