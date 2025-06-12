@@ -12,7 +12,7 @@ export class gameFunctions {
     }
 
     createGame(socket) {
-        socket.on("newGame", ({ playerId, playerSide, timer }) => {
+        socket.on("newGame", ({ playerId, playerSide, time }) => {
             console.log(
                 "New game requested from server.js by client",
                 playerId,
@@ -20,7 +20,7 @@ export class gameFunctions {
             );
             const gameId = randomUUID().slice(0, 8); // Generate a random game ID
 
-            const timerControl = timer || { minutes : 5, increment: 0 }; // Default timer control if not provided
+            const timerControl = time || { minutes : 5, increment: 0 }; // Default time control if not provided
             const timerInMs = timerControl.minutes * 60 * 1000; // Convert to milliseconds
 
             this.games[gameId] = {
@@ -41,7 +41,7 @@ export class gameFunctions {
             this.players[playerId]["gameId"] = gameId; // Associate the player with the game ID
             this.players[playerId]["playerStatus"] = "inRoom"; // Initialize player status
             socket.join(gameId); // Join the player to the game room
-            socket.to(gameId).emit("playerJoinedGame", {
+            socket.in(gameId).emit("playerJoinedGame", {
                 playerData: this.players[playerId],
                 gameId: gameId,
             }); // Notify other players in the game room that a player has joined
@@ -89,7 +89,7 @@ export class gameFunctions {
                 // console.log(this.players[playerId]);
                 this.players[playerId]["gameId"]= roomId; // Associate the player with the game ID
                 this.players[playerId]["playerStatus"] = "inRoom"; // Initialize player status
-                socket.emit("playerJoinedRoom", roomId);
+                socket.in(roomId).emit("playerJoinedRoom", roomId);
             }
         });
     }
@@ -104,13 +104,13 @@ export class gameFunctions {
                 const currentPlayer = game.game.turn();
                 
                 // Deduct 1 second from current player's time
-                game.timeControl[currentPlayer] -= 1000;
+                game.gameTimer[currentPlayer] -= 1000;
                 
                 // Broadcast time update to all players in the room
                 this.broadcastTimeUpdate(gameId);
                 
                 // Check for time out
-                if (game.timeControl[currentPlayer] <= 0) {
+                if (game.gameTimer[currentPlayer] <= 0) {
                     this.handleTimeOut(gameId, currentPlayer);
                 }
             }
@@ -123,9 +123,9 @@ export class gameFunctions {
 
         // Emit to all players in the room
         global.io.to(gameId).emit("timeUpdate", {
-            whiteTime: game.timeControl.white,
-            blackTime: game.timeControl.black,
-            currentTurn: game.timeControl.currentTurn
+            whiteTime: game.gameTimer.white,
+            blackTime: game.gameTimer.black,
+            currentTurn: game.game.turn()
         });
     }
 
@@ -133,7 +133,7 @@ export class gameFunctions {
         const game = this.games[gameId];
         if (!game) return;
 
-        // Stop the timer
+        // Stop the time
         this.stopGameTimer(gameId);
         
         // Set game status
@@ -181,17 +181,22 @@ export class gameFunctions {
                 currentGameData.gameStatus = "playing";
                 this.startGameTimer(gameId);
                 
-                const room_players = currentGameData.room_players;
+                const room_players = currentGameData.roomPlayers;
                 this.players[room_players.white]["playerStatus"] = "playing";
                 this.players[room_players.black]["playerStatus"] = "playing";
             }
 
             // Broadcast move and time update
-            socket.to(gameId).emit("moveMade", {
-                move: moveResult,
+            socket.in(gameId).emit("moveMade", {
+                // move: moveResult,
                 fen: currentGameData.game.fen(),
-                moveNumber: currentGameData.moveNumber,
-                currentTurn: currentGameData.timeControl.currentTurn
+                // moveNumber: currentGameData.moveNumber,
+                currentTurn: currentGameData.game.turn()
+            });
+            socket.in(gameId).emit("incrementedTime", {
+                whiteTime: currentGameData.gameTimer.white,
+                blackTime: currentGameData.gameTimer.black,
+                currentTurn: currentGameData.game.turn()
             });
 
             this.broadcastTimeUpdate(gameId);
@@ -200,10 +205,18 @@ export class gameFunctions {
             if (currentGameData.game.game_over()) {
                 this.stopGameTimer(gameId);
                 currentGameData.gameStatus = "game over";
-                socket.to(gameId).emit("gameOver", {
+                let reason;
+                if (currentGameData.game.isCheckmate()) reason = "checkmate"
+                else if (currentGameData.game.isStalemate()) reason = "stalemate"
+                else if (currentGameData.game.isDraw()) reason = "draw"
+                else if (currentGameData.game.isInsufficientMaterial()) reason = "insufficient material"
+                else if (currentGameData.game.isDrawByFiftyMoves()) reason = "draw by fifty moves"
+                else if (currentGameData.game.isThreefoldRepetition()) reason = "threefold repetition"
+                else reason = "unknown reason";
+                socket.in(gameId).emit("gameOver", {
                     winner: currentGameData.game.turn(),
-                    moveNumber: currentGameData.moveNumber,
-                    reason: "checkmate"
+                    // moveNumber: currentGameData.moveNumber,
+                    reason: reason
                 });
             }
 
@@ -244,27 +257,29 @@ export class gameFunctions {
             if (this.games[gameId] !== undefined) {
                 this.stopGameTimer(gameId);
                 this.games[gameId].gameStatus = "aborted";
-                socket.to(gameId).emit("gameAborted", { gameId: gameId, playerId: playerId });
-                socket.leave(gameId);
-                delete this.games[gameId];
+                // socket.leave(gameId);
+                // delete this.games[gameId];
+                socket.in(gameId).emit("gameAborted", {message: "game aborted successfully", gameStatus: "aborted" });
             }
+
         })
     }
 
     onResign(socket){
-        socket.on("resign", ({gameId, playerId}) => {
+        socket.on("resign", ({gameId}) => {
             if (this.games[gameId] !== undefined) {
                 this.stopGameTimer(gameId);
                 this.games[gameId].gameStatus = "resigned";
-                socket.to(gameId).emit("gameResigned", { gameId: gameId, playerId: playerId });
-                socket.leave(gameId);
-                delete this.games[gameId];
+                // socket.in(gameId).emit("gameResigned", { gameId: gameId, playerId: playerId });
+                // socket.leave(gameId);
+                // delete this.games[gameId];
+                socket.in(gameId).emit("gameAborted", {message: "game aborted successfully", gameStatus: "aborted" });
             }
         })
     }
 
-    onGameOver(socket) {
-            socket.on("gameOver", ({gameId}) => {
+    onRoomClose(socket) {
+            socket.on("closeRoom", ({gameId}) => {
                 if (this.games[gameId] !== undefined){
                     this.stopGameTimer(gameId);
                     socket.leave(gameId);

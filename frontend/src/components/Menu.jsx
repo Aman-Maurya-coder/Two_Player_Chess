@@ -1,17 +1,21 @@
-import { useState } from "react"
-import { getMoveNumber, getPlayerColor } from "./Chessboard";
+import { useCallback, useState } from "react"
+// import { getMoveNumber, getPlayerColor } from "./ChessBoard";
 import "../assets/MenuStyle.css"
+import { useSocketEmit } from "../hooks/useSocketEmit";
 
 export function Menu({gameStatus, onStart}) {
     let [firstMove, setfirstMove] = useState(1);
-    function handleNewGame() {
+    const [newGame, setNewGame] = useState(false);
+    const emitEvent = useSocketEmit();
+    const handleNewGame = useCallback(() => {
         // setGameStatus("playing");
         onStart();
+        emitEvent("newGame", {playerId: playerId, playerSide: playerSide, time: time})
         console.log("set game status to playing from Menu.jsx");
-    }
+    },[onStart, emitEvent]);
     return (
         <div className="menu">
-            <button className="newGame" onClick={handleNewGame}>
+            <button className="newGame" onClick={() => setNewGame(true)}>
                 New Game
             </button>
             {gameStatus === "playing" && <p>Your Code:</p>}

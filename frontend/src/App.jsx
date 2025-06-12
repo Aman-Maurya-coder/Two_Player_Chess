@@ -1,35 +1,40 @@
 import "./App.css";
 import { io } from "socket.io-client";
-import { useState } from "react";
-import { Board } from "./components/Chessboard";
+// import { useState } from "react";
+import { Board } from "./components/ChessBoard";
 import { Navbar } from "./components/Navbar";
 import { Menu } from "./components/Menu";
 import { Footer } from "./components/Footer";
 import { GameOverPopup } from "./components/GameOverPopup";
+// import { useGameState } from "../hooks/useGameState";
+import { ContextProvider } from "./context";
+import { useGameContext } from "./context/GameContext";
+
 
 const socket = io("http://localhost:3000");
 
 function App() {
-    const [gameStatus, setGameStatus] = useState("not started");
-    const [moveNumber, setMoveNumber] = useState(1);
-    const [playerColor, setPlayerColor] = useState("white");
+    const {gameState, updateGameState} = useGameContext();
     return (
         <>
-            <Navbar></Navbar>
-            {gameStatus === "game over" && <GameOverPopup></GameOverPopup>}
-            <div className="game">
-                <Board
-                    gameStatus={gameStatus}
-                    onEnd={() => setGameStatus("game over")}
-                    moveNumber={moveNumber}
-                    setMoveNumber={(prevMoveNumber) => setMoveNumber(prevMoveNumber)}
-                />
-                <Menu
-                    gameStatus={gameStatus}
-                    onStart={() => setGameStatus("playing")}
-                />
-            </div>
-            <Footer></Footer>
+            {/* <ContextProvider> */}
+                <Navbar></Navbar>
+                {gameState.gameStatus !== "not started" || gameState.gameStatus !== "playing" && <GameOverPopup />}
+                <div className="game">
+                    <Board
+                        socket={socket}
+                        gameStatus={gameState.gameStatus}
+                        onGameStatusChange={(status) => updateGameState({gameStauts: status})}
+                        moveNumber={gameState.moveNumber}
+                        setMoveNumber={(prevMoveNumber) => updateGameState({moveNumber: prevMoveNumber + 1})}
+                    />
+                    <Menu
+                        gameStatus={gameState.gameStatus}
+                        onStart={() => updateGameState({gameStatus: "playing"})}
+                    />
+                </div>
+                <Footer></Footer>
+            {/* </ContextProvider> */}
         </>
     );
 }

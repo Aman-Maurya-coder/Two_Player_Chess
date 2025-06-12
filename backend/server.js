@@ -48,7 +48,7 @@ io.on("connection", (socket) => {
     gameHandler.makeMove(socket); // Handle moves
     gameHandler.onAbort(socket); // Handle aborting a game
     gameHandler.onResign(socket); // Handle resigning
-    gameHandler.onGameOver(socket); // Handle game over
+    gameHandler.onRoomClose(socket); // Handle game over
 
     
 

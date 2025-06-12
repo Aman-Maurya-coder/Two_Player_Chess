@@ -18,7 +18,7 @@ body{
   box-sizing: border-box;
 }
 
- 
+
 
 #root {
   margin: 0;
@@ -72,6 +72,10 @@ body{
 
 .board{
   width: 30vw;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .menu{
