@@ -1,10 +1,7 @@
 import { createContext, useContext, useState } from "react";
 
-const GameOptionsContext = createContext();
+export const GameOptionsContext = createContext();
 
-export function useGameOptionsContext() {
-    return useContext(GameOptionsContext);
-}
 
 export function GameOptionsProvider({ children }) {
     const [gameOptions, setGameOptions] = useState({

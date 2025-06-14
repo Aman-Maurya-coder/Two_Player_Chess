@@ -4,9 +4,11 @@ import { Chessboard } from "react-chessboard";
 import { Timer } from "./Timer";
 import { useSocketEvent } from "../hooks/useSocketEvent";
 import { useSocketEmit } from "../hooks/useSocketEmit";
+import { useSocketContext } from "../context";
 // export { moveNumber, playerColor } from "./Chessboard";
 
 export function Board( {socket, gameStatus, onGameStatusChange ,moveNumber, setMoveNumber, PlayerColor} ) {
+    // const {socket} = useSocketContext();
     const [game, setGame] = useState(new Chess());
     const emitEvent = useSocketEmit(socket);
 
@@ -83,9 +85,7 @@ export function Board( {socket, gameStatus, onGameStatusChange ,moveNumber, setM
                 allowDragOutsideBoard={false} // Disable dragging outside the board
                 arePiecesDraggable = {gameStatus === "playing"} // Disable dragging when game is over
             />
-            <Timer 
-                socket = {socket}
-            />
+            <Timer/>
         </div>
     )
 }

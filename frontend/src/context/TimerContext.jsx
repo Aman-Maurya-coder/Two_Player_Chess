@@ -1,11 +1,8 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { useGameOptionsContext } from "./GameOptionsContext";
+import { useGameOptionsContext } from "./index.jsx";
 
-const TimerContext = createContext();
+export const TimerContext = createContext();
 
-export function useTimerContext() {
-    return useContext(TimerContext);
-}
 
 export function TimerProvider({ children }){
     const { gameOptions } = useGameOptionsContext();

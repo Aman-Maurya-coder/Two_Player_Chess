@@ -12,7 +12,7 @@ export class gameFunctions {
     }
 
     createGame(socket) {
-        socket.on("newGame", ({ playerId, playerSide, time }) => {
+        socket.on("newGame", ({ playerId, playerSide, timeControl }) => {
             console.log(
                 "New game requested from server.js by client",
                 playerId,
@@ -20,13 +20,13 @@ export class gameFunctions {
             );
             const gameId = randomUUID().slice(0, 8); // Generate a random game ID
 
-            const timerControl = time || { minutes : 5, increment: 0 }; // Default time control if not provided
-            const timerInMs = timerControl.minutes * 60 * 1000; // Convert to milliseconds
+            const timerControl = timeControl || { time : 30000, increment: 0 }; // Default time control if not provided
+            const timerInMs = timerControl.time * 60 * 1000; // Convert to milliseconds
 
             this.games[gameId] = {
                 game: new Chess(), // Create a new game instance
                 moveNumber: 1, // Initialize move number
-                gameStatus: "not started", // Add the player to the game
+                gameStatus: "waiting for player 2", // Add the player to the game
                 roomPlayers: {
                     white: playerSide === "white" ? playerId : null,
                     black: playerSide === "black" ? playerId : null
@@ -41,14 +41,14 @@ export class gameFunctions {
             this.players[playerId]["gameId"] = gameId; // Associate the player with the game ID
             this.players[playerId]["playerStatus"] = "inRoom"; // Initialize player status
             socket.join(gameId); // Join the player to the game room
-            socket.in(gameId).emit("playerJoinedGame", {
-                playerData: this.players[playerId],
-                gameId: gameId,
-            }); // Notify other players in the game room that a player has joined
-            // socket.emit("playerJoinedGame", {
+            // socket.in(gameId).emit("playerJoinedGame", {
             //     playerData: this.players[playerId],
             //     gameId: gameId,
-            // });
+            // }); // Notify other players in the game room that a player has joined
+            socket.emit("gameRoomCreated", {
+                playerData: this.players[playerId],
+                gameId: gameId,
+            });
             console.log("Player joined game room", gameId);
         });
     }
@@ -57,7 +57,11 @@ export class gameFunctions {
         socket.on("roomData", ({ gameId }) => {
             if (this.games[gameId] !== undefined) {
                 const gameData = this.games[gameId];
-                socket.emit("roomDataResponse", this.games[gameId]); // Send room data back to the client
+                const playerId = this.players.entries().filter((playerData) => {
+                    return playerData[1]["gameId"] === gameId
+                })[0]
+                const playerSide = gameData["roomPlayers"]["white"] === playerId ? "white" : "black";
+                socket.emit("roomDataResponse", playerSide, gameData); // Send room data back to the client
                 console.log("Room data sent for game", gameId);
             } else {
                 console.log("Game not found", gameId);
@@ -69,11 +73,15 @@ export class gameFunctions {
     joinGame(socket) {
         socket.on("joinGame", ({ roomId, playerId }) => {
             console.log(roomId);
-            console.log(this.games);
-            if (this.games[roomId] === undefined) {
+            const game = this.games[roomId];
+            if (game === undefined) {
                 socket.emit("gameNotFound", "Game not found");
                 return;
-            } 
+            }
+            else if (game["gameStatus"] === "room full") {
+                socket.emit("gameFull", "Game is already full. Please try joining another game."); // Notify the client if game is full
+                return;
+            }
             else {
                 socket.join(roomId); // Join the player to the game room
                 if (this.games[roomId]["roomPlayers"]["white"] === null) {
@@ -87,6 +95,7 @@ export class gameFunctions {
                     return;
                 }
                 // console.log(this.players[playerId]);
+                this.games[roomId]["gameStatus"] = "room full"; // Set game status to not started
                 this.players[playerId]["gameId"]= roomId; // Associate the player with the game ID
                 this.players[playerId]["playerStatus"] = "inRoom"; // Initialize player status
                 socket.in(roomId).emit("playerJoinedRoom", roomId);
@@ -177,7 +186,7 @@ export class gameFunctions {
                 currentGameData.gameTimer.lastMoveTime = currentTime;
                 currentGameData.moveNumber++;
             }
-            if (currentGameData.gameStatus === "not started") {
+            if (currentGameData.gameStatus === "room full") {
                 currentGameData.gameStatus = "playing";
                 this.startGameTimer(gameId);
                 

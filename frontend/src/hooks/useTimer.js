@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { useSocketEvent } from "./useSocketEvent";
-import { useTimerContext } from "../context/TimerContext";
-import { useGameContext } from "../context/GameContext";
+import {
+    useTimerContext,
+    useGameContext
+} from "../context/index.jsx";
 
 export function useTimer(socket) {
     const { whiteTime, blackTime, currentTurn, setWhiteTime, setBlackTime, setCurrentTurn } = useTimerContext();

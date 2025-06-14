@@ -1,7 +1,9 @@
 import { useCallback } from "react";
 import { useTimer } from "../hooks/useTimer";
+import { useSocketContext } from "../context";
 
 export function Timer({socket}){
+    // const {socket} = useSocketContext();
     const  { whiteTime, blackTime, currentTurn } = useTimer(socket);
 
     const formatTime = useCallback((timeInMs) => {

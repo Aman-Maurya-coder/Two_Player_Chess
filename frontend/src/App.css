@@ -83,10 +83,10 @@ body{
   flex-direction: column;
   justify-content: space-evenly;
   align-items: center;
-  /* background-color: darkgray; */
   overflow: hidden;
   width: 30vw;
   height: 55vh;
+  flex-grow: 0.5;
 }
 
 .menu button {
@@ -102,6 +102,18 @@ body{
 .menu p{
   font-size: 1.5rem;
   color: black;
+}
+
+.newGameForm{
+  display: flex;
+  flex-direction: column;
+  gap: 2vh;
+}
+
+.newGameForm div{
+  display: flex;
+  flex-direction: row;
+  gap: 1vw;
 }
 
 footer{
