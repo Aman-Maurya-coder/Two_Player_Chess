@@ -18,7 +18,8 @@ const url = "localhost:3000";
 
 // let socket;
 
-//NOTE: connecting to the socket server but not emmiting any events????
+//NOTE: Two players are joining but second player's screen is not showing the correct info.
+//NOTE: in backend this.players.entries is not a function in joinRoom method.
 
 function App() {
     const [socket, setSocket] = useState(null);
@@ -75,6 +76,14 @@ function App() {
         setPlayerId(null);
         setPlayerData({});
     })
+
+    useSocketEvent(socket, "playerDisconnected", ({gameData})=>{
+        console.log("Other player left the game");
+        updateGameState({
+            "gameStatus": gameData["gameStatus"],
+        })
+    })
+
     useSocketEvent(socket, "playerReconnected", (gameData, timeData) => {
         updateGameState({
             gameStatus: gameData.gameStatus,
@@ -93,13 +102,10 @@ function App() {
 
     useEffect(() => {
         const handleBeforeUnload = (event) =>{
+            emitEvent("Disconnect", { playerId });
             if (playerData["gameId"] === null){
                 localStorage.removeItem("playerId");
                 console.log("Player ID cleared from localStorage");
-            }
-            else{
-                emitEvent("playerDisconnected", { playerId });
-                console.log("Player disconnected:", playerId);
             }
         }
 

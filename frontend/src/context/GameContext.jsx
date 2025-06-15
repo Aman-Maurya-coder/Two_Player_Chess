@@ -4,6 +4,7 @@ export const GameContext = createContext();
 
 export function GameProvider({ children}){
     const [gameState, setGameState] = useState({
+        gameId: null,
         gameStatus: "not started", // "not started", "playing", "game over"
         moveNumber: 1, // Current move number
         playerColor: "white" // "white" or "black"

@@ -10,7 +10,8 @@ export function useTimer(socket) {
     const { updateGameState } = useGameContext();
 
     useSocketEvent(socket, "timeUpdate", ({whiteTime, blackTime, currentTurn}) => {
-        // Update the timer state with the new times
+        // Update the timer state with the new time
+        console.log("updated time:",whiteTime, blackTime);
         setWhiteTime(whiteTime);
         setBlackTime(blackTime);
         setCurrentTurn(currentTurn);
@@ -26,7 +27,9 @@ export function useTimer(socket) {
     useSocketEvent(socket, "gameTimeout", ({loser, winner, reason}) => {
         alert(`${loser} lost on time! ${winner} wins!`);
         // Optionally, you can handle game status change here if needed
-        updateGameState({ status: reason });
+        updateGameState({ 
+            status: reason 
+        });
     })
 
     return { whiteTime, blackTime, currentTurn };

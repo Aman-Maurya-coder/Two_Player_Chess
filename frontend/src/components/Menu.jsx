@@ -4,25 +4,36 @@ import { useSocketEmit } from "../hooks/useSocketEmit";
 import { useSocketEvent } from "../hooks/useSocketEvent";
 import { NewGameOptions } from "./gameOptions/NewGameOptions";
 import { InGameOptions } from "./gameOptions/InGameOptions";
-import { useGameContext, useGameOptionsContext, useSocketContext } from "../context";
+import { useGameContext, useGameOptionsContext, usePlayerContext, useSocketContext } from "../context";
 
 export function Menu({socket}) {
     // console.log(socket);
     // const socket = useSocketContext();
     const [view, setView] = useState("default"); // Tracks the current view: "default", "newGameOptions", or "joinGameOptions"
     const [gameCode, setGameCode] = useState(""); // Stores the game code entered by the user
+    const {playerId} = usePlayerContext();
     const {updateGameOptions} = useGameOptionsContext();
     const {updateGameState} = useGameContext();
     const emitEvent = useSocketEmit(socket);
 
     useSocketEvent(socket, "playerJoinedRoom", (gameId) => {
         console.log("Player joined room:", gameId);
+        updateGameState({
+            "gameId": gameId
+        })
         emitEvent("roomData", {
             "gameId": gameId
         })
     })
 
-    useSocketEvent(socket, "roomDataResponse", (playerSide, gameData) => {
+    useSocketEvent(socket, "roomJoiningFailed", ()=>{
+        console.error("Failed to join room. Please try again.");
+        alert("Failed to join room. Please check the game code and try again.");
+        setView("default"); // Reset to default view if joining fails
+    })
+
+    useSocketEvent(socket, "roomDataResponse", (gameData) => {
+        const playerSide = gameData["roomPlayers"]["white"] === playerId ? "white" : "black";
         updateGameState({
             "gameStatus": gameData["gameStatus"],
             "moveNumber": gameData["moveNumber"],
@@ -33,6 +44,7 @@ export function Menu({socket}) {
             "increment": gameData["gameTimer"]["increment"],
             "playerSide": playerSide
         })
+        setView("inGameOptions");
     })
     
     useSocketEvent(socket, "gameNotFound", (message) => {
@@ -66,7 +78,8 @@ export function Menu({socket}) {
         emitEvent("joinGame", { 
             "roomId": gameCode, "playerId": playerId 
         });
-        setView("inGameOptions"); // Switch to the InGameOptions view
+        console.log("requested to join the room", gameCode);
+        // setView("inGameOptions"); // Switch to the InGameOptions view
     };
 
     return (

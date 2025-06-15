@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { useGameOptionsContext, useSocketContext } from "../../context/index.jsx";
 import { useForm } from "react-hook-form";
 import { useSocketEmit } from "../../hooks/useSocketEmit.js";
 import { useSocketEvent } from "../../hooks/useSocketEvent.js";
-import { usePlayerContext } from "../../context/index.jsx";
+import { usePlayerContext, useGameContext, useGameOptionsContext } from "../../context/index.jsx";
 
 function NewGameOptions({ socket, setView }) {
     // const {socket} = useSocketContext();
@@ -15,6 +14,7 @@ function NewGameOptions({ socket, setView }) {
         formState: { errors },
     } = useForm();
     const { playerId } = usePlayerContext();
+    const { updateGameState } = useGameContext();
     const { updateGameOptions } = useGameOptionsContext();
     // Ensure playerId is available before proceeding
     if (!playerId) {
@@ -24,9 +24,13 @@ function NewGameOptions({ socket, setView }) {
     }
     const emitEvent = useSocketEmit(socket);
 
-    useSocketEvent(socket, "gameRoomCreated",(gameId) => {
-        console.log("player joined the new game room :", gameId);
-        // console.log("changed the view to ingameoptions");
+    useSocketEvent(socket, "gameRoomCreated",({gameId, gameData}) => {
+        console.log("player joined the new game room :", gameId, gameData);
+        updateGameState({
+            "gameStatus": gameData["gameStatus"],
+            "moveNumber": gameData["moveNumber"],
+            "playerColor": gameData["roomPlayers"]["white"] === playerId ? "white" : "black"
+        })
         setView("inGameOptions");
     })
 
@@ -107,9 +111,9 @@ function NewGameOptions({ socket, setView }) {
             <div>
                 <h3>Choose Side</h3>
                 <p>White</p>
-                <input {...register("Player Side")} type="radio" value="White" />
+                <input {...register("Player Side")} type="radio" value="white" />
                 <p>Black</p>
-                <input {...register("Player Side")} type="radio" value="Black" />
+                <input {...register("Player Side")} type="radio" value="black" />
             </div>
 
             <input type="submit" />

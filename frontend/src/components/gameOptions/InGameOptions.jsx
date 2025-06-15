@@ -10,19 +10,23 @@ function InGameOptions({socket, setMenuView}) {
   const { gameState } = useGameContext();
   // console.log(gameState);
   // const { gameOptions } = useGameOptionsContext();
-  const [ view, setView ] = useState("not started");
+  const [ view, setView ] = useState(gameState["gameStatus"]);
 
-  if(gameState["gameStatus"] === "room full"){
-    setView("playing");
-  }
-  else if (gameState["gameStatus"] === "waiting for player 2"){
-    setView("not started");
-  }
+  // if(gameState["gameStatus"] === "room full"){
+  //   setView("playing");
+  // }
+  // else if (gameState["gameStatus"] === "waiting for player 2"){
+  //   setView("not started");
+  // }
   // else{
   //   setView("game ended");
   // }
   useSocketEvent(socket, "playerJoinedRoom", (message) => {
-    setView("playing");
+    setView("room full");
+  })
+
+  useSocketEvent(socket, "playerDisconnected", (gameData)=>{
+    setView("waiting for reconnection");
   })
 
   useSocketEvent(socket, "gameOver", (data) => {
@@ -42,12 +46,20 @@ function InGameOptions({socket, setMenuView}) {
 
   return (
     <>
-      {view === "not started" && 
+      {view === "waiting for player 2" && 
         (
           <p>Waiting for the Second Player</p>
         )
       }
-      {view === "playing" && 
+      {view === "waiting for reconnection" &&
+        (
+          <>
+            <p>Waiting for the Second Player to Reconnect</p>
+            <button>Leave Room</button>
+          </>
+        )
+      }
+      {view === "room full" && 
         (
           <>
             <button>Abort || Resign</button>
