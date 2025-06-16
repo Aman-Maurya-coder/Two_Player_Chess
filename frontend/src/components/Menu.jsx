@@ -5,8 +5,10 @@ import { useSocketEvent } from "../hooks/useSocketEvent";
 import { NewGameOptions } from "./gameOptions/NewGameOptions";
 import { InGameOptions } from "./gameOptions/InGameOptions";
 import { useGameContext, useGameOptionsContext, usePlayerContext, useSocketContext } from "../context";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
-export function Menu({socket}) {
+export function Menu({socket, classes}) {
     // console.log(socket);
     // const socket = useSocketContext();
     const [view, setView] = useState("default"); // Tracks the current view: "default", "newGameOptions", or "joinGameOptions"
@@ -83,16 +85,18 @@ export function Menu({socket}) {
     };
 
     return (
-        <div className="menu">
+        <div className={classes+" p-10 items-center box-border"}>
             {view === "default" && (
-                <>
-                    <button className="newGame" onClick={handleNewGame}>
+                <div className="flex flex-col justify-center items-center gap-7 w-[80vh] h-[60vh] border-2 border-border p-5">
+                    {/* <button className="" onClick={handleNewGame}>
                         New Game
                     </button>
-                    <button className="joinGame" onClick={handleJoinGame}>
+                    <button className="" onClick={handleJoinGame}>
                         Join Game
-                    </button>
-                </>
+                    </button> */}
+                    <Button className="bg-primary text-4xl font-mono p-4 py-8 w-sm " onClick={handleNewGame}>New Game</Button>
+                    <Button className="bg-primary text-4xl font-mono p-4 py-8 w-sm " onClick={handleJoinGame}>Join Game</Button>
+                </div>
             )}
 
             {view === "newGameOptions" && (
@@ -103,14 +107,26 @@ export function Menu({socket}) {
             )}
 
             {view === "joinGameOptions" && (
-                <div>
-                    <input
+                <div className="flex flex-col justify-center items-center gap-9 w-[80vh] h-[60vh] border-2 border-border p-5">
+                    {/* <input
                         type="text"
                         placeholder="Enter Game Code"
                         value={gameCode}
                         onChange={(e) => setGameCode(e.target.value)}
-                    />
-                    <button onClick={handleGameCodeSubmit}>Submit</button>
+                    /> */}
+                    <Input
+                        type={"text"}
+                        placeholder="Enter Game Code"
+                        value={gameCode}
+                        onChange={(e) => setGameCode(e.target.value)}
+                        className={"dark:text-3xl dark:h-14 w-sm dark"}
+                    ></Input>
+                    {/* <button onClick={handleGameCodeSubmit}>Submit</button> */}
+                    <div className="flex flex-row-reverse justify-between w-sm">
+                    <Button size={"md"} onClick={handleGameCodeSubmit}>Submit</Button>
+                    <Button size={"md"} onClick={() => setView("default")}>Back</Button>
+                    </div>
+                    {/* className="bg-primary text-3xl font-mono p-4 py-8 w-sm dark" */}
                 </div>
             )}
 
