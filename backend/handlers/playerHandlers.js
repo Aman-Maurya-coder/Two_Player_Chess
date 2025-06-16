@@ -63,6 +63,7 @@ export class playerFunctions {
     onDisconnect(socket, games) {
         socket.on("Disconnect", ({ playerId }) => {
             if (this.players[playerId] !== undefined) {
+                console.log(this.players[playerId]);
                 if (this.players[playerId]["gameId"] !== null) {
                     const gameId = this.players[playerId]["gameId"];
                     if (games[gameId]["gameStatus"] === "room full") {

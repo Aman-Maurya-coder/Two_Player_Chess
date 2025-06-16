@@ -272,7 +272,7 @@ export class gameFunctions {
     }
 
     onAbort(socket){
-        socket.on("abort", ({gameId, playerId}) => {
+        socket.on("abort", ({gameId}) => {
             if (this.games[gameId] !== undefined) {
                 this.stopGameTimer(gameId);
                 this.games[gameId].gameStatus = "aborted";
@@ -287,13 +287,14 @@ export class gameFunctions {
             if (this.games[gameId] !== undefined) {
                 this.stopGameTimer(gameId);
                 this.games[gameId].gameStatus = "resigned";
-                global.io.in(gameId).emit("gameAborted", {message: "game aborted successfully", gameStatus: "aborted" });
+                global.io.in(gameId).emit("gameResigned", {message: "game resigned successfully", gameStatus: "resigned" });
             }
         })
     }
 
     onRoomClose(socket) {
             socket.on("closeRoom", ({gameId}) => {
+                console.log("Closing room for game", gameId);
                 if (this.games[gameId] !== undefined){
                     this.stopGameTimer(gameId);
                     socket.leave(gameId);
