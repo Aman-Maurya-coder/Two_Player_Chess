@@ -32,11 +32,6 @@ import { Button } from "@/components/ui/button";
 
 const url = "localhost:3000";
 
-// let socket;
-
-//NOTE: Two players are joining but second player's screen is not showing the correct info.
-//NOTE: in backend this.players.entries is not a function in joinRoom method.
-
 function App() {
     const [socket, setSocket] = useState(null);
     // console.log(socket);
@@ -160,11 +155,11 @@ function App() {
             <div className="flex flex-row flex-90/100 items-center justify-center overflow-hidden box-border">
                 <Board
                     socket={socket}
-                    classes="flex justify-center items-center h-[100%] flex-45/100"
+                    classes="flex justify-center items-center h-[100%] flex-35/100 "
                 />
                 <Timer 
                     socket={socket} 
-                    classes="flex flex-col justify-center items-center flex-10/100 h-[100%] border-2xl border-border text-accent-foreground dark gap-3"
+                    classes="flex flex-col justify-center items-center flex-20/100 h-[100%] border-2xl border-border text-accent-foreground dark gap-3"
                 />
                 <Menu
                     socket={socket}

@@ -78,13 +78,13 @@ export function Board({ socket, classes }) {
         }
     }
     return (
-        <div className={classes}>
-            <div style={{ width: "60vh"}}>
+        <div className={classes+""}>
+            <div style={{ width: "60vh"}} className="">
                 <Chessboard
                     // boardWidth={100}
-                    customBoardStyle={{ }} // Set the board size to 50vh
+                    customBoardStyle={{  }} // Set the board size to 50vh
                     customDarkSquareStyle={{ backgroundColor: "#17ad56" }} // Dark square color
-                    customLightSquareStyle={{ backgroundColor: "#acb2c0" }} // Light square color
+                    customLightSquareStyle={{ backgroundColor: "#fff" }} // Light square color
                     customSquareStyles={{ border: "1px solid #000" }} // Square border style
                     position={game.fen()}
                     snapToCursor={true} // Enable snapping to cursor

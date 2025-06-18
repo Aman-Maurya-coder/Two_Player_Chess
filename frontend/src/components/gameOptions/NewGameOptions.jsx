@@ -1,21 +1,77 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
+import { z } from "zod/v4";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useSocketEmit } from "../../hooks/useSocketEmit.js";
 import { useSocketEvent } from "../../hooks/useSocketEvent.js";
-import { usePlayerContext, useGameContext, useGameOptionsContext } from "../../context/index.jsx";
+import {
+    usePlayerContext,
+    useGameContext,
+    useGameOptionsContext,
+    useTimerContext,
+} from "../../context/index.jsx";
+import {
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form";
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button.jsx";
+import { Label } from "@/components/ui/label.jsx";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group.jsx";
+import { Input } from "@/components/ui/input.jsx";
+import { AlertDialogBox } from "../utils/AlertDialogBox.jsx";
+import { DialogBox } from "../utils/DialogBox.jsx";
+
+const formSchema = z.object({
+    time_control: z.enum(["5", "10", "15", "30"], {
+        error: "Time should be one of the options",
+    }),
+    increment: z.enum(["0", "2", "5", "10"], {
+        error: "Increment should be one of the options",
+    }),
+    player_side: z.enum(["white", "black"]),
+});
 
 function NewGameOptions({ socket, setView }) {
     // const {socket} = useSocketContext();
     // console.log(socket);
-    const {
-        register,
-        handleSubmit,
-        watch,
-        formState: { errors },
-    } = useForm();
+    const form = useForm({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            time_control: "5", // Default value for time control
+            increment: "0", // Default value for increment
+            player_side: "white", // Default value for player side
+        },
+    });
     const { playerId } = usePlayerContext();
-    const { updateGameState } = useGameContext();
+    const { gameState, updateGameState } = useGameContext();
     const { updateGameOptions } = useGameOptionsContext();
+    const { setWhiteTime, setBlackTime, setCurrentTurn } = useTimerContext();
+    // const copyButtonRef = useRef(null);
+    const gameIdRef = useRef(null);
+    // useEffect(() => {
+    //     copyButtonRef.current.focus(); // Focus the copy button when the component mounts
+    // }, []);
+
     // Ensure playerId is available before proceeding
     if (!playerId) {
         console.error("Player ID is not set. Cannot create a new game.");
@@ -24,101 +80,234 @@ function NewGameOptions({ socket, setView }) {
     }
     const emitEvent = useSocketEmit(socket);
 
-    useSocketEvent(socket, "gameRoomCreated",({gameId, gameData}) => {
+    useSocketEvent(socket, "gameRoomCreated", ({ gameId, gameData }) => {
         console.log("player joined the new game room :", gameId, gameData);
         updateGameState({
-            "gameStatus": gameData["gameStatus"],
-            "moveNumber": gameData["moveNumber"],
-            "playerColor": gameData["roomPlayers"]["white"] === playerId ? "white" : "black"
-        })
-        setView("inGameOptions");
-    })
+            gameId: gameId,
+            gameStatus: gameData["gameStatus"],
+            moveNumber: gameData["moveNumber"],
+            playerColor:
+                gameData["roomPlayers"]["white"] === playerId
+                    ? "white"
+                    : "black",
+        });
+        setWhiteTime(gameData["gameTimer"]["white"]);
+        setBlackTime(gameData["gameTimer"]["black"]);
+    });
 
     const onSubmit = (data) => {
-        console.log("data :", data);
+        console.log("Form submitted with data:", data);
         emitEvent("newGame", {
-            "playerId": playerId,
-            "playerSide": data["Player Side"],
-            "timeControl": {
-                "time": data["Time Control"],
-                "increment": data["Increment"]
-            }
-        })
+            playerId: playerId,
+            playerSide: data["player_side"],
+            timeControl: {
+                time: data["time_control"],
+                increment: data["increment"],
+            },
+        });
         console.log("newGame event emmitted");
         updateGameOptions({
-            "time": data["Time Control"],
-            "increment": data["Increment"],
-            "playerSide": data["Player Side"]
+            time: data["time_control"],
+            increment: data["increment"],
+            playerSide: data["player_side"],
         });
-    }
+    };
     return (
-        // <div>
-        //     <h2>Time Control</h2>
-        //     <div>
-        //         <button>3</button>
-        //         <button>5</button>
-        //         <button>10</button>
-        //         <button>15</button>
-        //         <button>30</button>
-        //         <button>custom</button>
-        //     </div>
-        // </div>
-        <form onSubmit={handleSubmit(onSubmit)} className="newGameForm">
-            <div>
-                <h3>Timer Control</h3>
-                <p>5min</p>
-                <input
-                    {...register("Time Control", { required: true })}
-                    type="radio"
-                    value="5"
-                />
-                <p>10min</p>
-                <input
-                    {...register("Time Control", { required: true })}
-                    type="radio"
-                    value="10"
-                />
-                <p>15min</p>
-                <input
-                    {...register("Time Control", { required: true })}
-                    type="radio"
-                    value="15"
-                />
-                <p>30min</p>
-                <input
-                    {...register("Time Control", { required: true })}
-                    type="radio"
-                    value="30"
-                />
-                <p>custom</p>
-                <input
-                    {...register("Time Control", { required: true })}
-                    type="radio"
-                    value="custom"
-                />
-            </div>
-            <div>
-                <h3>Increment</h3>
-                <p>0 sec</p>
-                <input {...register("Increment")} type="radio" value="0" />
-                <p>2 sec</p>
-                <input {...register("Increment")} type="radio" value="2" />
-                <p>5 sec</p>
-                <input {...register("Increment")} type="radio" value="5" />
-                <p>10 sec</p>
-                <input {...register("Increment")} type="radio" value="10" />
-            </div>
-            <div>
-                <h3>Choose Side</h3>
-                <p>White</p>
-                <input {...register("Player Side")} type="radio" value="white" />
-                <p>Black</p>
-                <input {...register("Player Side")} type="radio" value="black" />
-            </div>
-
-            <input type="submit" />
-        </form>
+        <Dialog>
+            <Form {...form}>
+                <form
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    className="flex flex-col gap-4 w-full h-full"
+                >
+                    <FormField
+                        control={form.control}
+                        name="time_control"
+                        render={({ field }) => (
+                            <FormItem className="flex-1/4 gap-0">
+                                <FormLabel className="text-2xl font-mono">
+                                    Time Control
+                                </FormLabel>
+                                <FormControl>
+                                    {/* <Input placeholder="enter time" {...field} /> */}
+                                    <RadioGroup
+                                        onValueChange={field.onChange}
+                                        defaultValue={field.value}
+                                        className="flex flex-row justify-start items-center"
+                                    >
+                                        <div className="flex items-center space-x-1 border-2 border-border rounded-full px-3 py-2">
+                                            <RadioGroupItem
+                                                value="5"
+                                                id="t5"
+                                                className="flex-1/5"
+                                            />
+                                            <Label
+                                                htmlFor="t5"
+                                                className="flex-4/5"
+                                            >
+                                                5 min
+                                            </Label>
+                                        </div>
+                                        <div className="flex items-center space-x-1 border-2 border-border rounded-full px-3 py-2">
+                                            <RadioGroupItem
+                                                value="10"
+                                                id="t10"
+                                            />
+                                            <Label htmlFor="t10">10 min</Label>
+                                        </div>
+                                        <div className="flex items-center space-x-1 border-2 border-border rounded-full px-3 py-2">
+                                            <RadioGroupItem
+                                                value="15"
+                                                id="t15"
+                                            />
+                                            <Label htmlFor="t15">15 min</Label>
+                                        </div>
+                                        <div className="flex items-center space-x-1 border-2 border-border rounded-full px-3 py-2">
+                                            <RadioGroupItem
+                                                value="30"
+                                                id="t30"
+                                            />
+                                            <Label htmlFor="t30">30 min</Label>
+                                        </div>
+                                    </RadioGroup>
+                                </FormControl>
+                                {/* <FormDescription>
+                                Choose the time control for the game.
+                            </FormDescription> */}
+                                {/* <FormMessage /> */}
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="increment"
+                        render={({ field }) => (
+                            <FormItem className="flex-1/4 gap-0">
+                                <FormLabel className="text-2xl font-mono">
+                                    Increment
+                                </FormLabel>
+                                <FormControl>
+                                    {/* <Input placeholder="enter time" {...field} /> */}
+                                    <RadioGroup
+                                        onValueChange={field.onChange}
+                                        defaultValue={field.value}
+                                        className="flex flex-row justify-start items-center"
+                                    >
+                                        <div className="flex items-center space-x-1 border-2 border-border rounded-full px-3 py-2">
+                                            <RadioGroupItem value="0" id="i0" />
+                                            <Label htmlFor="i0">0 sec</Label>
+                                        </div>
+                                        <div className="flex items-center space-x-1 border-2 border-border rounded-full px-3 py-2">
+                                            <RadioGroupItem value="2" id="i2" />
+                                            <Label htmlFor="i2">2 sec</Label>
+                                        </div>
+                                        <div className="flex items-center space-x-1 border-2 border-border rounded-full px-3 py-2">
+                                            <RadioGroupItem value="5" id="i5" />
+                                            <Label htmlFor="i5">5 sec</Label>
+                                        </div>
+                                        <div className="flex items-center space-x-1 border-2 border-border rounded-full px-3 py-2">
+                                            <RadioGroupItem
+                                                value="i10"
+                                                id="10"
+                                            />
+                                            <Label htmlFor="i10">10 sec</Label>
+                                        </div>
+                                    </RadioGroup>
+                                </FormControl>
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="player_side"
+                        render={({ field }) => (
+                            <FormItem className="flex-1/4 gap-0">
+                                <FormLabel className="text-2xl font-mono">
+                                    Your Side
+                                </FormLabel>
+                                <FormControl>
+                                    <RadioGroup
+                                        onValueChange={field.onChange}
+                                        defaultValue={field.value}
+                                        className="flex flex-row justify-start items-center"
+                                    >
+                                        <div className="flex items-center space-x-1 border-2 border-border rounded-full px-3 py-2">
+                                            <RadioGroupItem
+                                                value="white"
+                                                id="white"
+                                            />
+                                            <Label htmlFor="white">White</Label>
+                                        </div>
+                                        <div className="flex items-center space-x-1 border-2 border-border rounded-full px-3 py-2">
+                                            <RadioGroupItem
+                                                value="black"
+                                                id="black"
+                                            />
+                                            <Label htmlFor="black">Black</Label>
+                                        </div>
+                                    </RadioGroup>
+                                </FormControl>
+                            </FormItem>
+                        )}
+                    />
+                    <div className="flex flex-row justify-around items-center flex-1/4">
+                        <Button
+                            variant="outline"
+                            size={"md"}
+                            className="font-mono"
+                            onClick={() => setView("default")}
+                        >
+                            Close
+                        </Button>
+                        <DialogTrigger asChild>
+                            <Button type="Submit" size={"md"}>
+                                Submit
+                            </Button>
+                        </DialogTrigger>
+                    </div>
+                </form>
+            </Form>
+            <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                    <DialogTitle>Your Game Code</DialogTitle>
+                    <DialogDescription>Share this code with your friend to play with them.</DialogDescription>
+                </DialogHeader>
+                        <div className="flex w-full max-w-sm items-center gap-2">
+                            <Input
+                                readOnly
+                                type="text"
+                                defaultValue={gameState["gameId"]}
+                                ref={gameIdRef}
+                            />
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <Button
+                                        type="submit"
+                                        variant="outline"
+                                        className={"text-xl"}
+                                        onClick={() => {
+                                            window.navigator.clipboard.writeText(
+                                                gameIdRef.current.value
+                                            );
+                                        }}
+                                    >
+                                        Copy
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="flex justify-center items-center w-28 h-6 text-sm">
+                                    <p>Code Copied</p>
+                                </PopoverContent>
+                            </Popover>
+                        </div>
+                <DialogFooter className="sm:justify-end">
+                    <DialogClose asChild>
+                        <Button type="button" variant="secondary">
+                            Close
+                        </Button>
+                    </DialogClose>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     );
 }
 
-export {NewGameOptions};
+export { NewGameOptions };

@@ -1,5 +1,8 @@
 import { randomUUID } from "crypto";
 
+//IMP: there is a bug where when the user refresh after creating a game and leaves when the second player is not connected the game room is getting destroyed but gameId from the player data is not getting null.
+//IMP: Disconnet not working properly. Game Room closed console log is not getting printed when the player disconnects from the game room.
+
 export class playerFunctions {
     constructor(players) {
         this.players = players;
