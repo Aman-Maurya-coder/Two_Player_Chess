@@ -128,7 +128,7 @@ function App() {
         };
     }, [playerId, emitEvent]);
     return (
-        <div className="flex flex-col" style={{ height: "100%" }}>
+        <div className="flex flex-col h-full"  style={{ height: "100%" }}>
             <Navbar></Navbar>
             {/* {gameState.gameStatus !== "not started" || gameState.gameStatus !== "playing" && <GameOverPopup />} */}
             {/* <AlertDialog>

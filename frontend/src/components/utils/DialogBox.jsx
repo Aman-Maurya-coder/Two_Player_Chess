@@ -16,24 +16,32 @@ export function DialogBox({
     title,
     desc,
     content,
-    onClose
-
+    onClose,
 }) {
     return (
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <Dialog open={dialogOpen} onOpenChange={(open) => {
+            if (!open) {
+                setDialogOpen(false); // Only close the dialog when it is explicitly closed
+                if (onClose) onClose(); // Call the onClose handler if provided
+            }
+        }}> 
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                     <DialogTitle>{title}</DialogTitle>
-                    <DialogDescription>
-                        {desc}
-                    </DialogDescription>
+                    <DialogDescription>{desc}</DialogDescription>
                 </DialogHeader>
 
-                {content}
+                {content && content}
 
                 <DialogFooter className="sm:justify-end">
                     <DialogClose asChild>
-                        <Button type="button" variant="secondary" className="text-xl" size="md" onClick={onClose}>
+                        <Button
+                            type="button"
+                            variant="secondary"
+                            className="text-xl"
+                            size="md"
+                            {...(onClose && { onClick: onClose })}
+                        >
                             Close
                         </Button>
                     </DialogClose>

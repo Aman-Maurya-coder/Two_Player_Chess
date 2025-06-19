@@ -1,3 +1,9 @@
+//IMP: have to check what is useReducer and how to use it.
+//NOTE: to check whether we can use useCallback on the onSubmit function.
+//NOTE: have to implement play again button logic in backend and frontend both
+//NOTE: have to implement the dialog box for promotion.
+
+
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import { z } from "zod/v4";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,22 +19,10 @@ import {
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
-    FormMessage,
 } from "@/components/ui/form";
-import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
 import {
     Popover,
     PopoverContent,
@@ -62,11 +56,12 @@ function NewGameOptions({ socket, setView }) {
             player_side: "white", // Default value for player side
         },
     });
-    const { playerId } = usePlayerContext();
+    const { playerId, playerData } = usePlayerContext();
     const { gameState, updateGameState } = useGameContext();
     const { updateGameOptions } = useGameOptionsContext();
     const { setWhiteTime, setBlackTime, setCurrentTurn } = useTimerContext();
     const [dialogState, setDialogState] = useState(false); // State to control the dialog visibility
+    const [dialogContent, setDialogContent] = useState({}); // State to hold dialog content
     // const copyButtonRef = useRef(null);
     const gameIdRef = useRef(null);
     // useEffect(() => {
@@ -81,10 +76,19 @@ function NewGameOptions({ socket, setView }) {
     }
     const emitEvent = useSocketEmit(socket);
 
+    useEffect(() => {
+        if (dialogState && gameIdRef.current) {
+            console.log("Dialog opened, focusing input field...");
+            gameIdRef.current.focus(); // Focus the input field
+            console.log("Selecting text...");
+            gameIdRef.current.select(); // Select the text in the input field
+        }
+    },[dialogState]);
+
     useSocketEvent(socket, "gameRoomCreated", ({ gameId, gameData }) => {
         console.log("player joined the new game room :", gameId, gameData);
         updateGameState({
-            gameId: gameId,
+            "gameId": gameId,
             gameStatus: gameData["gameStatus"],
             moveNumber: gameData["moveNumber"],
             playerColor:
@@ -94,10 +98,59 @@ function NewGameOptions({ socket, setView }) {
         });
         setWhiteTime(gameData["gameTimer"]["white"]);
         setBlackTime(gameData["gameTimer"]["black"]);
+        console.log(gameState);
+        setDialogContent({
+            title: "Your Game Code",
+            desc: "Share this code with your friend to play with them.",
+            content: (
+                <div className="flex w-full items-center gap-2 mb-2">
+                        <Input
+                            readOnly
+                            type="text"
+                            value={gameId || ""}
+                            placeholder="Game Code"
+                            ref={gameIdRef}
+                        />
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <Button
+                                    type="submit"
+                                    // size="md"
+                                    className={"text-xl"}
+                                    onClick={() => {
+                                        window.navigator.clipboard.writeText(
+                                            gameIdRef.current.value
+                                        );
+                                    }}
+                                >
+                                    Copy
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="flex justify-center items-center w-28 h-6 text-sm">
+                                <p>Code Copied</p>
+                            </PopoverContent>
+                        </Popover>
+                </div>
+            ),
+            onClose: () => setView("inGameOptions")
+        });
+        console.log("dialog State:", dialogState);
+        // setDialogState(true); // Open the dialog to show the game code
+        setDialogState((prevState) => !prevState); // This ensures React recognizes the state change
+        console.log("dialog State:", dialogState);
     });
 
     const onSubmit = (data) => {
-        console.log("Form submitted with data:", data);
+        console.log("Form submitted with data:", data, playerData);
+        if(playerData?.gameId) {
+            console.warn("Player is already in a game, cannot create a new game.");
+            setDialogContent({
+                title: "Already in a Game",
+                desc: "You are already in a game. Please finish your current game before starting a new one.",
+            })
+            setDialogState(true);
+            return; // Prevent creating a new game if the player is already in one
+        }
         emitEvent("newGame", {
             playerId: playerId,
             playerSide: data["player_side"],
@@ -112,8 +165,16 @@ function NewGameOptions({ socket, setView }) {
             increment: data["increment"],
             playerSide: data["player_side"],
         });
-        setDialogState(true); // Open the dialog to show the game code
+        
+        // setTimeout(() => {
+        //     console.log(gameIdRef.current);
+        //     console.log("focusing the input");
+        //     gameIdRef.current?.focus(); // Focus the input field for the game ID
+        //     console.log("selecting the input");
+        //     gameIdRef.current.select();
+        // }, 400);
     };
+    
     return (
         <div className="h-full">
             <Form {...form}>
@@ -136,7 +197,7 @@ function NewGameOptions({ socket, setView }) {
                                         defaultValue={field.value}
                                         className="flex flex-row justify-start items-center"
                                     >
-                                        <div className="flex items-center space-x-1 border-2 border-border rounded-full px-3 py-2">
+                                        <div className="flex items-center space-x-1 border-2 border-border bg-background hover:bg-accent rounded-full px-3 py-2">
                                             <RadioGroupItem
                                                 value="5"
                                                 id="t5"
@@ -149,21 +210,21 @@ function NewGameOptions({ socket, setView }) {
                                                 5 min
                                             </Label>
                                         </div>
-                                        <div className="flex items-center space-x-1 border-2 border-border rounded-full px-3 py-2">
+                                        <div className="flex items-center space-x-1 border-2 border-border bg-background hover:bg-accent rounded-full px-3 py-2">
                                             <RadioGroupItem
                                                 value="10"
                                                 id="t10"
                                             />
                                             <Label htmlFor="t10">10 min</Label>
                                         </div>
-                                        <div className="flex items-center space-x-1 border-2 border-border rounded-full px-3 py-2">
+                                        <div className="flex items-center space-x-1 border-2 border-border bg-background hover:bg-accent rounded-full px-3 py-2">
                                             <RadioGroupItem
                                                 value="15"
                                                 id="t15"
                                             />
                                             <Label htmlFor="t15">15 min</Label>
                                         </div>
-                                        <div className="flex items-center space-x-1 border-2 border-border rounded-full px-3 py-2">
+                                        <div className="flex items-center space-x-1 border-2 border-border bg-background hover:bg-accent rounded-full px-3 py-2">
                                             <RadioGroupItem
                                                 value="30"
                                                 id="t30"
@@ -194,19 +255,19 @@ function NewGameOptions({ socket, setView }) {
                                         defaultValue={field.value}
                                         className="flex flex-row justify-start items-center"
                                     >
-                                        <div className="flex items-center space-x-1 border-2 border-border rounded-full px-3 py-2">
+                                        <div className="flex items-center space-x-1 border-2 border-border bg-background hover:bg-accent rounded-full px-3 py-2">
                                             <RadioGroupItem value="0" id="i0" />
                                             <Label htmlFor="i0">0 sec</Label>
                                         </div>
-                                        <div className="flex items-center space-x-1 border-2 border-border rounded-full px-3 py-2">
+                                        <div className="flex items-center space-x-1 border-2 border-border bg-background hover:bg-accent rounded-full px-3 py-2">
                                             <RadioGroupItem value="2" id="i2" />
                                             <Label htmlFor="i2">2 sec</Label>
                                         </div>
-                                        <div className="flex items-center space-x-1 border-2 border-border rounded-full px-3 py-2">
+                                        <div className="flex items-center space-x-1 border-2 border-border bg-background hover:bg-accent rounded-full px-3 py-2">
                                             <RadioGroupItem value="5" id="i5" />
                                             <Label htmlFor="i5">5 sec</Label>
                                         </div>
-                                        <div className="flex items-center space-x-1 border-2 border-border rounded-full px-3 py-2">
+                                        <div className="flex items-center space-x-1 border-2 border-border bg-background hover:bg-accent rounded-full px-3 py-2">
                                             <RadioGroupItem
                                                 value="i10"
                                                 id="10"
@@ -232,14 +293,14 @@ function NewGameOptions({ socket, setView }) {
                                         defaultValue={field.value}
                                         className="flex flex-row justify-start items-center"
                                     >
-                                        <div className="flex items-center space-x-1 border-2 border-border rounded-full px-3 py-2">
+                                        <div className="flex items-center space-x-1 border-2 border-border bg-background hover:bg-accent rounded-full px-3 py-2">
                                             <RadioGroupItem
                                                 value="white"
                                                 id="white"
                                             />
                                             <Label htmlFor="white">White</Label>
                                         </div>
-                                        <div className="flex items-center space-x-1 border-2 border-border rounded-full px-3 py-2">
+                                        <div className="flex items-center space-x-1 border-2 border-border bg-background hover:bg-accent rounded-full px-3 py-2">
                                             <RadioGroupItem
                                                 value="black"
                                                 id="black"
@@ -269,38 +330,14 @@ function NewGameOptions({ socket, setView }) {
             <DialogBox 
                 dialogOpen={dialogState}
                 setDialogOpen={setDialogState}
-                title="Your Game Code"
-                desc="Share this code with your friend to play with them."
-                content={
-                    <div className="flex w-full items-center gap-2 mb-2">
-                        <Input
-                            readOnly
-                            type="text"
-                            defaultValue={gameState["gameId"]}
-                            ref={gameIdRef}
-                        />
-                        <Popover>
-                            <PopoverTrigger asChild>
-                                <Button
-                                    type="submit"
-                                    // size="md"
-                                    className={"text-xl"}
-                                    onClick={() => {
-                                        window.navigator.clipboard.writeText(
-                                            gameIdRef.current.value
-                                        );
-                                    }}
-                                >
-                                    Copy
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="flex justify-center items-center w-28 h-6 text-sm">
-                                <p>Code Copied</p>
-                            </PopoverContent>
-                        </Popover>
-                    </div>
+                title={dialogContent.title}
+                desc={dialogContent.desc}
+                {
+                    ...(dialogContent.content && { content: dialogContent.content })
                 }
-                onClose={() => setView("inGameOptions")}
+                {
+                    ...(dialogContent.onClose && { onClose: dialogContent.onClose})
+                }
             />
         </div>
     );

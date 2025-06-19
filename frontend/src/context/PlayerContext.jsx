@@ -10,14 +10,14 @@ export const PlayerProvider = ({ children }) => {
 
     const [playerData, setPlayerData] = useState({});
 
-    const resetPlayer = () => {
+    const resetPlayerData = () => {
         // setPlayerId(null);
         setPlayerData({});
-        localStorage.removeItem("playerId");
+        // localStorage.removeItem("playerId");
     }
 
     return (
-        <PlayerContext.Provider value={{ playerId, setPlayerId, playerData, setPlayerData, resetPlayer }}>
+        <PlayerContext.Provider value={{ playerId, setPlayerId, playerData, setPlayerData, resetPlayerData }}>
             {children}
         </PlayerContext.Provider>
     );

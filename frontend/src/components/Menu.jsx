@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import "../assets/MenuStyle.css";
 import { useSocketEmit } from "../hooks/useSocketEmit";
 import { useSocketEvent } from "../hooks/useSocketEvent";
@@ -13,15 +13,33 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
+
+
 export function Menu({ socket, classes }) {
     // console.log(socket);
     // const socket = useSocketContext();
     const [view, setView] = useState("default"); // Tracks the current view: "default", "newGameOptions", or "joinGameOptions"
     const [gameCode, setGameCode] = useState(""); // Stores the game code entered by the user
+    const joinGameRef = useRef(null); // Reference to the join game input field
     const { playerId } = usePlayerContext();
     const { updateGameOptions } = useGameOptionsContext();
     const { updateGameState } = useGameContext();
     const emitEvent = useSocketEmit(socket);
+
+    useEffect(()=>{
+        if(view === "joinGameOptions" && joinGameRef.current) {
+            // Focus the join game input field when the view changes to "joinGameOptions"
+            joinGameRef.current.focus();
+        }
+    },[view])
+
+    //IMP: have to implement this...
+    // const handleViewChange = (newView) => {
+    //     setView(newView);
+    //     if (newView === "joinGameOptions" && joinGameRef.current) {
+    //         joinGameRef.current.focus();
+    //     }
+    // };
 
     useSocketEvent(socket, "playerJoinedRoom", (gameId) => {
         console.log("Player joined room:", gameId);
@@ -93,7 +111,7 @@ export function Menu({ socket, classes }) {
 
     return (
         <div className={classes + " items-center box-border"}>
-            <div className="w-[80vh] h-[60vh] border-2 border-border overflow-hidden p-5 rounded-lg">
+            <div className="w-[80vh] h-[60vh] border-2 border-border overflow-hidden p-5 rounded-lg bg-card">
                 {view === "default" && (
                     <div className="flex flex-col justify-center items-center gap-7 w-full h-full">
                         <Button
@@ -105,7 +123,7 @@ export function Menu({ socket, classes }) {
                         </Button>
                         <Button
                             size="mine"
-                            variant="default"
+                            variant="outline"
                             onClick={handleJoinGame}
                         >
                             Join Game
@@ -125,6 +143,7 @@ export function Menu({ socket, classes }) {
                             value={gameCode}
                             onChange={(e) => setGameCode(e.target.value)}
                             className={"dark:text-3xl dark:h-14 w-sm dark"}
+                            ref={joinGameRef}
                         ></Input>
                         <div className="flex flex-row-reverse justify-between w-sm">
                             <Button size={"md"} onClick={handleGameCodeSubmit}>

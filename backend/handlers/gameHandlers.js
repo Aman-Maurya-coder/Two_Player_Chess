@@ -207,7 +207,7 @@ export class gameFunctions {
                 this.players[room_players["white"]]["playerStatus"] = "playing";
                 this.players[room_players["black"]]["playerStatus"] = "playing";
             }
-            console.log("Players in room:", global.io.of("/").adapter.rooms.get(gameId));
+            // console.log("Players in room:", global.io.of("/").adapter.rooms.get(gameId));
             // Broadcast move and time update
             global.io.in(gameId).emit("moveMade", {
                 fen: currentGameData.game.fen(),
@@ -235,7 +235,6 @@ export class gameFunctions {
                 else reason = "unknown reason";
                 global.io.in(gameId).emit("gameOver", {
                     winner: currentGameData.game.turn(),
-                    // moveNumber: currentGameData.moveNumber,
                     reason: reason
                 });
             }
@@ -273,24 +272,26 @@ export class gameFunctions {
     }
 
     onAbort(socket){
-        socket.on("abort", ({gameId}) => {
+        socket.on("abort", ({playerId, gameId}) => {
             if (this.games[gameId] !== undefined) {
                 this.stopGameTimer(gameId);
                 this.games[gameId].gameStatus = "aborted";
                 console.log("Game", gameId, "aborted");
-                global.io.in(gameId).emit("gameAborted", {message: "game aborted successfully", gameStatus: "aborted" });
+                const winner = this.games[gameId]["roomPlayers"]["white"] === playerId ? this.games[gameId]["roomPlayers"]["black"] : this.games[gameId]["roomPlayers"]["white"];
+                global.io.in(gameId).emit("gameAborted", {"winner": winner, gameStatus: "aborted", reason: "aborted" });
             }
 
         })
     }
 
     onResign(socket){
-        socket.on("resign", ({gameId}) => {
+        socket.on("resign", ({playerId, gameId}) => {
             if (this.games[gameId] !== undefined) {
                 this.stopGameTimer(gameId);
                 this.games[gameId].gameStatus = "resigned";
                 console.log("Game", gameId, "ended by resignation");
-                global.io.in(gameId).emit("gameResigned", {message: "game resigned successfully", gameStatus: "resigned" });
+                const winner = this.games[gameId]["roomPlayers"]["white"] === playerId ? this.games[gameId]["roomPlayers"]["black"] : this.games[gameId]["roomPlayers"]["white"];
+                global.io.in(gameId).emit("gameResigned", {"winner": winner, gameStatus: "resigned", reason: "resigned" });
             }
         })
     }
@@ -309,7 +310,7 @@ export class gameFunctions {
                 this.stopGameTimer(gameId);
                 this.games[gameId].gameStatus = "draw";
                 console.log("Game", gameId, "ended in a draw");
-                global.io.in(gameId).emit("gameDraw", {message: "game drawn successfully", gameStatus: "draw"});
+                global.io.in(gameId).emit("gameDraw", {reason: "draw", gameStatus: "draw"});
             }
         })
     }
@@ -329,8 +330,16 @@ export class gameFunctions {
                 if (this.games[gameId] !== undefined){
                     this.stopGameTimer(gameId);
                     global.io.in(gameId).emit("roomClosed", {message: "Room closed successfully", gameStatus: "closed"});
-                    this.players[this.games[gameId]["roomPlayers"]["white"]]["gameId"] = null;
-                    this.players[this.games[gameId]["roomPlayers"]["black"]]["gameId"] = null;
+                    try {
+                        if(this.games[gameId]["roomPlayers"]["white"] !== null){
+                            this.players[this.games[gameId]["roomPlayers"]["white"]]["gameId"] = null;
+                        }
+                        if(this.games[gameId]["roomPlayers"]["black"] !== null) {
+                            this.players[this.games[gameId]["roomPlayers"]["black"]]["gameId"] = null;
+                        }
+                    } catch (error) {
+                        console.error("Error clearing player gameId:", error);
+                    }
                     socket.leave(gameId);
                     delete this.games[gameId];
                     console.log("Room deleted for game", gameId);

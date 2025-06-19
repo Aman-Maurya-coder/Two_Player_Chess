@@ -8,7 +8,7 @@ import {
     useGameContext,
     useGameOptionsContext,
     useTimerContext,
-} from "../context";
+} from "../context"; 
 // export { moveNumber, playerColor } from "./Chessboard";
 
 export function Board({ socket, classes }) {
@@ -36,6 +36,9 @@ export function Board({ socket, classes }) {
 
     useSocketEvent(socket, "gameOver", ({ winner, reason }) => {
         // Handle game over logic here (e.g., show a message, reset the game, etc.)
+        updateGameState({
+            
+        })
         console.log(`Game Over: ${winner} wins! Reason: ${reason}`);
     });
 
@@ -60,21 +63,29 @@ export function Board({ socket, classes }) {
                 to: targetSquare,
                 promotion: "q", // always promote to a queen for example simplicity
             };
+            console.log(movee);
             const gameCopy = new Chess(game.fen());
-            const result = gameCopy.move(movee);
-            if (result) {
-                // console.log(
-                //     "making the move,",
-                //     movee,
-                //     "in room :",
-                //     gameState["gameId"]
-                // );
-                emitEvent("move", {
-                    move: movee,
-                    gameId: gameState["gameId"], // Assuming gameId is available in the scope
-                });
-                return result; // null if the move was illegal, the move object if the move was legal
-            } else return false;
+            // let result;
+            try {
+                const result = gameCopy.move(movee);
+                console.log(result);
+                console.log(gameState["playerColor"]);
+                const playerColor = gameState["playerColor"] === "white" ? "w" : "b";
+                if (result && result.color === playerColor) {
+                    emitEvent("move", {
+                        move: movee,
+                        gameId: gameState["gameId"], // Assuming gameId is available in the scope
+                    });
+                    return result; // null if the move was illegal, the move object if the move was legal
+                } else {
+                    console.error("Illegal move attempted:", movee);
+                    return false;
+                }
+            } catch (error) {
+                console.error("Illegal move attempted:", error);
+                return false; // Return false if the move is illegal
+                
+            }
         } catch (error) {
             console.error("Error making move:", error);
             return false;

@@ -11,8 +11,8 @@ export function TimerProvider({ children }){
     const [currentTurn, setCurrentTurn] = useState('white');
 
     const resetTimer = () => {
-        setWhiteTime(gameOptions["time"] || 30000);
-        setBlackTime(gameOptions["time"] || 30000);
+        setWhiteTime(300000);
+        setBlackTime(300000);
         setCurrentTurn('white');
     };
 

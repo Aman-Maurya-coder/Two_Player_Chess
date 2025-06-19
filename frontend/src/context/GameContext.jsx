@@ -7,10 +7,13 @@ export function GameProvider({ children}){
         gameId: null,
         gameStatus: "not started", // "not started", "playing", "game over"
         moveNumber: 0, // Current move number
-        playerColor: "white" // "white" or "black"
+        playerColor: "white", // "white" or "black"
+        winner: null, // Player who won the game, null if no winner yet
+        reason: null // Reason for game end, e.g., "checkmate", "stalemate", "resignation", "draw"
     });
 
     const updateGameState = (newState) => {
+        // console.log("Updating game state:", newState);
         setGameState((prevState) => ({
             ...prevState,
             ...newState

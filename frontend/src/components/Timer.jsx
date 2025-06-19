@@ -49,8 +49,8 @@ export function Timer({socket, classes}){
                 // bg-(--activeTimer-background) can be used to set background with a custom css variable.
     return (
         <div className={classes}>       
-            <Label className={cn("dark text-muted-foreground py-3 px-7 rounded-md bg-sidebar-accent-foreground text-4xl",activeTimer[0] ? "bg-primary text-primary-foreground/70" : "")}>{gameState["playerColor"] === "white"?formatTime(blackTime): formatTime(whiteTime)}</Label>
-            <Label className={cn("dark text-muted-foreground py-3 px-7 rounded-md bg-sidebar-accent-foreground text-4xl",activeTimer[1] ? "bg-primary text-primary-foreground/70" : "")}>{gameState["playerColor"] === "white"?formatTime(whiteTime): formatTime(blackTime)}</Label>
+            <Label className={cn("dark text-muted py-3 px-7 rounded-md bg-muted-foreground text-4xl",activeTimer[0] ? "bg-primary text-primary-foreground/70" : "")}>{gameState["playerColor"] === "white"?formatTime(blackTime): formatTime(whiteTime)}</Label>
+            <Label className={cn("dark text-muted py-3 px-7 rounded-md bg-muted-foreground text-4xl",activeTimer[1] ? "bg-primary text-primary-foreground/70" : "")}>{gameState["playerColor"] === "white"?formatTime(whiteTime): formatTime(blackTime)}</Label>
         </div>
     );
 }
