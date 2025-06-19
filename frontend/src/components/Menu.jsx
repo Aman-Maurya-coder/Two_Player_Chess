@@ -96,12 +96,6 @@ export function Menu({ socket, classes }) {
             <div className="w-[80vh] h-[60vh] border-2 border-border overflow-hidden p-5 rounded-lg">
                 {view === "default" && (
                     <div className="flex flex-col justify-center items-center gap-7 w-full h-full">
-                        {/* <button className="" onClick={handleNewGame}>
-                        New Game
-                    </button>
-                    <button className="" onClick={handleJoinGame}>
-                        Join Game
-                    </button> */}
                         <Button
                             size="mine"
                             variant="default"
@@ -139,6 +133,7 @@ export function Menu({ socket, classes }) {
                             <Button
                                 size={"md"}
                                 onClick={() => setView("default")}
+                                variant={"outline"}
                             >
                                 Back
                             </Button>

@@ -66,6 +66,7 @@ function NewGameOptions({ socket, setView }) {
     const { gameState, updateGameState } = useGameContext();
     const { updateGameOptions } = useGameOptionsContext();
     const { setWhiteTime, setBlackTime, setCurrentTurn } = useTimerContext();
+    const [dialogState, setDialogState] = useState(false); // State to control the dialog visibility
     // const copyButtonRef = useRef(null);
     const gameIdRef = useRef(null);
     // useEffect(() => {
@@ -111,9 +112,10 @@ function NewGameOptions({ socket, setView }) {
             increment: data["increment"],
             playerSide: data["player_side"],
         });
+        setDialogState(true); // Open the dialog to show the game code
     };
     return (
-        <Dialog>
+        <div className="h-full">
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
@@ -256,57 +258,51 @@ function NewGameOptions({ socket, setView }) {
                             className="font-mono"
                             onClick={() => setView("default")}
                         >
-                            Close
+                            Back
                         </Button>
-                        <DialogTrigger asChild>
-                            <Button type="Submit" size={"md"}>
-                                Submit
-                            </Button>
-                        </DialogTrigger>
+                        <Button type="Submit" size={"md"}>
+                            Submit
+                        </Button>
                     </div>
                 </form>
             </Form>
-            <DialogContent className="sm:max-w-md">
-                <DialogHeader>
-                    <DialogTitle>Your Game Code</DialogTitle>
-                    <DialogDescription>Share this code with your friend to play with them.</DialogDescription>
-                </DialogHeader>
-                        <div className="flex w-full max-w-sm items-center gap-2">
-                            <Input
-                                readOnly
-                                type="text"
-                                defaultValue={gameState["gameId"]}
-                                ref={gameIdRef}
-                            />
-                            <Popover>
-                                <PopoverTrigger asChild>
-                                    <Button
-                                        type="submit"
-                                        variant="outline"
-                                        className={"text-xl"}
-                                        onClick={() => {
-                                            window.navigator.clipboard.writeText(
-                                                gameIdRef.current.value
-                                            );
-                                        }}
-                                    >
-                                        Copy
-                                    </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="flex justify-center items-center w-28 h-6 text-sm">
-                                    <p>Code Copied</p>
-                                </PopoverContent>
-                            </Popover>
-                        </div>
-                <DialogFooter className="sm:justify-end">
-                    <DialogClose asChild>
-                        <Button type="button" variant="secondary">
-                            Close
-                        </Button>
-                    </DialogClose>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
+            <DialogBox 
+                dialogOpen={dialogState}
+                setDialogOpen={setDialogState}
+                title="Your Game Code"
+                desc="Share this code with your friend to play with them."
+                content={
+                    <div className="flex w-full items-center gap-2 mb-2">
+                        <Input
+                            readOnly
+                            type="text"
+                            defaultValue={gameState["gameId"]}
+                            ref={gameIdRef}
+                        />
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <Button
+                                    type="submit"
+                                    // size="md"
+                                    className={"text-xl"}
+                                    onClick={() => {
+                                        window.navigator.clipboard.writeText(
+                                            gameIdRef.current.value
+                                        );
+                                    }}
+                                >
+                                    Copy
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="flex justify-center items-center w-28 h-6 text-sm">
+                                <p>Code Copied</p>
+                            </PopoverContent>
+                        </Popover>
+                    </div>
+                }
+                onClose={() => setView("inGameOptions")}
+            />
+        </div>
     );
 }
 

@@ -22,30 +22,36 @@ export function Board({ socket, classes }) {
         const gameCopy = new Chess(fen);
         setGame(gameCopy);
         setCurrentTurn(currentTurn);
+        if(gameCopy.moveNumber() > 0){
+            updateGameState({
+                gameStatus: "playing",
+            })
+        }
+        if (gameCopy.turn() === "w") {
+            updateGameState({
+                moveNumber: gameState["moveNumber"] + 1,
+            });
+        }
     });
 
     useSocketEvent(socket, "gameOver", ({ winner, reason }) => {
-        updateGameState({
-            gameStatus: reason,
-        });
         // Handle game over logic here (e.g., show a message, reset the game, etc.)
         console.log(`Game Over: ${winner} wins! Reason: ${reason}`);
     });
 
-    useSocketEvent(socket, "gameAbort", ({ message, gameStatus }) => {
-        updateGameState({
-            gameStatus: reason,
-        });
+    useSocketEvent(socket, "gameAborted", ({ message, gameStatus }) => {
         // Handle game abort logic here (e.g., show a message, reset the game, etc.)
         console.log(`${message}: Game Status - ${gameStatus}`);
     });
 
-    useSocketEvent(socket, "gameResign", ({ message, gameStatus }) => {
-        updateGameState({
-            gameStatus: reason,
-        });
+    useSocketEvent(socket, "gameResigned", ({ message, gameStatus }) => {
         console.log(`${message}: Game Status - ${gameStatus}`);
     });
+
+    useSocketEvent(socket, "roomClosed", (_) => {
+        console.log("Game room closed");
+        setGame(new Chess()); // Reset the game state
+    })
 
     function makeAMove(sourceSquare, targetSquare) {
         try {
@@ -57,15 +63,12 @@ export function Board({ socket, classes }) {
             const gameCopy = new Chess(game.fen());
             const result = gameCopy.move(movee);
             if (result) {
-                updateGameState({
-                    moveNumber: gameState["moveNumber"] + 1,
-                });
-                console.log(
-                    "making the move,",
-                    movee,
-                    "in room :",
-                    gameState["gameId"]
-                );
+                // console.log(
+                //     "making the move,",
+                //     movee,
+                //     "in room :",
+                //     gameState["gameId"]
+                // );
                 emitEvent("move", {
                     move: movee,
                     gameId: gameState["gameId"], // Assuming gameId is available in the scope

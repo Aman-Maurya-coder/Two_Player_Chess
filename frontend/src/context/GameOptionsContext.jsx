@@ -5,7 +5,7 @@ export const GameOptionsContext = createContext();
 
 export function GameOptionsProvider({ children }) {
     const [gameOptions, setGameOptions] = useState({
-        time: 600000,
+        time: null,
         increment: 0,
         playerSide: "white", // "white" or "black"
     })
@@ -17,8 +17,16 @@ export function GameOptionsProvider({ children }) {
         }));
     }
 
+    const resetGameOptions = () => {
+        setGameOptions({
+            time: null,
+            increment: 0,
+            playerSide: "white", // Reset to default values
+        });
+    }
+
     return (
-        <GameOptionsContext.Provider value={{ gameOptions, updateGameOptions }}>
+        <GameOptionsContext.Provider value={{ gameOptions, updateGameOptions, resetGameOptions }}>
             {children}
         </GameOptionsContext.Provider>
     );

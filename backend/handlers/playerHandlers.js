@@ -66,26 +66,38 @@ export class playerFunctions {
     onDisconnect(socket, games) {
         socket.on("Disconnect", ({ playerId }) => {
             if (this.players[playerId] !== undefined) {
-                console.log(this.players[playerId]);
+                console.log("Player disconnected", playerId);
                 if (this.players[playerId]["gameId"] !== null) {
                     const gameId = this.players[playerId]["gameId"];
+                    console.log(games);
                     if (games[gameId]["gameStatus"] === "room full") {
                         games[gameId]["gameStatus"] = "waiting for player 2"; // Update game status if player is in room
                         this.players[playerId]["playerStatus"] = "disconnected from room"; // Update player status to disconnected from 
                         console.log("player left from the room", gameId);
+                        global.io.in(gameId).emit("playerDisconnected", games[gameId])
                     }
                     else if (games[gameId]["gameStatus"] === "playing") {
                         games[gameId]["gameStatus"] = "waiting for reconnection"; // Update game status if player is playing
                         this.players[playerId]["playerStatus"] = "disconnected from game"; // Update player status to disconnected from game
                         console.log("player left from the game", gameId);
+                        global.io.in(gameId).emit("playerDisconnected", games[gameId])
                     }
-                    else{
+                    else if (games[gameId]["gameStatus"] === "waiting for player 2" || games[gameId]["gameStatus"] === "waiting for reconnection") {
                         console.log("Game room closed", gameId);
                         delete games[gameId]; // Remove the game from the games object if it is closed
                         delete this.players[playerId];
                         socket.emit("gameRoomClosed", gameId); // Notify the client that the game room is closed
                     }
-                    global.io.in(gameId).emit("playerDisconnected", games[gameId])
+                    else if (["resigned", "aborted", "game over"].includes(games[gameId]["gameStatus"])){
+                        games[gameId]["gameStatus"] = "waiting for player 2"; // Update game status if player has resigned or aborted
+                        this.players[playerId]["playerStatus"] = "disconnected from room"; // Update player status to disconnected from room
+                        console.log("player left from the game", gameId);
+                        global.io.in(gameId).emit("playerDisconnected", games[gameId]) // Notify the game room that a player has disconnected
+                    }
+                    else {
+                        console.log("Game room closed", gameId, games[gameId]["gameStatus"]);
+                        delete this.players[playerId];
+                    }
                 }
                 else{
                     socket.emit("playerLeft"); // Notify the client about disconnection

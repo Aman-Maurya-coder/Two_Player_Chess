@@ -125,7 +125,7 @@ export class gameFunctions {
                 
                 // Deduct 1 second from current player's time
                 game["gameTimer"][currentPlayer] -= 1000;
-                console.log(game.gameTimer[currentPlayer], "seconds left for", currentPlayer);
+                // console.log(game.gameTimer[currentPlayer], "seconds left for", currentPlayer);
                 
                 // Broadcast time update to all players in the room
                 this.broadcastTimeUpdate(gameId);
@@ -196,7 +196,8 @@ export class gameFunctions {
                 }
 
                 currentGameData.gameTimer.lastMoveTime = currentTime;
-                currentGameData.moveNumber++;
+                if (currentGameData["game"].turn() === "w")
+                    currentGameData.moveNumber++;
             }
             if (currentGameData.gameStatus === "room full") {
                 currentGameData.gameStatus = "playing";
@@ -276,6 +277,7 @@ export class gameFunctions {
             if (this.games[gameId] !== undefined) {
                 this.stopGameTimer(gameId);
                 this.games[gameId].gameStatus = "aborted";
+                console.log("Game", gameId, "aborted");
                 global.io.in(gameId).emit("gameAborted", {message: "game aborted successfully", gameStatus: "aborted" });
             }
 
@@ -287,7 +289,36 @@ export class gameFunctions {
             if (this.games[gameId] !== undefined) {
                 this.stopGameTimer(gameId);
                 this.games[gameId].gameStatus = "resigned";
+                console.log("Game", gameId, "ended by resignation");
                 global.io.in(gameId).emit("gameResigned", {message: "game resigned successfully", gameStatus: "resigned" });
+            }
+        })
+    }
+
+    onOfferDraw(socket){
+        socket.on("offerDraw", ({gameId}) => {
+            if (this.games[gameId] !== undefined){
+                socket.in(gameId).emit("drawOffered");
+            }
+        })
+    }
+
+    onDrawAccept(socket){
+        socket.on("drawAccepted", ({gameId}) => {
+            if (this.games[gameId] !== undefined) {
+                this.stopGameTimer(gameId);
+                this.games[gameId].gameStatus = "draw";
+                console.log("Game", gameId, "ended in a draw");
+                global.io.in(gameId).emit("gameDraw", {message: "game drawn successfully", gameStatus: "draw"});
+            }
+        })
+    }
+
+    onDrawReject(socket){
+        socket.on("drawRejected", ({gameId}) => {
+            if (this.games[gameId] !== undefined){
+                global.io.in(gameId).emit("drawDenied", {message: "draw offer rejected", gameStatus: "playing"});
+                console.log("Draw offer rejected for game", gameId);
             }
         })
     }
@@ -297,6 +328,9 @@ export class gameFunctions {
                 console.log("Closing room for game", gameId);
                 if (this.games[gameId] !== undefined){
                     this.stopGameTimer(gameId);
+                    global.io.in(gameId).emit("roomClosed", {message: "Room closed successfully", gameStatus: "closed"});
+                    this.players[this.games[gameId]["roomPlayers"]["white"]]["gameId"] = null;
+                    this.players[this.games[gameId]["roomPlayers"]["black"]]["gameId"] = null;
                     socket.leave(gameId);
                     delete this.games[gameId];
                     console.log("Room deleted for game", gameId);

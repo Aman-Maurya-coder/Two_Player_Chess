@@ -11,7 +11,7 @@ export function useTimer(socket) {
 
     useSocketEvent(socket, "timeUpdate", ({whiteTime, blackTime, currentTurn}) => {
         // Update the timer state with the new time
-        console.log("updated time:",whiteTime, blackTime);
+        // console.log("updated time:",whiteTime, blackTime);
         setWhiteTime(whiteTime);
         setBlackTime(blackTime);
         setCurrentTurn(currentTurn);

@@ -89,8 +89,8 @@ function App() {
         setPlayerData({});
     });
 
-    useSocketEvent(socket, "playerDisconnected", ({ gameData }) => {
-        console.log("Other player left the game");
+    useSocketEvent(socket, "playerDisconnected", (gameData) => {
+        console.log("Other player left the game", gameData);
         updateGameState({
             gameStatus: gameData["gameStatus"],
         });
@@ -159,7 +159,7 @@ function App() {
                 />
                 <Timer 
                     socket={socket} 
-                    classes="flex flex-col justify-center items-center flex-20/100 h-[100%] border-2xl border-border text-accent-foreground dark gap-3"
+                    classes="flex flex-col justify-center items-center flex-20  /100 h-[100%] border-2xl border-border text-accent-foreground dark gap-3"
                 />
                 <Menu
                     socket={socket}
