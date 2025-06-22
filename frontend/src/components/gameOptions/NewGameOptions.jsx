@@ -43,7 +43,7 @@ const formSchema = z.object({
     player_side: z.enum(["white", "black"]),
 });
 
-function NewGameOptions({ socket, setView }) {
+function NewGameOptions({ socket, setMenuView }) {
     // const {socket} = useSocketContext();
     // console.log(socket);
     const form = useForm({
@@ -76,10 +76,10 @@ function NewGameOptions({ socket, setView }) {
 
     useEffect(() => {
         if (dialogState && gameIdRef.current) {
-            console.log("Dialog opened, focusing input field...");
-            gameIdRef.current.focus(); // Focus the input field
-            console.log("Selecting text...");
-            gameIdRef.current.select(); // Select the text in the input field
+            requestAnimationFrame(() => {
+                gameIdRef.current.focus();
+                gameIdRef.current.select();
+            });
         }
     },[dialogState]);
 
@@ -134,7 +134,7 @@ function NewGameOptions({ socket, setView }) {
         });
         // console.log("dialog State:", dialogState);
         // setDialogState(true); // Open the dialog to show the game code
-        setDialogState((prevState) => !prevState); // This ensures React recognizes the state change
+        setDialogState(true); // This ensures React recognizes the state change
         // console.log("dialog State:", dialogState);
     });
 
@@ -315,10 +315,14 @@ function NewGameOptions({ socket, setView }) {
                     />
                     <div className="flex flex-row justify-around items-center flex-1/4">
                         <Button
+                            type="button"
                             variant="outline"
                             size={"md"}
                             className="font-mono"
-                            onClick={() => setView("default")}
+                            onClick={() => {
+                                setDialogState(false); // Close the dialog if open
+                                setTimeout(() => setMenuView("default"), 50);   
+                            }}
                         >
                             Back
                         </Button>
