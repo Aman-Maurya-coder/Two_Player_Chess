@@ -1,5 +1,3 @@
-//IMP: have to check what is useReducer and how to use it.
-//NOTE: to check whether we can use useCallback on the onSubmit function.
 //NOTE: have to implement play again button logic in backend and frontend both
 //NOTE: have to implement the dialog box for promotion.
 
@@ -59,7 +57,7 @@ function NewGameOptions({ socket, setView }) {
     const { playerId, playerData } = usePlayerContext();
     const { gameState, updateGameState } = useGameContext();
     const { updateGameOptions } = useGameOptionsContext();
-    const { setWhiteTime, setBlackTime, setCurrentTurn } = useTimerContext();
+    const { setWhiteTime, setBlackTime } = useTimerContext();
     const [dialogState, setDialogState] = useState(false); // State to control the dialog visibility
     const [dialogContent, setDialogContent] = useState({}); // State to hold dialog content
     // const copyButtonRef = useRef(null);
@@ -134,13 +132,13 @@ function NewGameOptions({ socket, setView }) {
             ),
             onClose: () => setView("inGameOptions")
         });
-        console.log("dialog State:", dialogState);
+        // console.log("dialog State:", dialogState);
         // setDialogState(true); // Open the dialog to show the game code
         setDialogState((prevState) => !prevState); // This ensures React recognizes the state change
-        console.log("dialog State:", dialogState);
+        // console.log("dialog State:", dialogState);
     });
 
-    const onSubmit = (data) => {
+    const onSubmit = useCallback((data) => {
         console.log("Form submitted with data:", data, playerData);
         if(playerData?.gameId) {
             console.warn("Player is already in a game, cannot create a new game.");
@@ -173,7 +171,7 @@ function NewGameOptions({ socket, setView }) {
         //     console.log("selecting the input");
         //     gameIdRef.current.select();
         // }, 400);
-    };
+    },[playerId, playerData]);
     
     return (
         <div className="h-full">
@@ -185,9 +183,10 @@ function NewGameOptions({ socket, setView }) {
                     <FormField
                         control={form.control}
                         name="time_control"
+                        id="time_control"
                         render={({ field }) => (
                             <FormItem className="flex-1/4 gap-0">
-                                <FormLabel className="text-2xl font-mono">
+                                <FormLabel className="text-2xl font-mono" htmlFor="time_control">
                                     Time Control
                                 </FormLabel>
                                 <FormControl>
@@ -243,9 +242,10 @@ function NewGameOptions({ socket, setView }) {
                     <FormField
                         control={form.control}
                         name="increment"
+                        id="increment"
                         render={({ field }) => (
                             <FormItem className="flex-1/4 gap-0">
-                                <FormLabel className="text-2xl font-mono">
+                                <FormLabel className="text-2xl font-mono" htmlFor="increment">
                                     Increment
                                 </FormLabel>
                                 <FormControl>
@@ -282,9 +282,10 @@ function NewGameOptions({ socket, setView }) {
                     <FormField
                         control={form.control}
                         name="player_side"
+                        id="player_side"
                         render={({ field }) => (
                             <FormItem className="flex-1/4 gap-0">
-                                <FormLabel className="text-2xl font-mono">
+                                <FormLabel className="text-2xl font-mono" htmlFor="player_side">
                                     Your Side
                                 </FormLabel>
                                 <FormControl>

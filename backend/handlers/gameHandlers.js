@@ -1,6 +1,7 @@
 import { Chess } from "chess.js";
 import { time } from "console";
 import { randomUUID } from "crypto";
+import { SocketAddress } from "net";
 
 
 
@@ -173,6 +174,28 @@ export class gameFunctions {
         console.log(`Game ${gameId}: ${player} lost on time`);
     }
 
+    resetGameTimer(gameId, gameData){
+        if (this.games[gameId]){
+            // this.stopGameTimer(gameId); // Stop any existing timer
+            clearInterval(this.timers[gameId]); // Clear the timer if it exists
+            this.games[gameId].gameTimer = {
+                white: gameData.gameTimer.white,
+                black: gameData.gameTimer.black,
+                increment: gameData.increment,
+                lastMoveTime: null, // Reset last move time
+            };
+            // this.startGameTimer(gameId); // Start a new timer with the reset values
+        }
+    }
+
+    resetGameData(gameId){
+        if(this.games[gameId]){
+            this.games[gameId]["game"] = new Chess(); // Reset the game instance
+            this.games[gameId]["moveNumber"] = 1; // Reset move number
+            this.games[gameId]["gameStatus"] = "room full"; // Reset game status
+        }
+    }
+
     stopGameTimer(gameId) {
         if (this.timers[gameId]) {
             clearInterval(this.timers[gameId]);
@@ -213,6 +236,7 @@ export class gameFunctions {
                 fen: currentGameData.game.fen(),
                 currentTurn: currentGameData.game.turn() === "w" ? "white" : "black"
             });
+            // console.log("time on both players:", currentGameData.gameTimer);
             socket.emit("incrementedTime", {
                 whiteTime: currentGameData.gameTimer.white,
                 blackTime: currentGameData.gameTimer.black,
@@ -320,6 +344,39 @@ export class gameFunctions {
             if (this.games[gameId] !== undefined){
                 global.io.in(gameId).emit("drawDenied", {message: "draw offer rejected", gameStatus: "playing"});
                 console.log("Draw offer rejected for game", gameId);
+            }
+        })
+    }
+
+    onPlayAgain(socket){
+        socket.on("playAgain", ({playerId, gameId}) =>{
+            console.log("play Again request recieved");
+            if (this.games[gameId] !== undefined){
+                socket.in(gameId).emit("playAgainOffered");
+                console.log("Play again offered by player", playerId, "for game", gameId);
+            }
+        })
+    }
+
+    onPlayAgainAccept(socket) {
+        socket.on("playAgainAccepted", ({gameId, gameData}) => {
+            if (this.games[gameId] !== undefined) {
+                this.resetGameTimer(gameId, gameData);
+                this.resetGameData(gameId);
+                console.log("Game", gameId, "reset to play again");
+                global.io.in(gameId).emit("gameResetSuccessful", {fen: this.games[gameId]["game"].fen()});
+            }
+        })
+    }
+
+    onPlayAgainReject(socket) {
+        socket.on("playAgainRejected", ({gameId}) => {
+            if (this.games[gameId] !== undefined) {
+                global.io.in(gameId).emit("playAgainDenied", {message: "Play again offer rejected"});
+                console.log("Play again offer rejected for game", gameId);
+            }
+            else{
+                console.log("Game not found for play again rejection", gameId);
             }
         })
     }

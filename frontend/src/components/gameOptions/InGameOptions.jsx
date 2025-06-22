@@ -10,15 +10,14 @@ import { useSocketEmit } from "@/hooks/useSocketEmit";
 import { Button } from "@/components/ui/button";
 import { AlertDialogBox } from "../utils/AlertDialogBox";
 import { DialogBox } from "../utils/DialogBox";
-import { set } from "zod/v4";
 import { Label } from "@/components/ui/label";
 
 function InGameOptions({ socket, setMenuView }) {
     // const {socket} = useSocketContext();
     // console.log("now in inGameOptions");
     const { gameState, updateGameState, resetGameState } = useGameContext();
-    const { resetGameOptions } = useGameOptionsContext();
-    const { resetTimer } = useTimerContext();
+    const { gameOptions, resetGameOptions } = useGameOptionsContext();
+    const { setWhiteTime, setBlackTime, setCurrentTurn, resetTimer } = useTimerContext();
     const { playerId, resetPlayerData } = usePlayerContext();
 
     const emitEvent = useSocketEmit(socket);
@@ -109,6 +108,38 @@ function InGameOptions({ socket, setMenuView }) {
     useSocketEvent(socket, "drawDenied", (data) => {
         console.log("Draw offer rejected by the opponent");
     });
+    useSocketEvent(socket, "playAgainOffered", () => {
+        setAlertDialogContent({
+            title: "Play Again Offered",
+            desc: "Your opponent has offered to play again. Do you accept?",
+            action: "Accept",
+            onAction: handlePlayAgainAccepted,
+            onClose: handlePlayAgainRejected
+        })
+        setIsAlertDialogOpen(true);
+        console.log("Play again offered by the opponent");
+    })
+    useSocketEvent(socket, "gameResetSuccessful", (data) => {
+        console.log("Game reset successful, starting a new game");
+        if(dialogState){
+            setDialogState(false);
+        }
+        setWhiteTime(gameOptions["time"]);
+        setBlackTime(gameOptions["time"]);
+        setCurrentTurn("white");
+        setView("room full");
+    })
+    useSocketEvent(socket, "playAgainDenied", () => {
+        if(dialogState){
+            setDialogState(false);
+        }
+        setDialogContent({
+            title: "Play Again Rejected",
+            desc: "Your opponent has rejected the play again request.",
+        })
+        setDialogState(true);
+        console.log("Play again rejected by the opponent");
+    })
 
     function handleAbort() {
         setAlertDialogContent({
@@ -155,9 +186,6 @@ function InGameOptions({ socket, setMenuView }) {
             onAction: onConfirmOfferDraw,
         });
         setIsAlertDialogOpen(true);
-        // emitEvent("offerDraw", {
-        //   "gameId": gameState["gameId"]
-        // });
     }
 
     function onConfirmOfferDraw() {
@@ -181,12 +209,40 @@ function InGameOptions({ socket, setMenuView }) {
     }
 
 	function handlePlayAgain(){
-		// emitEvent("playAgain", {
-		// 	gameId: gameState["gameId"],
-		// });
-
-		// resetTimer();
+		emitEvent("playAgain", {
+            "playerId": playerId,
+			"gameId": gameState["gameId"],
+		});
+        setDialogContent({
+            title: "Play Again Offered",
+            desc: "Waiting for the opponent's response.",
+        })
+        setDialogState(true);
+        console.log("Play again offered to the opponent");
 	}
+
+    function handlePlayAgainAccepted() {
+        console.log("Play again accepted by the opponent");
+        const gameData = {
+            "gameTimer": {
+                "white": gameOptions["time"],
+                "black": gameOptions["time"],
+            },
+            "increment": gameOptions["increment"],
+        }
+        emitEvent("playAgainAccepted", {
+            "gameId": gameState["gameId"],
+            "gameData": gameData,
+        })
+    }
+
+    function handlePlayAgainRejected(){
+        console.log("Play again rejected by the opponent");
+        setIsAlertDialogOpen(false);
+        emitEvent("playAgainRejected", {
+            "gameId": gameState["gameId"],
+        })
+    }
 
     function exitRoom() {
         emitEvent("closeRoom", {

@@ -24,7 +24,6 @@ export function AlertDialogBox({
         <AlertDialog open={dialogOpen} onOpenChange={(open) => {
             if (!open) {
                 setDialogOpen(false); // Only close the dialog when it is explicitly closed
-                if (onClose) onClose(); // Call the onClose handler if provided
             }
         }}>
             <AlertDialogContent>

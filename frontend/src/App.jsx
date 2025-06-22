@@ -15,20 +15,7 @@ import { useState, useEffect } from "react";
 import { useSocketEmit } from "./hooks/useSocketEmit";
 import { useSocketEvent } from "./hooks/useSocketEvent";
 import { Timer } from "./components/Timer";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
 
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
 
 const url = "localhost:3000";
 

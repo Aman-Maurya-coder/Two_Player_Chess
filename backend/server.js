@@ -51,6 +51,9 @@ io.on("connection", (socket) => {
     gameHandler.onOfferDraw(socket); // Handle draw offer
     gameHandler.onDrawAccept(socket); // Handle draw acceptance
     gameHandler.onDrawReject(socket); // Handle draw rejection
+    gameHandler.onPlayAgain(socket); // Handle play again request
+    gameHandler.onPlayAgainAccept(socket); // Handle play again acceptance
+    gameHandler.onPlayAgainReject(socket); // Handle play again rejection
     gameHandler.onRoomClose(socket); // Handle game over
 
     

@@ -9,8 +9,6 @@ import {
     useGameOptionsContext,
     useTimerContext,
 } from "../context"; 
-// export { moveNumber, playerColor } from "./Chessboard";
-
 export function Board({ socket, classes }) {
     // const {socket} = useSocketContext();
     const [game, setGame] = useState(new Chess());
@@ -48,8 +46,16 @@ export function Board({ socket, classes }) {
     });
 
     useSocketEvent(socket, "gameResigned", ({ message, gameStatus }) => {
-        console.log(`${message}: Game Status - ${gameStatus}`);
+        console.log(`Game Status - ${gameStatus}`);
     });
+
+    useSocketEvent(socket, "gameResetSuccessful", ({ fen }) => {
+        console.log("Game reset successful");
+        setGame(new Chess(fen)); // Reset the game state with the provided FEN
+        updateGameState({
+            "gameStatus": "room full"
+        })
+    })
 
     useSocketEvent(socket, "roomClosed", (_) => {
         console.log("Game room closed");
@@ -103,8 +109,8 @@ export function Board({ socket, classes }) {
                     position={game.fen()}
                     snapToCursor={true} // Enable snapping to cursor
                     showBoardNotation={true} // Show board notation
-                    // showPromotionDialog={true} // Show promotion dialog when a pawn is promoted
-                    // promotionDialogVariant="modal" // Use modal for promotion dialog
+                    showPromotionDialog={true} // Show promotion dialog when a pawn is promoted
+                    promotionDialogVariant="modal" // Use modal for promotion dialog
                     boardOrientation={gameState["playerColor"]}
                     onPieceDrop={makeAMove} // Use the makeAMove function to handle piece drops
                     animationDuration={0} // Disable animation by setting duration to 0
