@@ -1,4 +1,3 @@
-//NOTE: have to implement play again button logic in backend and frontend both
 //NOTE: have to implement the dialog box for promotion.
 
 
@@ -194,7 +193,6 @@ function NewGameOptions({ socket, setMenuView }) {
                                     <RadioGroup
                                         onValueChange={field.onChange}
                                         defaultValue={field.value}
-                                        className="flex flex-row justify-start items-center"
                                     >
                                         <div className="flex items-center space-x-1 border-2 border-border bg-background hover:bg-accent rounded-full px-3 py-2">
                                             <RadioGroupItem
@@ -253,7 +251,6 @@ function NewGameOptions({ socket, setMenuView }) {
                                     <RadioGroup
                                         onValueChange={field.onChange}
                                         defaultValue={field.value}
-                                        className="flex flex-row justify-start items-center"
                                     >
                                         <div className="flex items-center space-x-1 border-2 border-border bg-background hover:bg-accent rounded-full px-3 py-2">
                                             <RadioGroupItem value="0" id="i0" />
@@ -292,7 +289,6 @@ function NewGameOptions({ socket, setMenuView }) {
                                     <RadioGroup
                                         onValueChange={field.onChange}
                                         defaultValue={field.value}
-                                        className="flex flex-row justify-start items-center"
                                     >
                                         <div className="flex items-center space-x-1 border-2 border-border bg-background hover:bg-accent rounded-full px-3 py-2">
                                             <RadioGroupItem

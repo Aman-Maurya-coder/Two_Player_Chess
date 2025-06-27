@@ -4,7 +4,11 @@ import { useSocketEmit } from "../hooks/useSocketEmit";
 import { useSocketEvent } from "../hooks/useSocketEvent";
 import { NewGameOptions } from "./gameOptions/NewGameOptions";
 import { InGameOptions } from "./gameOptions/InGameOptions";
-import { useGameContext, useGameOptionsContext, usePlayerContext } from "../context";
+import {
+    useGameContext,
+    useGameOptionsContext,
+    usePlayerContext,
+} from "../context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -70,16 +74,41 @@ export function Menu({
     };
 
     return (
-        <div className={classes + " items-center box-border"}>
-            <div className="w-full h-full sm:w-[80vw] sm:h-[60vh] md:w-[60vw] md:h-[50vh] lg:w-[50vw] lg:h-[40vh] border-2 border-border overflow-hidden p-5 rounded-lg bg-card">
+        <div id="menu" className={classes + "bg-background p-10"}>
+            <div className="w-full overflow-hidden p-5 h-4/6">
                 {menuView === "default" && (
-                    <div className="flex flex-col justify-center items-center gap-7 w-full h-full">
-                        <Button size="mine" variant="default" onClick={handleNewGame}>
-                            New Game
-                        </Button>
-                        <Button size="mine" variant="outline" onClick={handleJoinGame}>
-                            Join Game
-                        </Button>
+                    <div
+                        id="landingOptions"
+                        className="flex flex-col w-full h-full box-border"
+                    >
+                        <h1 className="text-6xl/22 font-semibold tracking-tighter text-left inline">
+                            Welcome to
+                            <span className="text-6xl/22 font-semibold tracking-tighter bg-gradient-to-r from-primary to-accent inline text-transparent bg-clip-text">
+                                {" "}
+                                Two Player Chess
+                            </span>
+                        </h1>
+                        <h3 className="text-2xl/25 font-sans text-left text-muted font-medium mb-15 tracking-wide">
+                            Create.Share.Play.Repeat
+                        </h3>
+                        <div className="flex flex-row w-full h-full justify-between items-center">
+                            <Button
+                                variant="hero"
+                                size="hero"
+                                onClick={handleNewGame}
+                                className="text-primary-foreground"
+                            >
+                                New Game
+                            </Button>
+                            <Button
+                                variant="hero_outline"
+                                size="hero"
+                                onClick={handleJoinGame}
+                                className="text-foreground"
+                            >
+                                Join Game
+                            </Button>
+                        </div>
                     </div>
                 )}
 
@@ -101,7 +130,11 @@ export function Menu({
                             <Button size={"md"} onClick={handleGameCodeSubmit}>
                                 Submit
                             </Button>
-                            <Button size={"md"} onClick={() => setMenuView("default")} variant={"outline"}>
+                            <Button
+                                size={"md"}
+                                onClick={() => setMenuView("default")}
+                                variant={"outline"}
+                            >
                                 Back
                             </Button>
                         </div>

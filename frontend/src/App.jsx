@@ -11,6 +11,7 @@ import { useSocketEvent } from "./hooks/useSocketEvent";
 
 // Import motion (motion.dev)
 import { AnimatePresence, motion } from "motion/react";
+import { delay } from "motion";
 
 const url = "localhost:3000";
 
@@ -108,14 +109,14 @@ function App() {
 
     // Animation variants
     const menuVariants = {
-        initial: { opacity: 0 },
-        animate: { opacity: 1 },
-        exit: { opacity: 0 },
-        transition: { duration: 0.3, ease: "easeInOut" },
+        initial: { opacity: 0, y: 20 },
+        animate: { opacity: 1, y: 0 },
+        exit: { opacity: 0, y: 20 },
+        transition: { duration: 0.3, ease: "easeInOut"},
     };
 
     return (
-        <div className="flex flex-col h-full min-h-screen">
+        <div className="flex flex-col h-full min-h-screen bg-white">
             {/* Animate Navbar and Footer */}
             <AnimatePresence>
                 {layoutView === "landing" && (
@@ -124,17 +125,18 @@ function App() {
                         initial={{ opacity: 0, y: -24 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -24 }}
-                        transition={{ duration: 0.4 }}
+                        transition={{ duration: 0.4}}
+                        className="absolute top-0 w-full h-1/10"
                     >
                         <Navbar />
                     </motion.div>
                 )}
             </AnimatePresence>
-            <div className="flex flex-col flex-1 items-center justify-center overflow-hidden box-border md:flex-row">
+            <div className="flex flex-col-reverse flex-1 items-center justify-center box-border md:flex-row md:flex-1">
                 {/* Board never remounts */}
                 <Board
                     socket={socket}
-                    classes="flex justify-center items-center h-[100%] flex-35/100"
+                    classes="hidden md:flex justify-center items-center md:h-full md:w-full"
                 />
                 {/* Timer only shows in 'game' layout, with animation */}
                 <AnimatePresence mode="wait">
@@ -154,16 +156,17 @@ function App() {
                 {/* Menu panel animates between states */}
                 <AnimatePresence mode="wait">
                     <motion.div
-                        key={menuView + layoutView}
+                        key={layoutView}
                         initial={menuVariants.initial}
                         animate={menuVariants.animate}
                         exit={menuVariants.exit}
                         transition={menuVariants.transition}
-                        className="flex flex-45/100 flex-col justify-center items-center h-[100%]"
+                        className="bg-background w-full h-full"
+                        id="menu-panel"
                     >
                         <Menu
                             socket={socket}
-                            classes=""
+                            classes="flex justify-center items-center w-full h-full box-border"
                             menuView={menuView}
                             setMenuView={setMenuView}
                             layoutView={layoutView}
@@ -172,7 +175,7 @@ function App() {
                     </motion.div>
                 </AnimatePresence>
             </div>
-            <AnimatePresence>
+            {/* <AnimatePresence>
                 {layoutView === "landing" && (
                     <motion.div
                         key="footer"
@@ -180,11 +183,12 @@ function App() {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 24 }}
                         transition={{ duration: 0.4 }}
+                        className="absolute bottom-0 w-full h-1/10"
                     >
                         <Footer />
                     </motion.div>
                 )}
-            </AnimatePresence>
+            </AnimatePresence> */}
         </div>
     );
 }

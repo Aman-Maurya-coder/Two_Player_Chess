@@ -1,9 +1,9 @@
 import { Label } from "@/components/ui/label";
 export function Navbar() {
     return (
-        <nav className="flex flex-5/100 flex-row gap-5 p-6  justify-around dark bg-sidebar/10">
+        <nav className="absolute top-0 flex h-full w-full flex-row gap-5 p-6 px-26 justify-between bg-transparent backdrop-blur-lg">
             <img src="#" className="logo"></img>
-            <div className="flex flex-row gap-10 text-foreground font-mono ">
+            <div className="flex flex-row gap-25 text-foreground font-sans ">
                 <Label>Home</Label>
                 <Label>About</Label>
                 <Label>Help</Label>

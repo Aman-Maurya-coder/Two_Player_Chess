@@ -20,6 +20,8 @@ const buttonVariants = cva(
         ghost:
           "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
         link: "text-primary underline-offset-4 hover:underline",
+        hero: "border-2 border-accent/20 text-3xl font-sans font-medium rounded-xs bg-secondary/90 hover:shadow-foreground/35 focus-visible:shadow-primary focus-visible:ring-0",
+        hero_outline: "border-2 border-foreground/20 text-3xl rounded-sm hover:shadow-foreground/35 hover:border-accent/20 hover:bg-secondary/90 hover:text-primary-foreground focus-visible:shadow-primary focus-visible:border-none focus-visible:ring-0",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",
@@ -27,6 +29,7 @@ const buttonVariants = cva(
         md: "h-10 rounded-md px-5 has-[>svg]:px-3",
         lg: "h-12 w-xs rounded-md px-6 has-[>svg]:px-4",
         mine: "p-4 py-4 w-sm",
+        hero: "px-4 py-1 w-xs h-20",
         icon: "size-9",
       },
     },
