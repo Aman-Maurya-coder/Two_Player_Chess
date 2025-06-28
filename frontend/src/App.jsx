@@ -116,27 +116,27 @@ function App() {
     };
 
     return (
-        <div className="flex flex-col h-full min-h-screen bg-white">
+        <div className="flex flex-col h-full min-h-screen bg-gradient-to-br from-primary/65 via-background to-white">
             {/* Animate Navbar and Footer */}
-            <AnimatePresence>
-                {layoutView === "landing" && (
+            {layoutView === "landing" && (
+                <AnimatePresence>
                     <motion.div
                         key="navbar"
                         initial={{ opacity: 0, y: -24 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -24 }}
                         transition={{ duration: 0.4}}
-                        className="absolute top-0 w-full h-1/10"
+                        className="sticky lg:absolute px-20 box-border top-0 w-full h-1/10"
                     >
                         <Navbar />
                     </motion.div>
-                )}
-            </AnimatePresence>
-            <div className="flex flex-col-reverse flex-1 items-center justify-center box-border md:flex-row md:flex-1">
+                </AnimatePresence>
+            )}
+            <div className="flex flex-col h-full lg:flex-row items-center justify-center box-border md:flex-1">
                 {/* Board never remounts */}
                 <Board
                     socket={socket}
-                    classes="hidden md:flex justify-center items-center md:h-full md:w-full"
+                    classes="hidden justify-center items-center md:flex md:flex-1/2 md:h-full md:w-full"
                 />
                 {/* Timer only shows in 'game' layout, with animation */}
                 <AnimatePresence mode="wait">
@@ -161,12 +161,12 @@ function App() {
                         animate={menuVariants.animate}
                         exit={menuVariants.exit}
                         transition={menuVariants.transition}
-                        className="bg-background w-full h-full"
+                        className="w-full h-full md:flex-1/2"
                         id="menu-panel"
                     >
                         <Menu
                             socket={socket}
-                            classes="flex justify-center items-center w-full h-full box-border"
+                            classes="flex justify-center items-center w-full h-full box-border p-10"
                             menuView={menuView}
                             setMenuView={setMenuView}
                             layoutView={layoutView}

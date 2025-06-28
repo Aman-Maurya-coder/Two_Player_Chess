@@ -74,24 +74,28 @@ export function Menu({
     };
 
     return (
-        <div id="menu" className={classes + "bg-background p-10"}>
-            <div className="w-full overflow-hidden p-5 h-4/6">
+        <div id="menu" className={classes}>
+            <div className="w-full p-5 h-[90%]">
                 {menuView === "default" && (
                     <div
                         id="landingOptions"
                         className="flex flex-col w-full h-full box-border"
                     >
-                        <h1 className="text-6xl/22 font-semibold tracking-tighter text-left inline">
-                            Welcome to
-                            <span className="text-6xl/22 font-semibold tracking-tighter bg-gradient-to-r from-primary to-accent inline text-transparent bg-clip-text">
-                                {" "}
-                                Two Player Chess
-                            </span>
-                        </h1>
-                        <h3 className="text-2xl/25 font-sans text-left text-muted font-medium mb-15 tracking-wide">
-                            Create.Share.Play.Repeat
-                        </h3>
-                        <div className="flex flex-row w-full h-full justify-between items-center">
+                        <div id="heading" className="flex flex-2/5 justify-center items-end">
+                            <h1 className="text-6xl/22 h-min font-semibold tracking-tighter text-center inline lg:text-6xl/18 lg:text-left xl:text-7xl/20 2xl:text-6xl/18">
+                                Welcome to
+                                <span className="text-6xl/22 font-semibold tracking-tighter bg-gradient-to-r from-primary to-accent inline text-transparent bg-clip-text lg:text-6xl/18 xl:text-7xl/20 2xl:text-6xl/18">
+                                    {" "}
+                                    Two Player Chess
+                                </span>
+                            </h1>
+                        </div>
+                        <div id="sub-heading" className="flex-1/5 flex justify-center items-start lg:justify-start">
+                            <h3 className="text-xl/25 font-sans inline text-center text-muted font-semibold tracking-wide lg:text-xl/20 lg:text-left xl:text-2xl/22 2xl:text-xl/20">
+                                Create.Share.Play.Repeat
+                            </h3>
+                        </div>
+                        <div id="hero-buttons" className="flex flex-2/5 flex-col w-full h-full justify-center items-center space-y-15 sm:flex-row sm:space-y-0 sm:justify-around lg:justify-between lg:items-start lg:pt-15 lg:space-x-5">
                             <Button
                                 variant="hero"
                                 size="hero"

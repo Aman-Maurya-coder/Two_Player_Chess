@@ -1,6 +1,5 @@
 //NOTE: have to implement the dialog box for promotion.
 
-
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import { z } from "zod/v4";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -32,14 +31,61 @@ import { Input } from "@/components/ui/input.jsx";
 import { AlertDialogBox } from "../utils/AlertDialogBox.jsx";
 import { DialogBox } from "../utils/DialogBox.jsx";
 
+const timer_options = [
+    {
+        label: "5 min",
+        value: "5",
+    },
+    {
+        label: "10 min",
+        value: "10",
+    },
+    {
+        label: "15 min",
+        value: "15",
+    },
+    {
+        label: "30 min",
+        value: "30",
+    },
+];
+const increment_options = [
+    {
+        label: "0 sec",
+        value: "0",
+    },
+    {
+        label: "2 sec",
+        value: "2",
+    },
+    {
+        label: "5 sec",
+        value: "5",
+    },
+    {
+        label: "10 sec",
+        value: "10",
+    }
+];
+const playerSideOptions = [
+    {
+        label: "White",
+        value: "white",
+    },
+    {
+        label: "Black",
+        value: "black",
+    }
+];
+
 const formSchema = z.object({
-    time_control: z.enum(["5", "10", "15", "30"], {
+    time_control: z.enum(timer_options.map((option) => option.value), {
         error: "Time should be one of the options",
     }),
-    increment: z.enum(["0", "2", "5", "10"], {
+    increment: z.enum(increment_options.map((option) => option.value), {
         error: "Increment should be one of the options",
     }),
-    player_side: z.enum(["white", "black"]),
+    player_side: z.enum(playerSideOptions.map((option) => option.value)),
 });
 
 function NewGameOptions({ socket, setMenuView }) {
@@ -48,9 +94,9 @@ function NewGameOptions({ socket, setMenuView }) {
     const form = useForm({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            time_control: "5", // Default value for time control
-            increment: "0", // Default value for increment
-            player_side: "white", // Default value for player side
+            time_control: timer_options[0].value, // Default value for time control
+            increment: increment_options[0].value, // Default value for increment
+            player_side: playerSideOptions[0].value, // Default value for player side
         },
     });
     const { playerId, playerData } = usePlayerContext();
@@ -59,11 +105,7 @@ function NewGameOptions({ socket, setMenuView }) {
     const { setWhiteTime, setBlackTime } = useTimerContext();
     const [dialogState, setDialogState] = useState(false); // State to control the dialog visibility
     const [dialogContent, setDialogContent] = useState({}); // State to hold dialog content
-    // const copyButtonRef = useRef(null);
     const gameIdRef = useRef(null);
-    // useEffect(() => {
-    //     copyButtonRef.current.focus(); // Focus the copy button when the component mounts
-    // }, []);
 
     // Ensure playerId is available before proceeding
     if (!playerId) {
@@ -80,12 +122,12 @@ function NewGameOptions({ socket, setMenuView }) {
                 gameIdRef.current.select();
             });
         }
-    },[dialogState]);
+    }, [dialogState]);
 
     useSocketEvent(socket, "gameRoomCreated", ({ gameId, gameData }) => {
         console.log("player joined the new game room :", gameId, gameData);
         updateGameState({
-            "gameId": gameId,
+            gameId: gameId,
             gameStatus: gameData["gameStatus"],
             moveNumber: gameData["moveNumber"],
             playerColor:
@@ -101,35 +143,35 @@ function NewGameOptions({ socket, setMenuView }) {
             desc: "Share this code with your friend to play with them.",
             content: (
                 <div className="flex w-full items-center gap-2 mb-2">
-                        <Input
-                            readOnly
-                            type="text"
-                            value={gameId || ""}
-                            placeholder="Game Code"
-                            ref={gameIdRef}
-                        />
-                        <Popover>
-                            <PopoverTrigger asChild>
-                                <Button
-                                    type="submit"
-                                    // size="md"
-                                    className={"text-xl"}
-                                    onClick={() => {
-                                        window.navigator.clipboard.writeText(
-                                            gameIdRef.current.value
-                                        );
-                                    }}
-                                >
-                                    Copy
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="flex justify-center items-center w-28 h-6 text-sm">
-                                <p>Code Copied</p>
-                            </PopoverContent>
-                        </Popover>
+                    <Input
+                        readOnly
+                        type="text"
+                        value={gameId || ""}
+                        placeholder="Game Code"
+                        ref={gameIdRef}
+                    />
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <Button
+                                type="submit"
+                                // size="md"
+                                className={"text-xl"}
+                                onClick={() => {
+                                    window.navigator.clipboard.writeText(
+                                        gameIdRef.current.value
+                                    );
+                                }}
+                            >
+                                Copy
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="flex justify-center items-center w-28 h-6 text-sm">
+                            <p>Code Copied</p>
+                        </PopoverContent>
+                    </Popover>
                 </div>
             ),
-            onClose: () => setView("inGameOptions")
+            onClose: () => setView("inGameOptions"),
         });
         // console.log("dialog State:", dialogState);
         // setDialogState(true); // Open the dialog to show the game code
@@ -137,47 +179,44 @@ function NewGameOptions({ socket, setMenuView }) {
         // console.log("dialog State:", dialogState);
     });
 
-    const onSubmit = useCallback((data) => {
-        console.log("Form submitted with data:", data, playerData);
-        if(playerData?.gameId) {
-            console.warn("Player is already in a game, cannot create a new game.");
-            setDialogContent({
-                title: "Already in a Game",
-                desc: "You are already in a game. Please finish your current game before starting a new one.",
-            })
-            setDialogState(true);
-            return; // Prevent creating a new game if the player is already in one
-        }
-        emitEvent("newGame", {
-            playerId: playerId,
-            playerSide: data["player_side"],
-            timeControl: {
+    const onSubmit = useCallback(
+        (data) => {
+            console.log("Form submitted with data:", data, playerData);
+            if (playerData?.gameId) {
+                console.warn(
+                    "Player is already in a game, cannot create a new game."
+                );
+                setDialogContent({
+                    title: "Already in a Game",
+                    desc: "You are already in a game. Please finish your current game before starting a new one.",
+                });
+                setDialogState(true);
+                return; // Prevent creating a new game if the player is already in one
+            }
+            emitEvent("newGame", {
+                playerId: playerId,
+                playerSide: data["player_side"],
+                timeControl: {
+                    time: data["time_control"],
+                    increment: data["increment"],
+                },
+            });
+            console.log("newGame event emmitted");
+            updateGameOptions({
                 time: data["time_control"],
                 increment: data["increment"],
-            },
-        });
-        console.log("newGame event emmitted");
-        updateGameOptions({
-            time: data["time_control"],
-            increment: data["increment"],
-            playerSide: data["player_side"],
-        });
-        
-        // setTimeout(() => {
-        //     console.log(gameIdRef.current);
-        //     console.log("focusing the input");
-        //     gameIdRef.current?.focus(); // Focus the input field for the game ID
-        //     console.log("selecting the input");
-        //     gameIdRef.current.select();
-        // }, 400);
-    },[playerId, playerData]);
-    
+                playerSide: data["player_side"],
+            });
+        },
+        [playerId, playerData]
+    );
+
     return (
         <div className="h-full">
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className="flex flex-col gap-4 w-full h-full"
+                    className="flex flex-col w-full h-full md:gap-5"
                 >
                     <FormField
                         control={form.control}
@@ -185,55 +224,31 @@ function NewGameOptions({ socket, setMenuView }) {
                         id="time_control"
                         render={({ field }) => (
                             <FormItem className="flex-1/4 gap-0">
-                                <FormLabel className="text-2xl font-mono" htmlFor="time_control">
+                                <FormLabel htmlFor="time_control">
                                     Time Control
                                 </FormLabel>
                                 <FormControl>
-                                    {/* <Input placeholder="enter time" {...field} /> */}
                                     <RadioGroup
                                         onValueChange={field.onChange}
                                         defaultValue={field.value}
                                     >
-                                        <div className="flex items-center space-x-1 border-2 border-border bg-background hover:bg-accent rounded-full px-3 py-2">
-                                            <RadioGroupItem
-                                                value="5"
-                                                id="t5"
-                                                className="flex-1/5"
-                                            />
-                                            <Label
-                                                htmlFor="t5"
-                                                className="flex-4/5"
+                                        {timer_options.map((option) => (
+                                            <RadioGroupItem 
+                                                key={option.value}
+                                                value={option.value}
+                                                id={`t${option.value}`}
+                                                className="flex justify-center items-center ring-[1px] ring-border rounded-xs py-1 px-3 data-[state=checked]:ring-2 data-[state=checked]:ring-blue-500"
                                             >
-                                                5 min
-                                            </Label>
-                                        </div>
-                                        <div className="flex items-center space-x-1 border-2 border-border bg-background hover:bg-accent rounded-full px-3 py-2">
-                                            <RadioGroupItem
-                                                value="10"
-                                                id="t10"
-                                            />
-                                            <Label htmlFor="t10">10 min</Label>
-                                        </div>
-                                        <div className="flex items-center space-x-1 border-2 border-border bg-background hover:bg-accent rounded-full px-3 py-2">
-                                            <RadioGroupItem
-                                                value="15"
-                                                id="t15"
-                                            />
-                                            <Label htmlFor="t15">15 min</Label>
-                                        </div>
-                                        <div className="flex items-center space-x-1 border-2 border-border bg-background hover:bg-accent rounded-full px-3 py-2">
-                                            <RadioGroupItem
-                                                value="30"
-                                                id="t30"
-                                            />
-                                            <Label htmlFor="t30">30 min</Label>
-                                        </div>
+                                                <span 
+                                                    htmlFor={`t${option.value}`}
+                                                    className="text-xl font-semibold tracking-tight"
+                                                >
+                                                    {option.label}
+                                                </span>
+                                            </RadioGroupItem>
+                                        ))}
                                     </RadioGroup>
                                 </FormControl>
-                                {/* <FormDescription>
-                                Choose the time control for the game.
-                            </FormDescription> */}
-                                {/* <FormMessage /> */}
                             </FormItem>
                         )}
                     />
@@ -243,34 +258,29 @@ function NewGameOptions({ socket, setMenuView }) {
                         id="increment"
                         render={({ field }) => (
                             <FormItem className="flex-1/4 gap-0">
-                                <FormLabel className="text-2xl font-mono" htmlFor="increment">
+                                <FormLabel htmlFor="increment">
                                     Increment
                                 </FormLabel>
                                 <FormControl>
-                                    {/* <Input placeholder="enter time" {...field} /> */}
-                                    <RadioGroup
+                                <RadioGroup
                                         onValueChange={field.onChange}
                                         defaultValue={field.value}
                                     >
-                                        <div className="flex items-center space-x-1 border-2 border-border bg-background hover:bg-accent rounded-full px-3 py-2">
-                                            <RadioGroupItem value="0" id="i0" />
-                                            <Label htmlFor="i0">0 sec</Label>
-                                        </div>
-                                        <div className="flex items-center space-x-1 border-2 border-border bg-background hover:bg-accent rounded-full px-3 py-2">
-                                            <RadioGroupItem value="2" id="i2" />
-                                            <Label htmlFor="i2">2 sec</Label>
-                                        </div>
-                                        <div className="flex items-center space-x-1 border-2 border-border bg-background hover:bg-accent rounded-full px-3 py-2">
-                                            <RadioGroupItem value="5" id="i5" />
-                                            <Label htmlFor="i5">5 sec</Label>
-                                        </div>
-                                        <div className="flex items-center space-x-1 border-2 border-border bg-background hover:bg-accent rounded-full px-3 py-2">
-                                            <RadioGroupItem
-                                                value="i10"
-                                                id="10"
-                                            />
-                                            <Label htmlFor="i10">10 sec</Label>
-                                        </div>
+                                        {increment_options.map((option) => (
+                                            <RadioGroupItem 
+                                                key={option.value}
+                                                value={option.value}
+                                                id={`i${option.value}`}
+                                                className="flex justify-center items-center ring-[1px] ring-border rounded-xs py-1 px-3 data-[state=checked]:ring-2 data-[state=checked]:ring-blue-500"
+                                            >
+                                                <span 
+                                                    htmlFor={`i${option.value}`}
+                                                    className="text-xl font-semibold tracking-tight"
+                                                >
+                                                    {option.label}
+                                                </span>
+                                            </RadioGroupItem>
+                                        ))}
                                     </RadioGroup>
                                 </FormControl>
                             </FormItem>
@@ -282,63 +292,63 @@ function NewGameOptions({ socket, setMenuView }) {
                         id="player_side"
                         render={({ field }) => (
                             <FormItem className="flex-1/4 gap-0">
-                                <FormLabel className="text-2xl font-mono" htmlFor="player_side">
+                                <FormLabel htmlFor="player_side">
                                     Your Side
                                 </FormLabel>
                                 <FormControl>
-                                    <RadioGroup
+                                <RadioGroup
                                         onValueChange={field.onChange}
                                         defaultValue={field.value}
                                     >
-                                        <div className="flex items-center space-x-1 border-2 border-border bg-background hover:bg-accent rounded-full px-3 py-2">
-                                            <RadioGroupItem
-                                                value="white"
-                                                id="white"
-                                            />
-                                            <Label htmlFor="white">White</Label>
-                                        </div>
-                                        <div className="flex items-center space-x-1 border-2 border-border bg-background hover:bg-accent rounded-full px-3 py-2">
-                                            <RadioGroupItem
-                                                value="black"
-                                                id="black"
-                                            />
-                                            <Label htmlFor="black">Black</Label>
-                                        </div>
+                                        {playerSideOptions.map((option) => (
+                                            <RadioGroupItem 
+                                                key={option.value}
+                                                value={option.value}
+                                                id={`p${option.value}`}
+                                                className="flex justify-center items-center ring-[1px] ring-border rounded-xs py-1 px-3 data-[state=checked]:ring-2 data-[state=checked]:ring-blue-500"
+                                            >
+                                                <span 
+                                                    htmlFor={`p${option.value}`}
+                                                    className="text-xl font-semibold tracking-tight"
+                                                >
+                                                    {option.label}
+                                                </span>
+                                            </RadioGroupItem>
+                                        ))}
                                     </RadioGroup>
                                 </FormControl>
                             </FormItem>
                         )}
                     />
-                    <div className="flex flex-row justify-around items-center flex-1/4">
+                    <div className="flex flex-row justify-evenly items-center flex-1/4">
                         <Button
                             type="button"
-                            variant="outline"
-                            size={"md"}
-                            className="font-mono"
+                            variant="form_outline"
+                            size={"form"}
                             onClick={() => {
                                 setDialogState(false); // Close the dialog if open
-                                setTimeout(() => setMenuView("default"), 50);   
+                                setTimeout(() => setMenuView("default"), 50);
                             }}
                         >
                             Back
                         </Button>
-                        <Button type="Submit" size={"md"}>
+                        <Button type="Submit" size={"form"}>
                             Submit
                         </Button>
                     </div>
                 </form>
             </Form>
-            <DialogBox 
+            <DialogBox
                 dialogOpen={dialogState}
                 setDialogOpen={setDialogState}
                 title={dialogContent.title}
                 desc={dialogContent.desc}
-                {
-                    ...(dialogContent.content && { content: dialogContent.content })
-                }
-                {
-                    ...(dialogContent.onClose && { onClose: dialogContent.onClose})
-                }
+                {...(dialogContent.content && {
+                    content: dialogContent.content,
+                })}
+                {...(dialogContent.onClose && {
+                    onClose: dialogContent.onClose,
+                })}
             />
         </div>
     );

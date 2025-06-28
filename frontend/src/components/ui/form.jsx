@@ -54,7 +54,7 @@ function FormItem({
 
   return (
     <FormItemContext.Provider value={{ id }}>
-      <div data-slot="form-item" className={cn("grid gap-2", className)} {...props} />
+      <div data-slot="form-item" className={cn("flex flex-col gap-2", className)} {...props} />
     </FormItemContext.Provider>
   );
 }
@@ -69,7 +69,7 @@ function FormLabel({
     <Label
       data-slot="form-label"
       data-error={!!error}
-      className={cn("data-[error=true]:text-destructive", className)}
+      className={cn("data-[error=true]:text-destructive text-2xl flex-1/4 font-medium", className)}
       htmlFor={formItemId}
       {...props} />
   );

@@ -12,15 +12,17 @@
   --text-base: 1rem;
   --text-lg: 1.25rem;
   --text-xl: 1.5rem;
-  --text-2xl: 1.75rem;
+  --text-2xl: 2rem;
   --text-3xl: 2.5rem;
   --text-4xl: 3rem;
-  --text-5xl: 4rem;
-  --text-6xl: 4.75rem;
-  --text-7xl: 6rem;
+  --text-5xl: 3.5rem;
+  --text-6xl: 4rem;
+  --text-7xl: 4.5rem;
+  --text-8xl: 5rem;
+  --text-9xl: 5.5rem;
+  --text-10xl: 6rem;
 
-  --shadow-button: -10px 50px 20px 10px var(--color-primary);
-
+  /* --breakpoint-2xl: 1440px; */
 }
 
 :root {
@@ -125,6 +127,7 @@
 
   --shadow-primary: 0px 0px 10px 1px var(--color-primary);
   --shadow-foreground: 0px 0px 10px 1px var(--color-foreground);
+  --shodow-small: 0px 1px 5px 0px rgba(0, 0, 0, 0.05);
 
 
   --tracking-tighter: calc(var(--tracking-normal) - 0.05em);
@@ -139,9 +142,38 @@ body {
   letter-spacing: var(--tracking-normal);
 }
 
+.radioButton{
+  @apply flex items-center space-x-1 bg-background hover:text-accent focus-visible:border-2 hover:border-2 rounded-full px-3 py-2;
+}
+
 @layer base {
   *{
     font-size: 14px;
+  }
+  @media (min-width: 640px) {
+    *{
+      font-size: 10px;
+    }
+  }
+  @media (min-width: 768px) {
+    *{
+      font-size: 11px;
+    }
+  }
+  @media (min-width: 1024px) {
+    *{
+      font-size: 12px;
+    }
+  }
+  @media (min-width: 1280px) {
+    *{
+      font-size: 14px;
+    }
+  }
+  @media (min-width: 1536px){
+    *{
+      font-size: 16px;
+    } 
   }
   body {
     @apply bg-background text-foreground;
