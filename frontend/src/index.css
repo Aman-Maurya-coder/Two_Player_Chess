@@ -148,7 +148,7 @@ body {
 
 @layer base {
   *{
-    font-size: 14px;
+    font-size: 10px;
   }
   @media (min-width: 640px) {
     *{

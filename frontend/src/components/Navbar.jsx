@@ -6,7 +6,7 @@ export function Navbar() {
         setHamburgerMenuView(!hamburgerMenuView);
     };
     return (
-        <nav className="top-0 flex h-full w-full flex-row justify-between bg-transparent backdrop-blur-lg">
+        <nav className="flex h-full w-full flex-row justify-between bg-transparent backdrop-blur-lg">
             <div id="logo" className="flex justify-center items-center">
                 <img src="#"></img>
             </div>

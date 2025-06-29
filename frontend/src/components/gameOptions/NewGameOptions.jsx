@@ -216,7 +216,7 @@ function NewGameOptions({ socket, setMenuView }) {
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className="flex flex-col w-full h-full md:gap-5"
+                    className="flex flex-col w-full h-full lg:gap-5"
                 >
                     <FormField
                         control={form.control}

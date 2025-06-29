@@ -98,8 +98,8 @@ export function Board({ socket, classes }) {
         }
     }
     return (
-        <div className={classes +""}>
-            <div id="board-container" className="flex justify-center items-center w-[40vh] lg:w-[50vh] xl:w-[60vh] 2xl:w-[65vh] shadow-2xl/90 shadow-accent">
+        <div id="chessboard" className={classes +""}>
+            <div id="board-container" className="flex justify-center items-center w-[50vw] lg:w-[50vh] xl:w-[60vh] 2xl:w-[65vh] shadow-2xl/90 shadow-accent">
                 <Chessboard
                     // boardWidth={100}
                     customBoardStyle={{  }} // Set the board size to 50vh

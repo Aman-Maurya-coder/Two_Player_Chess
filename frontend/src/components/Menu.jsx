@@ -75,13 +75,13 @@ export function Menu({
 
     return (
         <div id="menu" className={classes}>
-            <div className="w-full p-5 h-[90%]">
+            <div className="w-full p-5 md:w-auto">
                 {menuView === "default" && (
                     <div
                         id="landingOptions"
                         className="flex flex-col w-full h-full box-border"
                     >
-                        <div id="heading" className="flex flex-2/5 justify-center items-end">
+                        <div id="heading" className="flex flex-2/5 justify-center items-end lg:justify-start">
                             <h1 className="text-6xl/22 h-min font-semibold tracking-tighter text-center inline lg:text-6xl/18 lg:text-left xl:text-7xl/20 2xl:text-6xl/18">
                                 Welcome to
                                 <span className="text-6xl/22 font-semibold tracking-tighter bg-gradient-to-r from-primary to-accent inline text-transparent bg-clip-text lg:text-6xl/18 xl:text-7xl/20 2xl:text-6xl/18">
