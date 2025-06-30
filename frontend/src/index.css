@@ -127,7 +127,8 @@
 
   --shadow-primary: 0px 0px 10px 1px var(--color-primary);
   --shadow-foreground: 0px 0px 10px 1px var(--color-foreground);
-  --shodow-small: 0px 1px 5px 0px rgba(0, 0, 0, 0.05);
+  --shadow-small: 0px 1px 5px 0px rgba(0, 0, 0, 0.05);
+  --shadow-input: 0px 0px 10px 3px var(--color-input);
 
 
   --tracking-tighter: calc(var(--tracking-normal) - 0.05em);

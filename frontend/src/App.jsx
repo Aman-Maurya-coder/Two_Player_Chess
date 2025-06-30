@@ -116,7 +116,7 @@ function App() {
     };
 
     return (
-        <div id="main-app" style={{ height: "100%" }} className="flex flex-col bg-gradient-to-br from-primary/65 via-background to-white">
+        <div id="main-app" style={{ height: "100vh" }} className="flex flex-col bg-gradient-to-br from-primary/65 via-background to-white">
             {/* Animate Navbar and Footer */}
             {layoutView === "landing" && (
                 <AnimatePresence>
@@ -126,18 +126,18 @@ function App() {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -24 }}
                         transition={{ duration: 0.4}}
-                        className="flex justify-center sticky lg:absolute px-20 box-border top-0 w-full h-1/10"
+                        className="flex justify-center sticky  backdrop-blur-xs z-50 lg:absolute px-20 box-border top-0 w-full h-[5rem]"
                         id="navbar"
                     >
                         <Navbar />
                     </motion.div>
                 </AnimatePresence>
             )}
-            <div id="content" className="grid lg:flex lg:flex-1 sm:flex-col-reverse items-center justify-end box-border md:justify-center md:flex-1 lg:flex-row">
+            <div id="content" className="grid lg:flex lg:flex-1 sm:flex-col-reverse items-center box-border md:justify-center md:flex-1 lg:flex-row">
                 {/* Board never remounts */}
                 <Board
                     socket={socket}
-                    classes="flex justify-center h-full w-full items-center md:flex md:flex-1/2 md:h-full md:w-full lg:items-center"
+                    classes="flex justify-center h-[30rem] w-full items-center md:flex md:flex-1/2 md:h-full md:w-full lg:items-center"
                 />
                 {/* Timer only shows in 'game' layout, with animation */}
                 <AnimatePresence mode="wait">
@@ -163,7 +163,7 @@ function App() {
                         exit={menuVariants.exit}
                         transition={menuVariants.transition}
                         id="menu-panel"
-                        className="w-full md:flex-1/2"
+                        className="w-full h-[40rem] md:flex-1/2 lg:h-full"
                     >
                         <Menu
                             socket={socket}

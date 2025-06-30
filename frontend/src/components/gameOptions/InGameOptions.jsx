@@ -263,11 +263,11 @@ function InGameOptions({ socket, setMenuView }) {
             {view === "waiting for player 2" && (
                 <div className="flex flex-col justify-around items-center h-full">
                     <div className="flex flex-col flex-6/10 items-center justify-center">
-                        <p>Loading...</p>
-                        <p>Waiting for the Second Player</p>
+                        <h3 className="text-3xl text-center">Loading...</h3>
+                        <h3 className="text-2xl text-center">Waiting for the Second Player</h3>
                     </div>
-                    <div className="flex justify-center items-center flex-4/10">
-                        <Button onClick={exitRoom} size="mine" className="">
+                    <div className="flex justify-center items-center flex-4/10 mt-10">
+                        <Button onClick={exitRoom} size="ui" variant="ui" className="">
                             Exit Room
                         </Button>
                     </div>

@@ -121,23 +121,24 @@ export function Menu({
                 )}
 
                 {menuView === "joinGameOptions" && (
-                    <div className="flex flex-col justify-center items-center gap-9 h-full w-full">
+                    <div className="flex flex-col justify-center items-start h-full w-full">
+                        <h3 className="text-2xl/tight font-sans font-medium">Room Code:</h3>
                         <Input
                             type={"text"}
-                            placeholder="Enter Game Code"
+                            placeholder="Enter Room Code"
                             value={gameCode}
                             onChange={(e) => setGameCode(e.target.value)}
-                            className={"dark:text-3xl dark:h-14 w-sm dark"}
+                            className="my-3 text-2xl h-16 text-foreground border-[hsl(26,9%,40%)] border placeholder:text-[#B5A89E] focus-visible:shadow-primary bg-background"
                             ref={joinGameRef}
                         />
-                        <div className="flex flex-row-reverse justify-between w-sm">
-                            <Button size={"md"} onClick={handleGameCodeSubmit}>
+                        <div className="mt-5 flex flex-row-reverse justify-around items-center w-full">
+                            <Button size={"form"} className='text-2xl' onClick={handleGameCodeSubmit}>
                                 Submit
                             </Button>
                             <Button
-                                size={"md"}
+                                size={"form"}
                                 onClick={() => setMenuView("default")}
-                                variant={"outline"}
+                                variant={"form_outline"}
                             >
                                 Back
                             </Button>

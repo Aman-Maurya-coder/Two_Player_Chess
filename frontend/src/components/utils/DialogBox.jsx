@@ -38,7 +38,7 @@ export function DialogBox({
                         <Button
                             type="button"
                             variant="secondary"
-                            className="text-xl"
+                            className="text-2xl h-fit rounded-full"
                             size="md"
                             {...(onClose && { onClick: onClose })}
                         >

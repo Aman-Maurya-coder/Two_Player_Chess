@@ -23,7 +23,8 @@ const buttonVariants = cva(
         hero: "border-2 border-accent/20 text-3xl font-sans font-medium rounded-xs bg-secondary/90 lg:text-2xl xl:text-3xl 2xl:text-2xl hover:shadow-foreground/35 focus-visible:shadow-primary focus-visible:ring-0 focus-visible:border-none",
         hero_outline: "border-2 border-foreground/20 text-3xl rounded-sm lg:text-2xl xl:text-3xl 2xl:text-2xl hover:shadow-foreground/35 hover:border-accent/20 hover:bg-secondary/90 hover:text-primary-foreground focus-visible:shadow-primary focus-visible:border-none focus-visible:ring-0",
         form: "",
-        form_outline: "text-3xl font-medium border",
+        ui: "text-2xl bg-primary text-primary-foreground shadow-xs hover:bg-primary/85",
+        form_outline: "text-2xl font-medium border",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",
@@ -31,6 +32,7 @@ const buttonVariants = cva(
         md: "h-10 rounded-md px-5 has-[>svg]:px-3",
         lg: "h-12 w-xs rounded-md px-6 has-[>svg]:px-4",
         form: "w-45 h-16",
+        ui: "w-xs h-16 px-15",
         hero: "px-4 py-1 w-xs h-20 lg:w-60 xl:w-70 2xl:w-65",
         icon: "size-9",
       },

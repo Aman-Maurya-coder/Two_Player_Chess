@@ -148,6 +148,7 @@ function NewGameOptions({ socket, setMenuView }) {
                         type="text"
                         value={gameId || ""}
                         placeholder="Game Code"
+                        className="h-fit px-10 rounded-full text-2xl text-foreground shadow-input border border-[hsl(26,9%,40%)] placeholder:text-[#B5A89E]"
                         ref={gameIdRef}
                     />
                     <Popover>
@@ -155,7 +156,7 @@ function NewGameOptions({ socket, setMenuView }) {
                             <Button
                                 type="submit"
                                 // size="md"
-                                className={"text-xl"}
+                                className={"text-2xl h-min rounded-full"}
                                 onClick={() => {
                                     window.navigator.clipboard.writeText(
                                         gameIdRef.current.value
@@ -171,7 +172,7 @@ function NewGameOptions({ socket, setMenuView }) {
                     </Popover>
                 </div>
             ),
-            onClose: () => setView("inGameOptions"),
+            onClose: () => setMenuView("inGameOptions"),
         });
         // console.log("dialog State:", dialogState);
         // setDialogState(true); // Open the dialog to show the game code
@@ -332,7 +333,7 @@ function NewGameOptions({ socket, setMenuView }) {
                         >
                             Back
                         </Button>
-                        <Button type="Submit" size={"form"}>
+                        <Button type="Submit" className='text-2xl' size={"form"}>
                             Submit
                         </Button>
                     </div>
