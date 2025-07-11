@@ -6,13 +6,14 @@ import { Menu } from "./components/Menu";
 // import { Footer } from "./components/Footer";
 // import { Timer } from "./components/Timer";
 import { usePlayerContext, useGameContext, useTimerContext } from "./context/index.jsx";
+import { InGameOptions } from "./components/gameOptions/InGameOptions";
 import { useSocketEmit } from "./hooks/useSocketEmit";
 import { useSocketEvent } from "./hooks/useSocketEvent";
 
 // Import motion (motion.dev)
 import { AnimatePresence, motion } from "motion/react";
 import { delay } from "motion";
-
+import { Board } from "./components/ChessBoard";
 const url = "https://nrjrsvh4-3000.inc1.devtunnels.ms/" || "localhost:3000";
 
 function App() {
@@ -192,18 +193,26 @@ function App() {
         //         )}
         //     </AnimatePresence> */}
         // </div>
-        <div id="main-app" className="bg-background h-full flex flex-col ">
+        <div id="main-app" className={`${ menuView !== "inGameOptions" ? "bg-background" : "bg-secondary-background"} h-full flex flex-col `}>
             <Navbar/>
-            <div id="hero-container" className="flex-1 grid grid-rows-[1fr_1fr] grid-flow-col lg:grid-rows-1 lg:grid-cols-2 min-w-[360px] w-full">
-                <Menu 
-                    socket={socket}
-                    menuView={menuView}
-                    setMenuView={setMenuView}
-                />
-                <div id="hero-image" className="flex items-center justify-center h-full lg:order-1">
-                    <img src="../src/assets/hero_image.png" alt="chess image" width={821} height={380} className="" />
+            {menuView !== "inGameOptions" && (
+                <div id="hero-container" className="flex-1 grid grid-rows-[1fr_1fr] grid-flow-col lg:grid-rows-1 lg:grid-cols-2 min-w-[360px] w-full">
+                    <Menu 
+                        socket={socket}
+                        menuView={menuView}
+                        setMenuView={setMenuView}
+                    />
+                    <div id="hero-image" className="flex items-center justify-center h-full lg:order-1">
+                        <img src="../src/assets/hero_image.png" alt="chess image" width={821} height={380} className="" />
+                    </div>
                 </div>
-            </div>
+            )}
+            {menuView === "inGameOptions" && (
+                <div id="game-container" className="flex-1 grid grid-rows-[1fr_calc(65%)_calc(30%)_1fr] grid-cols-[1fr_calc(90%)_1fr] bg-secondary-background">
+                    <Board socket={socket} />
+                    <InGameOptions socket={socket} setMenuView={setMenuView} />
+                </div>
+            )}
         </div>
     );
 }

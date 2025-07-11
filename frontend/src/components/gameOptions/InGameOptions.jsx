@@ -259,38 +259,24 @@ function InGameOptions({ socket, setMenuView }) {
     }
 
     return (
-        <div className="flex flex-col justify-center items-center h-full w-full">
-            {view === "waiting for player 2" && (
-                <div className="flex flex-col justify-around items-center h-full">
-                    <div className="flex flex-col flex-6/10 items-center justify-center">
-                        <h3 className="text-3xl text-center">Loading...</h3>
-                        <h3 className="text-2xl text-center">Waiting for the Second Player</h3>
+        <div className="col-start-2 row-start-3 flex flex-col justify-center items-center h-full w-full">
+            {view === "waiting for player 2" || view === "waiting for reconnection" && (
+                <div className="flex flex-col justify-around items-center w-full h-full">
+                    <div className="flex flex-col flex-3/5 items-center justify-center">
+                        <h3 className="text-xl text-center">Loading...</h3>
+                        <h3 className="text-lg text-center">{view === "waiting for reconnection" ? "Waiting for the Second Player to Reconnect" : "Waiting for the Second Player"}</h3>
                     </div>
-                    <div className="flex justify-center items-center flex-4/10 mt-10">
-                        <Button onClick={exitRoom} size="ui" variant="ui" className="">
-                            Exit Room
-                        </Button>
-                    </div>
-                </div>
-            )}
-            {view === "waiting for reconnection" && (
-                <div className="flex flex-col justify-around items-center h-full">
-                    <div className="flex flex-col flex-6/10 items-center justify-center">
-                        <p>Loading...</p>
-                        <p>Waiting for the Second Player to Reconnect</p>
-                    </div>
-                    <div className="flex justify-center items-center flex-4/10">
-                        <Button onClick={exitRoom} size="mine" className="">
+                    <div className="flex flex-2/5 w-full h-full items-center justify-center">
+                        <Button onClick={exitRoom} size="ui" className="px-[12%] py-[5%] font-semibold text-[17px]/5 rounded-[15px] drop-shadow-2xl">
                             Exit Room
                         </Button>
                     </div>
                 </div>
             )}
             {view === "room full" && (
-                <div className="flex flex-col justify-around items-center h-full">
-                    <div className="flex flex-col flex-6/10 items-center justify-center">
-                        <Button
-                            size="mine"
+                <div className="flex flex-col justify-center items-center w-full h-full gap-5">
+                    <Button
+                            className="w-[54%] h-[20%] rounded-[15px] bg-highlight text-base/5 font-semibold text-foreground"
                             onClick={
                                 gameState["moveNumber"] <= 1
                                     ? handleAbort
@@ -298,13 +284,13 @@ function InGameOptions({ socket, setMenuView }) {
                             }
                         >
                             {gameState["moveNumber"] <= 1 ? "Abort" : "Resign"}
-                        </Button>
-                    </div>
-                    <div className="flex justify-center items-center flex-4/10">
-                        <Button size="mine" onClick={handleOfflerDraw}>
+                    </Button>
+                    <Button 
+                        className="w-[54%] h-[20%] rounded-[15px] bg-destructive text-base/5 font-semibold text-foreground"
+                        onClick={handleOfflerDraw}
+                    >
                             Offer Draw
-                        </Button>
-                    </div>
+                    </Button>
                 </div>
             )}
             {view === "game ended" && (

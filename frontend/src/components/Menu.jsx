@@ -167,10 +167,6 @@ export function Menu({
                     </div>
                 </div>
             )}
-
-            {menuView === "inGameOptions" && (
-                <InGameOptions socket={socket} setMenuView={setMenuView} />
-            )}
         </div>
     );
 }

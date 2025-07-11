@@ -9,7 +9,10 @@ import {
     useGameOptionsContext,
     useTimerContext,
 } from "../context"; 
-export function Board({ socket, classes }) {
+export function Board({ socket }) {
+
+    // ${window.innerHeight > window.innerWidth ? "" : "w-[50vh]"} have to check it for resizing of the board.
+
     // const {socket} = useSocketContext();
     const [game, setGame] = useState(new Chess());
     const { gameState, updateGameState } = useGameContext();
@@ -97,9 +100,15 @@ export function Board({ socket, classes }) {
             return false;
         }
     }
+
     return (
-        <div id="chessboard" className={classes +""}>
-            <div id="board-container" className="flex justify-center items-center w-[50vw] lg:w-[50vh] xl:w-[60vh] 2xl:w-[65vh] shadow-2xl/90 shadow-accent">
+        <div id="chessboard" className="col-start-2 row-start-2">
+            <div id="opponent-info">
+                <h2 className="text-2xl text-center font-bold">
+                    {gameState["opponentName"] || "Opponent"}
+                </h2>
+            </div>
+            <div id="board-container" className={`flex justify-center items-center`}>
                 <Chessboard
                     // boardWidth={100}
                     customBoardStyle={{  }} // Set the board size to 50vh
@@ -122,6 +131,11 @@ export function Board({ socket, classes }) {
                 />
             </div>
             {/* <Timer socket={socket} /> */}
+            <div id="player-info">
+                <h2 className="text-2xl text-center font-bold">
+                    {gameState["playerName"] || "You"}
+                </h2>
+            </div>
         </div>
     );
 }
