@@ -1,9 +1,83 @@
-@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
+/* fraunces-regular - latin */
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: 'Fraunces';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../fonts/fraunces-v37-latin-regular.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+/* fraunces-600 - latin */
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: 'Fraunces';
+  font-style: normal;
+  font-weight: 600;
+  src: url('../fonts/fraunces-v37-latin-600.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+/* fraunces-700 - latin */
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: 'Fraunces';
+  font-style: normal;
+  font-weight: 700;
+  src: url('../fonts/fraunces-v37-latin-700.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+/* fraunces-900 - latin */
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: 'Fraunces';
+  font-style: normal;
+  font-weight: 900;
+  src: url('../fonts/fraunces-v37-latin-900.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+/* poppins-regular - latin */
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../fonts/poppins-v23-latin-regular.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+/* poppins-600 - latin */
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 600;
+  src: url('../fonts/poppins-v23-latin-600.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+/* poppins-700 - latin */
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 700;
+  src: url('../fonts/poppins-v23-latin-700.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+/* poppins-800 - latin */
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 800;
+  src: url('../fonts/poppins-v23-latin-800.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+/* poppins-900 - latin */
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 900;
+  src: url('../fonts/poppins-v23-latin-900.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+html, body, #root{
+  height: 100%;
+}
 
 @theme{
   --text-*: initial;
@@ -21,103 +95,41 @@
   --text-8xl: 5rem;
   --text-9xl: 5.5rem;
   --text-10xl: 6rem;
+  
+  
 
   /* --breakpoint-2xl: 1440px; */
 }
 
 :root {
-  --background: oklch(0.9791 0 0);
-  --foreground: oklch(0.1591 0 0);
-  --card: oklch(0.9911 0 0);
-  --card-foreground: oklch(0.1591 0 0);
-  --popover: oklch(0.9911 0 0);
-  --popover-foreground: oklch(0.1591 0 0);
-  --primary: oklch(0.7665 0.1387 91.0594);
-  --primary-foreground: oklch(0.9791 0 0);
-  --secondary: oklch(0.7665 0.1387 91.0594);
-  --secondary-foreground: oklch(0.9791 0 0);
-  --muted: oklch(0.6354 0.0359 67.1038);
-  --muted-foreground: oklch(0.1591 0 0);
-  --accent: oklch(0.4176 0.0368 51.9792);
-  --accent-foreground: oklch(1.0000 0 0);
-  --destructive: oklch(0.6188 0.2376 25.7658);
-  --destructive-foreground: oklch(0.9791 0 0);
-  --border: oklch(0.7348 0 0);
-  --input: oklch(0.9809 0.0025 228.7836);
-  --ring: oklch(0.7348 0 0);
-  --chart-1: oklch(0.6723 0.1606 244.9955);
-  --chart-2: oklch(0.6907 0.1554 160.3454);
-  --chart-3: oklch(0.8214 0.1600 82.5337);
-  --chart-4: oklch(0.7064 0.1822 151.7125);
-  --chart-5: oklch(0.5919 0.2186 10.5826);
-  --font-sans: Lora, serif;
-  --font-serif: DM Sans, sans-serif;
-  --font-mono: Menlo, monospace;
+  /* --background: oklch(0.2494 0.0731 264.2); */
+  --background: #0F1F44;
+  --secondary-background: #1E2B80;
+  --foreground: #FAFFF5;
+  --highlight: #E8A927;
+  --secondary-foreground: #61C9AF;
+  --destructive: #DC0040;
+  --box-shadow: #0F153E;
+  --font-fraunces: 'Fraunces', serif;
+  --font-poppins: 'Poppins', sans-serif;
   --radius: 1.3rem;
   --tracking-normal: 0.025em;
 }
 
-.dark {
-  --background: oklch(0 0 0);
-  --foreground: oklch(0.9328 0.0025 228.7857);
-  --card: oklch(0.2097 0.0080 274.5332);
-  --card-foreground: oklch(0.8853 0 0);
-  --popover: oklch(0 0 0);
-  --popover-foreground: oklch(0.9328 0.0025 228.7857);
-  --primary: oklch(0.6692 0.1607 245.0110);
-  --primary-foreground: oklch(1.0000 0 0);
-  --secondary: oklch(0.9622 0.0035 219.5331);
-  --secondary-foreground: oklch(0.1884 0.0128 248.5103);
-  --muted: oklch(0.2090 0 0);
-  --muted-foreground: oklch(0.5637 0.0078 247.9662);
-  --accent: oklch(0.1928 0.0331 242.5459);
-  --accent-foreground: oklch(0.6692 0.1607 245.0110);
-  --destructive: oklch(0.6188 0.2376 25.7658);
-  --destructive-foreground: oklch(1.0000 0 0);
-  --border: oklch(0.2674 0.0047 248.0045);
-  --input: oklch(0.3020 0.0288 244.8244);
-  --ring: oklch(0.6818 0.1584 243.3540);
-  --chart-1: oklch(0.6723 0.1606 244.9955);
-  --chart-2: oklch(0.6907 0.1554 160.3454);
-  --chart-3: oklch(0.8214 0.1600 82.5337);
-  --chart-4: oklch(0.7064 0.1822 151.7125);
-  --chart-5: oklch(0.5919 0.2186 10.5826);
-  --font-sans: Lora, serif;
-  --font-serif: DM Sans, sans-serif;
-  --font-mono: Menlo, monospace;
-  --radius: 1.3rem;
-  
-}
+/* h1,h2,h3{
+  color: var(--foreground);
+} */
 
 @theme inline {
   --color-background: var(--background);
+  --color-secondary-background: var(--secondary-background);
   --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-mono);
-  --font-serif: var(--font-serif);
+  --color-highlight: var(--highlight);
+  --color-box-shadow: var(--box-shadow);
+  --font-fraunces: var(--font-fraunces);
+  --font-poppins: var(--font-poppins);
 
   --radius-xs: calc(var(--radius) - 6px);
   --radius-sm: calc(var(--radius) - 4px);
@@ -125,10 +137,7 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 
-  --shadow-primary: 0px 0px 10px 1px var(--color-primary);
-  --shadow-foreground: 0px 0px 10px 1px var(--color-foreground);
-  --shadow-small: 0px 1px 5px 0px rgba(0, 0, 0, 0.05);
-  --shadow-input: 0px 0px 10px 3px var(--color-input);
+  --shadow-nav: 0px 4px 10px 7px rgba(0, 0, 0, 0.25);
 
 
   --tracking-tighter: calc(var(--tracking-normal) - 0.05em);
@@ -143,38 +152,13 @@ body {
   letter-spacing: var(--tracking-normal);
 }
 
-.radioButton{
+/* .radioButton{
   @apply flex items-center space-x-1 bg-background hover:text-accent focus-visible:border-2 hover:border-2 rounded-full px-3 py-2;
-}
+} */
 
 @layer base {
   *{
-    font-size: 10px;
-  }
-  @media (min-width: 640px) {
-    *{
-      font-size: 10px;
-    }
-  }
-  @media (min-width: 768px) {
-    *{
-      font-size: 11px;
-    }
-  }
-  @media (min-width: 1024px) {
-    *{
-      font-size: 12px;
-    }
-  }
-  @media (min-width: 1280px) {
-    *{
-      font-size: 14px;
-    }
-  }
-  @media (min-width: 1536px){
-    *{
-      font-size: 16px;
-    } 
+    font-size: 1rem;
   }
   body {
     @apply bg-background text-foreground;

@@ -10,11 +10,11 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground text-3xl shadow-xs hover:bg-primary/85",
+          "text-base/10 tracking-tight bg-secondary-foreground text-foreground shadow-xs",
         destructive:
           "bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
         outline:
-          "border bg-background shadow-xs text-3xl hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+          "border-2 border-secondary-background bg-transparent shadow-xs text-base/10 tracking-tight text-foreground hover:bg-secondary-foreground hover:text-foreground hover:border-secondary-foreground",
         secondary:
           "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
         ghost:
@@ -23,7 +23,6 @@ const buttonVariants = cva(
         hero: "border-2 border-accent/20 text-3xl font-sans font-medium rounded-xs bg-secondary/90 lg:text-2xl xl:text-3xl 2xl:text-2xl hover:shadow-foreground/35 focus-visible:shadow-primary focus-visible:ring-0 focus-visible:border-none",
         hero_outline: "border-2 border-foreground/20 text-3xl rounded-sm lg:text-2xl xl:text-3xl 2xl:text-2xl hover:shadow-foreground/35 hover:border-accent/20 hover:bg-secondary/90 hover:text-primary-foreground focus-visible:shadow-primary focus-visible:border-none focus-visible:ring-0",
         form: "",
-        ui: "text-2xl bg-primary text-primary-foreground shadow-xs hover:bg-primary/85",
         form_outline: "text-2xl font-medium border",
       },
       size: {
@@ -32,7 +31,7 @@ const buttonVariants = cva(
         md: "h-10 rounded-md px-5 has-[>svg]:px-3",
         lg: "h-12 w-xs rounded-md px-6 has-[>svg]:px-4",
         form: "w-45 h-16",
-        ui: "w-xs h-16 px-15",
+        ui: " rounded-2xl",
         hero: "px-4 py-1 w-xs h-20 lg:w-60 xl:w-70 2xl:w-65",
         icon: "size-9",
       },

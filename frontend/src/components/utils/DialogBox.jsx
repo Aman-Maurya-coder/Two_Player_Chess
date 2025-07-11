@@ -37,9 +37,8 @@ export function DialogBox({
                     <DialogClose asChild>
                         <Button
                             type="button"
-                            variant="secondary"
-                            className="text-2xl h-fit rounded-full"
-                            size="md"
+                            className="col-start-2 col-end-3 "
+                            size="ui"
                             {...(onClose && { onClick: onClose })}
                         >
                             Close

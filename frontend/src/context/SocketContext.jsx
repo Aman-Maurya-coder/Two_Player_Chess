@@ -3,7 +3,7 @@ import { createContext, useEffect, useState } from "react";
 
 export const SocketContext = createContext();
 
-const url = "http://localhost:3000";
+const url = "https://nrjrsvh4-3000.inc1.devtunnels.ms/" || "http://localhost:3000";
 
 export function SocketProvider({ children }){
     const [socket, setSocket] = useState(null);

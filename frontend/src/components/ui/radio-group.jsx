@@ -11,7 +11,7 @@ function RadioGroup({
   return (
     <RadioGroupPrimitive.Root
       data-slot="radio-group"
-      className={cn("flex flex-3/4 flex-row flex-wrap space-y-3 justify-start items-start mt-1 space-x-5 sm:space-x-10 md:space-x-12 md:space-y-2 box-border", className)}
+      className={cn("flex flex-row justify-start items-start space-x-[calc(100vw*0.03)] box-border", className)}
       {...props} />
   );
 }
@@ -25,7 +25,7 @@ function RadioGroupItem({
     <RadioGroupPrimitive.Item
       data-slot="radio-group-item"
       className={cn(
-        "w-30 h-15 border-border text-primary focus-visible:border-ring focus-visible:ring-ring/40 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/50 aria-invalid:border-destructive dark:bg-input/30 aspect-square shrink-0 rounded-full border-2 shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[2px] disabled:cursor-not-allowed disabled:opacity-50",
+        "w-[calc(100vw*0.18)] h-[calc(100vh*0.04)] sm:max-w-[132px] sm:max-h-[54px] rounded-[5px] border-border text-primary focus-visible:border-ring focus-visible:ring-ring/40 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/50 aria-invalid:border-destructive dark:bg-input/30 aspect-square shrink-0 border-2 shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[2px] disabled:cursor-not-allowed disabled:opacity-50",
         className
       )}
       {...props}>

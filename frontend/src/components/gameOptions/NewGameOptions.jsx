@@ -110,7 +110,7 @@ function NewGameOptions({ socket, setMenuView }) {
     // Ensure playerId is available before proceeding
     if (!playerId) {
         console.error("Player ID is not set. Cannot create a new game.");
-        setView("default");
+        setMenuView("default");
         return null; // or handle the error as needed
     }
     const emitEvent = useSocketEmit(socket);
@@ -142,21 +142,20 @@ function NewGameOptions({ socket, setMenuView }) {
             title: "Your Game Code",
             desc: "Share this code with your friend to play with them.",
             content: (
-                <div className="flex w-full items-center gap-2 mb-2">
+                <div id="content" className="flex w-full items-center gap-2 mb-2">
                     <Input
                         readOnly
                         type="text"
                         value={gameId || ""}
                         placeholder="Game Code"
-                        className="h-fit px-10 rounded-full text-2xl text-foreground shadow-input border border-[hsl(26,9%,40%)] placeholder:text-[#B5A89E]"
+                        className="flex-3/4 h-fit px-10 rounded-full text-lg text-foreground shadow-input border border-[hsl(26,9%,40%)] placeholder:text-[#B5A89E]"
                         ref={gameIdRef}
                     />
                     <Popover>
                         <PopoverTrigger asChild>
                             <Button
                                 type="submit"
-                                // size="md"
-                                className={"text-2xl h-min rounded-full"}
+                                className={"flex-1/4 rounded-full"}
                                 onClick={() => {
                                     window.navigator.clipboard.writeText(
                                         gameIdRef.current.value
@@ -213,18 +212,18 @@ function NewGameOptions({ socket, setMenuView }) {
     );
 
     return (
-        <div className="h-full">
+        <div className="h-full w-full">
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className="flex flex-col w-full h-full lg:gap-5"
+                    className="grid h-full grid-rows-[25%_25%_25%_25%]"
                 >
                     <FormField
                         control={form.control}
                         name="time_control"
                         id="time_control"
                         render={({ field }) => (
-                            <FormItem className="flex-1/4 gap-0">
+                            <FormItem className="">
                                 <FormLabel htmlFor="time_control">
                                     Time Control
                                 </FormLabel>
@@ -238,11 +237,11 @@ function NewGameOptions({ socket, setMenuView }) {
                                                 key={option.value}
                                                 value={option.value}
                                                 id={`t${option.value}`}
-                                                className="flex justify-center items-center ring-[1px] ring-border rounded-xs py-1 px-3 data-[state=checked]:ring-2 data-[state=checked]:ring-blue-500"
+                                                className="flex justify-center items-center ring-[1px] ring-border data-[state=checked]:ring-2 data-[state=checked]:ring-blue-500"
                                             >
                                                 <span 
-                                                    htmlFor={`t${option.value}`}
-                                                    className="text-xl font-semibold tracking-tight"
+                                                    htmlFor={`t${option.value}`} 
+                                                    className="text-md/2 font-bold tracking-tight"
                                                 >
                                                     {option.label}
                                                 </span>
@@ -258,7 +257,7 @@ function NewGameOptions({ socket, setMenuView }) {
                         name="increment"
                         id="increment"
                         render={({ field }) => (
-                            <FormItem className="flex-1/4 gap-0">
+                            <FormItem className="">
                                 <FormLabel htmlFor="increment">
                                     Increment
                                 </FormLabel>
@@ -272,11 +271,11 @@ function NewGameOptions({ socket, setMenuView }) {
                                                 key={option.value}
                                                 value={option.value}
                                                 id={`i${option.value}`}
-                                                className="flex justify-center items-center ring-[1px] ring-border rounded-xs py-1 px-3 data-[state=checked]:ring-2 data-[state=checked]:ring-blue-500"
+                                                className="flex justify-center items-center ring-[1px] ring-border py-1 px-3 data-[state=checked]:ring-2 data-[state=checked]:ring-blue-500"
                                             >
                                                 <span 
                                                     htmlFor={`i${option.value}`}
-                                                    className="text-xl font-semibold tracking-tight"
+                                                    className="text-md font-semibold tracking-tight"
                                                 >
                                                     {option.label}
                                                 </span>
@@ -292,7 +291,7 @@ function NewGameOptions({ socket, setMenuView }) {
                         name="player_side"
                         id="player_side"
                         render={({ field }) => (
-                            <FormItem className="flex-1/4 gap-0">
+                            <FormItem className="">
                                 <FormLabel htmlFor="player_side">
                                     Your Side
                                 </FormLabel>
@@ -306,11 +305,11 @@ function NewGameOptions({ socket, setMenuView }) {
                                                 key={option.value}
                                                 value={option.value}
                                                 id={`p${option.value}`}
-                                                className="flex justify-center items-center ring-[1px] ring-border rounded-xs py-1 px-3 data-[state=checked]:ring-2 data-[state=checked]:ring-blue-500"
+                                                className="flex justify-center items-center ring-[1px] ring-border py-1 px-3 data-[state=checked]:ring-2 data-[state=checked]:ring-blue-500"
                                             >
                                                 <span 
                                                     htmlFor={`p${option.value}`}
-                                                    className="text-xl font-semibold tracking-tight"
+                                                    className="text-md font-semibold tracking-tight"
                                                 >
                                                     {option.label}
                                                 </span>
@@ -321,19 +320,20 @@ function NewGameOptions({ socket, setMenuView }) {
                             </FormItem>
                         )}
                     />
-                    <div className="flex flex-row justify-evenly items-center flex-1/4">
+                    <div className="grid grid-cols-[calc(7%)_1fr_calc(10%)_1fr_calc(7%)] items-center">
                         <Button
                             type="button"
-                            variant="form_outline"
-                            size={"form"}
+                            variant="outline"
+                            size={"ui"}
                             onClick={() => {
                                 setDialogState(false); // Close the dialog if open
                                 setTimeout(() => setMenuView("default"), 50);
                             }}
+                            className="col-start-2 col-end-3 text-foreground"
                         >
                             Back
                         </Button>
-                        <Button type="Submit" className='text-2xl' size={"form"}>
+                        <Button type="Submit" className="col-start-4 col-end-5 text-foreground" size={"ui"}>
                             Submit
                         </Button>
                     </div>

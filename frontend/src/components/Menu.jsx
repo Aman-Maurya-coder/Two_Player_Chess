@@ -14,7 +14,6 @@ import { Input } from "@/components/ui/input";
 
 export function Menu({
     socket,
-    classes,
     menuView = "default",
     setMenuView,
     layoutView = "landing",
@@ -74,82 +73,104 @@ export function Menu({
     };
 
     return (
-        <div id="menu" className={classes}>
-            <div className="w-full p-5 md:w-auto">
-                {menuView === "default" && (
+        <div
+            id="menu"
+            className={`lg:order-2 flex justify-center ${
+                menuView === "newGameOptions" || menuView === "joinGameOptions"
+                    ? "m-[calc(100vh*0.04)]"
+                    : "m-[6%]"
+            } h-full overflow-x-hidden`}
+        >
+            {menuView === "default" && (
+                <div
+                    id="landingOptions"
+                    className="my-auto" //flex flex-col w-full h-full box-border
+                >
                     <div
-                        id="landingOptions"
-                        className="flex flex-col w-full h-full box-border"
+                        id="heroHeading"
+                        className="flex justify-center items-center mx-auto"
                     >
-                        <div id="heading" className="flex flex-2/5 justify-center items-end lg:justify-start">
-                            <h1 className="text-6xl/22 h-min font-semibold tracking-tighter text-center inline lg:text-6xl/18 lg:text-left xl:text-7xl/20 2xl:text-6xl/18">
-                                Welcome to
-                                <span className="text-6xl/22 font-semibold tracking-tighter bg-gradient-to-r from-primary to-accent inline text-transparent bg-clip-text lg:text-6xl/18 xl:text-7xl/20 2xl:text-6xl/18">
-                                    {" "}
-                                    Two Player Chess
-                                </span>
-                            </h1>
-                        </div>
-                        <div id="sub-heading" className="flex-1/5 flex justify-center items-start lg:justify-start">
-                            <h3 className="text-xl/25 font-sans inline text-center text-muted font-semibold tracking-wide lg:text-xl/20 lg:text-left xl:text-2xl/22 2xl:text-xl/20">
-                                Create.Share.Play.Repeat
-                            </h3>
-                        </div>
-                        <div id="hero-buttons" className="flex flex-2/5 flex-col w-full h-full justify-center items-center space-y-15 sm:flex-row sm:space-y-0 sm:justify-around lg:justify-between lg:items-start lg:pt-15 lg:space-x-5">
-                            <Button
-                                variant="hero"
-                                size="hero"
-                                onClick={handleNewGame}
-                                className="text-primary-foreground"
-                            >
-                                New Game
-                            </Button>
-                            <Button
-                                variant="hero_outline"
-                                size="hero"
-                                onClick={handleJoinGame}
-                                className="text-foreground"
-                            >
-                                Join Game
-                            </Button>
-                        </div>
+                        <h1 className="text-4xl/13 text-foreground font-black font-fraunces tracking-normal text-center inline lg:text-left lg:text-6xl/19 ">
+                            Welcome to
+                            <span className="font-fraunces text-foreground text-4xl/13 font-black tracking-normal inline lg:text-6xl/19">
+                                {" "}
+                                Two Player Chess
+                            </span>
+                        </h1>
                     </div>
-                )}
-
-                {menuView === "newGameOptions" && (
-                    <NewGameOptions socket={socket} setMenuView={setMenuView} />
-                )}
-
-                {menuView === "joinGameOptions" && (
-                    <div className="flex flex-col justify-center items-start h-full w-full">
-                        <h3 className="text-2xl/tight font-sans font-medium">Room Code:</h3>
-                        <Input
-                            type={"text"}
-                            placeholder="Enter Room Code"
-                            value={gameCode}
-                            onChange={(e) => setGameCode(e.target.value)}
-                            className="my-3 text-2xl h-16 text-foreground border-[hsl(26,9%,40%)] border placeholder:text-[#B5A89E] focus-visible:shadow-primary bg-background"
-                            ref={joinGameRef}
-                        />
-                        <div className="mt-5 flex flex-row-reverse justify-around items-center w-full">
-                            <Button size={"form"} className='text-2xl' onClick={handleGameCodeSubmit}>
-                                Submit
-                            </Button>
-                            <Button
-                                size={"form"}
-                                onClick={() => setMenuView("default")}
-                                variant={"form_outline"}
-                            >
-                                Back
-                            </Button>
-                        </div>
+                    <div
+                        id="sub-heading"
+                        className="flex justify-center items-start lg:justify-start"
+                    >
+                        <h3 className="text-highlight text-xl/13 font-fraunces inline text-center font-bold tracking-tight lg:text-left">
+                            Create.Share.Play.Repeat
+                        </h3>
                     </div>
-                )}
+                    <div
+                        id="hero-buttons"
+                        className="grid grid-cols-[calc(7%)_1fr_calc(10%)_1fr_calc(7%)] w-full h-full items-center bottom-0"
+                    >
+                        <Button
+                            size="ui"
+                            onClick={handleNewGame}
+                            className="text-foreground col-start-2 col-end-3"
+                        >
+                            <p className="p-0 m-0">New Game</p>
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="ui"
+                            onClick={handleJoinGame}
+                            className="text-foreground col-start-4 col-end-5"
+                        >
+                            Join Game
+                        </Button>
+                    </div>
+                </div>
+            )}
 
-                {menuView === "inGameOptions" && (
-                    <InGameOptions socket={socket} setMenuView={setMenuView} />
-                )}
-            </div>
+            {menuView === "newGameOptions" && (
+                <NewGameOptions socket={socket} setMenuView={setMenuView} />
+            )}
+
+            {menuView === "joinGameOptions" && (
+                <div id="join-game" className="my-auto w-full">
+                    <div className="flex justify-start items-start">
+                        <h3 className="text-lg font-fraunces font-bold">
+                            Room Code:
+                        </h3>
+                    </div>
+                    <Input
+                        type={"text"}
+                        placeholder="Enter Room Code"
+                        value={gameCode}
+                        onChange={(e) => setGameCode(e.target.value)}
+                        className="text-black rounded-[10px] bg-foreground" //my-3 text-2xl h-16 text-foreground border-[hsl(26,9%,40%)] border placeholder:text-[#B5A89E] focus-visible:shadow-primary bg-background
+                        ref={joinGameRef}
+                    />
+                    <div className="grid grid-cols-[calc(7%)_1fr_calc(10%)_1fr_calc(7%)] items-center bottom-0">
+                        <Button
+                            variant="outline"
+                            size={"ui"}
+                            className="col-start-2 col-end-3 text-foreground"
+                            onClick={() => setMenuView("default")}
+                        >
+                            Back
+                        </Button>
+                        <Button
+                            size={"ui"}
+                            className="col-start-4 col-end-5 text-foreground"
+                            onClick={handleGameCodeSubmit}
+                        >
+                            Submit
+                        </Button>
+                    </div>
+                </div>
+            )}
+
+            {menuView === "inGameOptions" && (
+                <InGameOptions socket={socket} setMenuView={setMenuView} />
+            )}
         </div>
     );
 }
