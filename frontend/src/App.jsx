@@ -14,7 +14,8 @@ import { useSocketEvent } from "./hooks/useSocketEvent";
 import { AnimatePresence, motion } from "motion/react";
 import { delay } from "motion";
 import { Board } from "./components/ChessBoard";
-const url = "https://nrjrsvh4-3000.inc1.devtunnels.ms/" || "localhost:3000";
+// const url = "https://nrjrsvh4-3000.inc1.devtunnels.ms/" || "localhost:3000";
+const url = "http://localhost:3000";
 
 function App() {
     const [socket, setSocket] = useState(null);
