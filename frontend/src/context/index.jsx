@@ -1,14 +1,14 @@
 import { useContext } from "react";
 
-import { SocketContext, SocketProvider } from "./SocketContext";
+// import { SocketContext, SocketProvider } from "./SocketContext";
 import { PlayerContext, PlayerProvider } from "./PlayerContext";
 import { GameContext, GameProvider } from "./GameContext";
 import { GameOptionsContext, GameOptionsProvider } from "./GameOptionsContext";
 import { TimerContext, TimerProvider } from "./TimerContext";
 
-export function useSocketContext() {
-    return useContext(SocketContext);
-}
+// export function useSocketContext() {
+//     return useContext(SocketContext);
+// }
 
 export function useGameContext() {
     return useContext(GameContext);
@@ -28,7 +28,7 @@ export function useTimerContext() {
 
 export function ContextProvider({ children }) {
     return (
-        <SocketProvider>
+        // <SocketProvider>
             <PlayerProvider>
                 <GameProvider>
                     <GameOptionsProvider>
@@ -38,6 +38,6 @@ export function ContextProvider({ children }) {
                     </GameOptionsProvider>
                 </GameProvider>
             </PlayerProvider>
-        </SocketProvider>
+        // {/* </SocketProvider> */}
     );
 }

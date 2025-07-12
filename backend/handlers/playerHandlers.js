@@ -10,7 +10,7 @@ export class playerFunctions {
 
     onPlayerJoin(socket, games) {
         socket.on("onPlayerJoin", ({playerId}) => {
-            console.log("player joined", playerId);
+            // console.log("player joined", playerId);  
             if (playerId === "") {
                 playerId = randomUUID(); // Generate a random player ID
                 this.players[playerId] = { 
@@ -47,6 +47,7 @@ export class playerFunctions {
             }
             else if (this.players[playerId] !== undefined && this.players[playerId]["gameId"] === null){
                 socket.emit("playerAlreadyJoined");
+                delete this.players[playerId];
             }
         });
     }

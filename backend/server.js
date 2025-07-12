@@ -56,7 +56,9 @@ io.on("connection", (socket) => {
     gameHandler.onPlayAgainReject(socket); // Handle play again rejection
     gameHandler.onRoomClose(socket); // Handle game over
 
-    
+    socket.on("disconnect", (reason) => {
+        console.log("Player disconnected", reason);
+    });
 
 });
 
