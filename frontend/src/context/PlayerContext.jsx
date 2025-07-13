@@ -10,6 +10,14 @@ export const PlayerProvider = ({ children }) => {
 
     const [playerData, setPlayerData] = useState({});
 
+    const updatePlayerData = (newState) => {
+        console.log("Updating player data:", newState);
+        setPlayerData((prevState) => ({
+            ...prevState,
+            ...newState
+        }))
+    }
+
     const resetPlayerData = () => {
         // setPlayerId(null);
         setPlayerData({});
@@ -17,7 +25,7 @@ export const PlayerProvider = ({ children }) => {
     }
 
     return (
-        <PlayerContext.Provider value={{ playerId, setPlayerId, playerData, setPlayerData, resetPlayerData }}>
+        <PlayerContext.Provider value={{ playerId, setPlayerId, playerData, updatePlayerData, resetPlayerData }}>
             {children}
         </PlayerContext.Provider>
     );

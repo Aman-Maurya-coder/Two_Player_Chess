@@ -12,13 +12,13 @@ import { AlertDialogBox } from "../utils/AlertDialogBox";
 import { DialogBox } from "../utils/DialogBox";
 import { Label } from "@/components/ui/label";
 
-function InGameOptions({ socket, setMenuView }) {
+function InGameOptions({ socket,menuView, setMenuView }) {
     // const {socket} = useSocketContext();
     // console.log("now in inGameOptions");
     const { gameState, updateGameState, resetGameState } = useGameContext();
     const { gameOptions, resetGameOptions } = useGameOptionsContext();
     const { setWhiteTime, setBlackTime, setCurrentTurn, resetTimer } = useTimerContext();
-    const { playerId, resetPlayerData } = usePlayerContext();
+    const { playerId, updatePlayerData, resetPlayerData } = usePlayerContext();
 
     const emitEvent = useSocketEmit(socket);
 
@@ -54,11 +54,23 @@ function InGameOptions({ socket, setMenuView }) {
         }
     }, [view]);
 
-    useSocketEvent(socket, "playerJoinedRoom", (message) => {
+    useEffect(() => {
+        if ( gameState.gameStatus === "room full" ){
+            console.log("setting view to room full");
+            setView("room full");
+        }
+    },[menuView, setView, gameState.gameStatus]);
+    //Listening event for the player who is waiting in the room
+    useSocketEvent(socket, "playerJoinedRoom", (gameId, gameStatus) => {
+        updatePlayerData({gameId: gameId});
+        updateGameState({ gameId: gameId, gameStatus: gameStatus });
         setView("room full");
     });
 
     useSocketEvent(socket, "playerDisconnected", (gameData) => {
+        updateGameState({
+            gameStatus: gameData["gameStatus"],
+        });
         setView("waiting for reconnection");
     });
 
@@ -259,8 +271,10 @@ function InGameOptions({ socket, setMenuView }) {
     }
 
     return (
+        
         <div className="col-start-2 row-start-3 flex flex-col justify-center items-center h-full w-full">
-            {view === "waiting for player 2" || view === "waiting for reconnection" && (
+            {console.log(view)}
+            {(view === "waiting for player 2" || view === "waiting for reconnection" || view === "not started") && (
                 <div className="flex flex-col justify-around items-center w-full h-full">
                     <div className="flex flex-col flex-3/5 items-center justify-center">
                         <h3 className="text-xl text-center">Loading...</h3>

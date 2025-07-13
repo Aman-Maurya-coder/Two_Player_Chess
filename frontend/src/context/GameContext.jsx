@@ -13,7 +13,7 @@ export function GameProvider({ children}){
     });
 
     const updateGameState = (newState) => {
-        // console.log("Updating game state:", newState);
+        console.log("Updating game state:", newState);
         setGameState((prevState) => ({
             ...prevState,
             ...newState

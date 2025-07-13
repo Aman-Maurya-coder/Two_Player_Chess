@@ -29,38 +29,13 @@ function App() {
     }, []);
 
     const [isConnected, setIsConnected] = useState(false);
-    const { playerId, setPlayerId, playerData, setPlayerData } = usePlayerContext();
+    const { playerId, setPlayerId, playerData, updatePlayerData } = usePlayerContext();
     const { gameState, updateGameState } = useGameContext();
     const { setWhiteTime, setBlackTime, setCurrentTurn } = useTimerContext();
     const [menuView, setMenuView] = useState("default"); // "default", "newGameOptions", etc.
 
     useEffect(() => {
         if (!socket) return;
-
-        // socket.on("connect", () => {
-        //     console.log("Socket connected:", socket.id);
-        //     if (playerId) {
-        //         console.log("Emitting playerReconnected with playerId:", playerId);
-        //         emitEvent("playerReconnected", { playerId });
-        //     }
-        //     else{
-        //         console.log("No playerId found, emitting onPlayerJoin with empty playerId");
-        //         emitEvent("onPlayerJoin", { playerId: "" });
-        //     }
-        // })
-        // socket.on("connect_error", (error) => {
-        //     console.error("Socket connection error:", error);
-        // });
-        // socket.on("disconnect", (reason) => {
-        //     console.log("Socket disconnected:", reason);
-        // });
-
-        // return () => {
-        //     if (socket) {
-        //         socket.disconnect();
-        //         console.log("Socket disconnected");
-        //     }
-        // }
         const handleConnect = () => {
             console.log("Socket connected:", socket.id);
             setIsConnected(true); // Update connection status
@@ -73,6 +48,9 @@ function App() {
 
         const handleDisconnect = (reason) => {
             console.log("Socket disconnected", reason);
+            // if( reason === "io server disconnect" || reason === "transport error") {
+            //     localStorage.removeItem("playerId"); // Clear playerId on disconnect
+            // }
             setIsConnected(false); // Update connection status
         };
 
@@ -123,13 +101,13 @@ function App() {
     });
     useSocketEvent(socket, "playerDataResponse", (data) => {
         console.log("Player data received:", data);
-        setPlayerData(data);
+        updatePlayerData(data);
     });
     useSocketEvent(socket, "playerNotFound", () => {
         console.log("Player not found");
         localStorage.removeItem("playerId");
         setPlayerId(null);
-        setPlayerData({});
+        updatePlayerData({});
     });
     useSocketEvent(socket, "playerReconnected", (gameData, timeData) => {
         updateGameState({
@@ -145,6 +123,7 @@ function App() {
         console.error("Reconnection failed:", error);
         localStorage.removeItem("playerId");
     });
+    
     useEffect(() => {
         if (
             ["playing", "room full", "waiting for reconnection"].includes(gameState.gameStatus)
@@ -161,8 +140,13 @@ function App() {
     }, [gameState.gameStatus]);
     useEffect(() => {
         const handleBeforeUnload = () => {
+            console.log(playerData);
+            console.log(gameState);
+            if (playerData["gameId"] === null || gameState.gameStatus === "waiting for player 2" || gameState.gameStatus === "waiting for reconnection") {
+                console.log("Removing playerId from localStorage before unload");
+                localStorage.removeItem("playerId");
+            }
             emitEvent("Disconnect", { playerId });
-            localStorage.removeItem("playerId");
         };
 
         window.addEventListener("beforeunload", handleBeforeUnload);
@@ -190,7 +174,7 @@ function App() {
             {menuView === "inGameOptions" && (
                 <div id="game-container" className="flex-1 grid grid-rows-[1fr_calc(65%)_calc(30%)_1fr] grid-cols-[1fr_calc(90%)_1fr] bg-secondary-background">
                     <Board socket={socket} />
-                    <InGameOptions socket={socket} setMenuView={setMenuView} />
+                    <InGameOptions socket={socket} menuView={menuView} setMenuView={setMenuView} />
                 </div>
             )}
         </div>

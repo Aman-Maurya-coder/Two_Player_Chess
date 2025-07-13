@@ -99,7 +99,7 @@ function NewGameOptions({ socket, setMenuView }) {
             player_side: playerSideOptions[0].value, // Default value for player side
         },
     });
-    const { playerId, playerData } = usePlayerContext();
+    const { playerId, playerData, updatePlayerData } = usePlayerContext();
     const { gameState, updateGameState } = useGameContext();
     const { updateGameOptions } = useGameOptionsContext();
     const { setWhiteTime, setBlackTime } = useTimerContext();
@@ -126,7 +126,11 @@ function NewGameOptions({ socket, setMenuView }) {
 
     useSocketEvent(socket, "gameRoomCreated", ({ gameId, gameData }) => {
         console.log("player joined the new game room :", gameId, gameData);
+        updatePlayerData({
+            gameId: gameId
+        })
         updateGameState({
+            gameStatus: gameData["gameStatus"],
             gameId: gameId,
             gameStatus: gameData["gameStatus"],
             moveNumber: gameData["moveNumber"],
@@ -137,7 +141,7 @@ function NewGameOptions({ socket, setMenuView }) {
         });
         setWhiteTime(gameData["gameTimer"]["white"]);
         setBlackTime(gameData["gameTimer"]["black"]);
-        console.log(gameState);
+        // console.log(gameState);
         setDialogContent({
             title: "Your Game Code",
             desc: "Share this code with your friend to play with them.",

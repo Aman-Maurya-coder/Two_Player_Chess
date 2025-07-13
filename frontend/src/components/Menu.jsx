@@ -20,7 +20,7 @@ export function Menu({
     setLayoutView,
 }) {
     const joinGameRef = useRef(null);
-    const { playerId } = usePlayerContext();
+    const { playerId, updatePlayerData } = usePlayerContext();
     const { updateGameOptions } = useGameOptionsContext();
     const { updateGameState } = useGameContext();
     const emitEvent = useSocketEmit(socket);
@@ -34,13 +34,16 @@ export function Menu({
             });
         }
     }, [menuView]);
-
-    useSocketEvent(socket, "playerJoinedRoom", (gameId) => {
-        updateGameState({ gameId: gameId });
+    // Listening event for the player who is joining the room
+    useSocketEvent(socket, "playerJoinedRoom", (gameId, gameStatus) => {
+        console.log("Player joined room with gameId:", gameId);
+        updatePlayerData({gameId: gameId});
+        updateGameState({ gameId: gameId, gameStatus: gameStatus });
         emitEvent("roomData", { gameId: gameId });
     });
     useSocketEvent(socket, "roomJoiningFailed", () => setMenuView("default"));
     useSocketEvent(socket, "roomDataResponse", (gameData) => {
+        console.log("Received room data response:", gameData);
         const playerSide =
             gameData["roomPlayers"]["white"] === playerId ? "white" : "black";
         updateGameState({
@@ -55,22 +58,31 @@ export function Menu({
         });
         setMenuView("inGameOptions");
     });
-    useSocketEvent(socket, "gameNotFound", () => setMenuView("default"));
-    useSocketEvent(socket, "gameFull", () => setMenuView("default"));
+    useSocketEvent(socket, "gameNotFound", () => {
+        console.log("Game not found, returning to default menu view");
+        setMenuView("default");
+    });
+    useSocketEvent(socket, "gameFull", () => {
+        console.log("Game is full, returning to default menu view");
+        setMenuView("default");
+    });
 
     const handleNewGame = () => setMenuView("newGameOptions");
     const handleJoinGame = () => setMenuView("joinGameOptions");
     const handleGameCodeSubmit = () => {
         const localPlayerId = JSON.parse(localStorage.getItem("playerId"));
         if (!localPlayerId) {
+            console.log("Player ID not found in local storage");
             setMenuView("default");
             return;
-        }
+        };
+        console.log("Joining game with code:", gameCode);
         emitEvent("joinGame", {
             roomId: gameCode,
             playerId: localPlayerId,
         });
     };
+    
 
     return (
         <div

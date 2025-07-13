@@ -74,44 +74,69 @@ export class gameFunctions {
 
     joinGame(socket) {
         socket.on("joinGame", ({ roomId, playerId }) => {
-            console.log(roomId);
-            const game = this.games[roomId];
-            if (game === undefined) {
+            const gameId = this.games[roomId];
+            console.log(gameId?.gameStatus);
+            if (gameId === undefined) {
                 socket.emit("gameNotFound", "Game not found");
                 return;
             }
-            else if (game["gameStatus"] === "room full") {
+            else if (gameId["gameStatus"] === "room full") {
+                
                 socket.emit("gameFull", "Game is already full. Please try joining another game."); // Notify the client if game is full
                 return;
             }
-            else if (game["gameStatus"] === "waiting for player 2") {
+            else if (gameId["gameStatus"] === "waiting for player 2") {
+                // console.log(this.players[playerId]["playerStatus"]);
+                if (this.players[playerId]["playerStatus"] === "disconnected from room" || this.players[playerId]["playerStatus"] === "disconnected from game") {
+                    if(this.games[roomId]["roomPlayers"]["white"] === playerId || this.games[roomId]["roomPlayers"]["black"] === playerId) {
+                        socket.join(roomId); // Join the player to the game room
+                    }
+                    else{
+                        socket.emit("roomFull", "You are not part of this game room. Please try joining another game.");
+                        return;
+                    }
+                }
+                else{
+                    console.log(this.players[playerId]["playerStatus"]);
+                    console.log(this.games[roomId]["roomPlayers"]);
+                    if (this.games[roomId]["roomPlayers"]["white"] === null) {
+                        this.games[roomId]["roomPlayers"]["white"] = playerId;
+                        console.log("Player joined as white");
+                    } 
+                    else if (this.games[roomId]["roomPlayers"]["black"] === null) {
+                        this.games[roomId]["roomPlayers"]["black"] = playerId;
+                        console.log("Player joined as black");
+                    } 
+                    else {
+                        socket.emit("gameFull", "Game is already full");
+                        console.log("Game is full");
+                        return;
+                    }
+                    
+                }
                 socket.join(roomId); // Join the player to the game room
-                if (this.games[roomId]["roomPlayers"]["white"] === null) {
-                    this.games[roomId]["roomPlayers"]["white"] = playerId;
-                } 
-                else if (this.games[roomId]["roomPlayers"]["black"] === null) {
-                    this.games[roomId]["roomPlayers"]["black"] = playerId;
-                } 
-                else {
-                    socket.emit("gameFull", "Game is already full");
+                this.games[roomId]["gameStatus"] = "room full"; // Set game status to not started
+                this.players[playerId]["playerStatus"] = "inRoom"; // Initialize player status
+                this.players[playerId]["gameId"]= roomId; // Associate the player with the game ID
+                global.io.in(roomId).emit("playerJoinedRoom", roomId, this.games[roomId]["gameStatus"]);
+            }
+            else if (gameId["gameStatus"] === "waiting for reconnection" && this.players[playerId]["playerStatus"] === "disconnected from game") {
+                if(this.games[roomId]["roomPlayers"]["white"] === playerId || this.games[roomId]["roomPlayers"]["black"] === playerId) {
+                    socket.join(roomId); // Join the player to the game room
+                    
+                }
+                else{
+                    socket.emit("roomFull", "You are not part of this game room. Please try joining another game.");
                     return;
                 }
-                // console.log(this.players[playerId]);
-                this.games[roomId]["gameStatus"] = "room full"; // Set game status to not started
-                this.players[playerId]["gameId"]= roomId; // Associate the player with the game ID
-                this.players[playerId]["playerStatus"] = "inRoom"; // Initialize player status
-                socket.in(roomId).emit("playerJoinedRoom", roomId);
-                global.io.in(roomId).emit("playerJoinedRoom", roomId);
-            }
-            else if (game["gameStatus"] === "waiting for reconnection"){
-                socket.join(roomId); // Join the player to the game room
                 this.games[roomId]["gameStatus"] = "playing";
                 this.players[playerId]["playerStatus"] = "playing";
-                global.io.in(roomId).emit("playerJoinedRoom", roomId); // Notify the client that the player has joined the room
+                global.io.in(roomId).emit("playerJoinedRoom", {"gameId": roomId}); // Notify the client that the player has joined the room
             }
-            if(global.io.of("/").adapter.rooms.get(roomId)?.size !== 2) {
-                socket.emit("roomJoiningFailed");
-            }
+            // if(global.io.of("/").adapter.rooms.get(roomId)?.size !== 2) {
+            //     console.log("Room is not full yet, waiting for another player to join");
+            //     socket.emit("roomJoiningFailed");
+            // }
         });
     }
 

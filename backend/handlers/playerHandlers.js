@@ -10,7 +10,7 @@ export class playerFunctions {
 
     onPlayerJoin(socket, games) {
         socket.on("onPlayerJoin", ({playerId}) => {
-            // console.log("player joined", playerId);  
+            console.log("player joined", playerId);  
             if (playerId === "") {
                 playerId = randomUUID(); // Generate a random player ID
                 this.players[playerId] = { 
@@ -29,21 +29,17 @@ export class playerFunctions {
                     socket.emit("gameFull", "Game is full. Please try joining another game."); // Notify the client if game is full
                     return;
                 }
-                // games[this.players[playerId]["gameId"]]["gameStatus"] = this.players[playerId]["playerStatus"] === "inRoom" ? "not started" : "playing";
-                // console.log(this.players[playerId]["gameId"]);
-                // console.log(games);
-                // console.log(games[gameId]);
-                if (this.players[playerId]["playerStatus"] === "disconnected from room") {
-                    socket.join(this.players[playerId]["gameId"]); // Join the player to the game room
-                    games[gameId]["gameStatus"] = "room full"; // Update game status if player is in room
-                    this.players[playerId]["playerStatus"] = "inRoom"; // Update player status to inGame
-                } else if (this.players[playerId]["playerStatus"] === "disconnected from game") {
-                    games[gameId]["gameStatus"] = "playing"; // Update game status if player is playing
-                    this.players[playerId]["playerStatus"] = "playing"; // Update player status to playing
-                }
-                console.log(
-                    "Player joined game room",this.players[playerId]["gameId"]
-                );
+                // else if (this.players[playerId]["playerStatus"] === "disconnected from room") {
+                //     socket.join(this.players[playerId]["gameId"]); // Join the player to the game room
+                //     games[gameId]["gameStatus"] = "room full"; // Update game status if player is in room
+                //     this.players[playerId]["playerStatus"] = "inRoom"; // Update player status to inGame
+                // } else if (this.players[playerId]["playerStatus"] === "disconnected from game") {
+                //     games[gameId]["gameStatus"] = "playing"; // Update game status if player is playing
+                //     this.players[playerId]["playerStatus"] = "playing"; // Update player status to playing
+                // }
+                // console.log(
+                //     "Player joined game room",this.players[playerId]["gameId"]
+                // );
             }
             else if (this.players[playerId] !== undefined && this.players[playerId]["gameId"] === null){
                 socket.emit("playerAlreadyJoined");
@@ -70,7 +66,7 @@ export class playerFunctions {
                 console.log("Player disconnected", playerId);
                 if (this.players[playerId]["gameId"] !== null) {
                     const gameId = this.players[playerId]["gameId"];
-                    console.log(games);
+                    console.log(gameId);
                     if (games[gameId]["gameStatus"] === "room full") {
                         games[gameId]["gameStatus"] = "waiting for player 2"; // Update game status if player is in room
                         this.players[playerId]["playerStatus"] = "disconnected from room"; // Update player status to disconnected from 
