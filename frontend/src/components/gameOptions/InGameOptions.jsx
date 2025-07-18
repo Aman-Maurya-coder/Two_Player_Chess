@@ -63,13 +63,13 @@ function InGameOptions({ socket,menuView, setMenuView }) {
     //Listening event for the player who is waiting in the room
     useSocketEvent(socket, "playerJoinedRoom", (gameId, gameStatus) => {
         updatePlayerData({gameId: gameId});
-        updateGameState({ gameId: gameId, gameStatus: gameStatus });
+        updateGameState({ gameId: gameId, "gameStatus": gameStatus });
         setView("room full");
     });
 
-    useSocketEvent(socket, "playerDisconnected", (gameData) => {
+    useSocketEvent(socket, "playerDisconnected", (gameStatusResponse) => {
         updateGameState({
-            gameStatus: gameData["gameStatus"],
+            "gameStatus": gameStatusResponse,
         });
         setView("waiting for reconnection");
     });

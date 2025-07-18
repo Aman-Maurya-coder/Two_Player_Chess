@@ -1,16 +1,25 @@
 import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
-import cors from "cors";
-// import { createGame, makeMove, joinGame, onAbort, onResign, onGameOver, getRoomData } from "./handlers/gameHandlers.js";
-// import { getPlayerData, onDisconnect, onPlayerJoin } from "./handlers/playerHandlers.js";
+import { instrument } from "@socket.io/admin-ui";
 import { playerFunctions } from "./handlers/playerHandlers.js";
 import { gameFunctions } from "./handlers/gameHandlers.js";
-// import { on } from "events";
 
 const app = express();
 const httpServer = createServer(app);
-const io = new Server(httpServer, { cors: { origin: "*" } });
+// const io = new Server(httpServer, { cors: { origin: "*" } });
+
+const io = new Server(httpServer, {
+    cors: {
+        origin: [
+            "http://localhost:3000",    // Your React dev server
+            "http://localhost:5173",    // Vite dev server (if using Vite)
+            "https://admin.socket.io"   // Admin UI
+        ], // required for the admin UI
+        methods: ["GET", "POST"],
+        credentials: true,
+    },
+});
 
 global.io = io;
 
@@ -21,7 +30,11 @@ const timers = {};
 const playerHandler = new playerFunctions(players); // Create an instance of player functions
 const gameHandler = new gameFunctions(players, games, timers); // Create an instance of game handler
 
-app.use(cors());
+// app.use(cors());
+instrument(io, {
+    auth: false,
+    mode: "development",
+});
 
 io.on("connection", (socket) => {
     console.log("connection succesfull", socket.id);
@@ -31,9 +44,9 @@ io.on("connection", (socket) => {
     // getPlayerData(socket, players); // Handle getting player data
     playerHandler.onPlayerJoin(socket, games); // Handle player joining
     playerHandler.getPlayerData(socket); // Handle getting player data
+    playerHandler.onRejoinGame(socket, games); // Handle player rejoining
+    playerHandler.onRejoinCancel(socket, games); // Handle player canceling rejoin
     playerHandler.onDisconnect(socket, games); // Handle player disconnection
-
-
 
     // createGame(socket, players, games); // Handle game creation
     // joinGame(socket, players, games); // Handle joining a game
@@ -59,7 +72,8 @@ io.on("connection", (socket) => {
     socket.on("disconnect", (reason) => {
         console.log("Player disconnected", reason);
     });
-
 });
 
-httpServer.listen(3000);
+httpServer.listen(3000, () => {
+    console.log("Server is running on port 3000");
+});

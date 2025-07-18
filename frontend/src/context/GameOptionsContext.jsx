@@ -11,6 +11,7 @@ export function GameOptionsProvider({ children }) {
     })
 
     const updateGameOptions = (newOptions) => {
+        console.log("updating game options", newOptions);
         setGameOptions((prevOptions) => ({
             ...prevOptions,
             ...newOptions

@@ -38,7 +38,7 @@ export function Menu({
     useSocketEvent(socket, "playerJoinedRoom", (gameId, gameStatus) => {
         console.log("Player joined room with gameId:", gameId);
         updatePlayerData({gameId: gameId});
-        updateGameState({ gameId: gameId, gameStatus: gameStatus });
+        updateGameState({ gameId: gameId, "gameStatus": gameStatus });
         emitEvent("roomData", { gameId: gameId });
     });
     useSocketEvent(socket, "roomJoiningFailed", () => setMenuView("default"));

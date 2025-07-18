@@ -4,6 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
+    "dev": "cross-env NODE_ENV=development nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -11,11 +12,15 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "@socket.io/admin-ui": "^0.5.1",
     "chess.js": "^1.2.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
-    "nodemon": "^3.1.10",
     "socket.io": "^4.8.1",
     "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "nodemon": "^3.1.10"
   }
 }

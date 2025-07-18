@@ -1,7 +1,5 @@
 import { randomUUID } from "crypto";
 
-//IMP: there is a bug where when the user refresh after creating a game and leaves when the second player is not connected the game room is getting destroyed but gameId from the player data is not getting null.
-//IMP: Disconnet not working properly. Game Room closed console log is not getting printed when the player disconnects from the game room.
 
 export class playerFunctions {
     constructor(players) {
@@ -25,10 +23,7 @@ export class playerFunctions {
             }
             else if (this.players[playerId] !== undefined && this.players[playerId]["gameId"] !== null) {
                 const gameId = this.players[playerId]["gameId"];
-                if(games[gameId]["gameStatus"] === "room full" || games[gameId]["gameStatus"] === "playing") {
-                    socket.emit("gameFull", "Game is full. Please try joining another game."); // Notify the client if game is full
-                    return;
-                }
+                socket.emit("askForRejoin"); // Ask the player if they want to rejoin the game
                 // else if (this.players[playerId]["playerStatus"] === "disconnected from room") {
                 //     socket.join(this.players[playerId]["gameId"]); // Join the player to the game room
                 //     games[gameId]["gameStatus"] = "room full"; // Update game status if player is in room
@@ -60,6 +55,49 @@ export class playerFunctions {
         });
     }
 
+    onRejoinGame(socket, games) {
+        socket.on("rejoinGame", ({ playerId, gameId}) => {
+            console.log("Rejoin game request", playerId, gameId);
+            if(this.players[playerId] === undefined || games[gameId] === undefined){
+                socket.emit("rejoinFailed", { message: "Player or game not found" });
+                return;
+            }
+            else{
+                const gameStatus = games[gameId]["gameStatus"];
+                socket.join(gameId); // Join the player to the game room
+                this.players[playerId]["gameId"] = gameId; // Associate the player with the game ID
+                if (gameStatus === "waiting for player 2") {
+                    games[gameId]["gameStatus"] = "room full"; // Update game status if player is in room
+                    this.players[playerId]["playerStatus"] = "inRoom"; // Update player status to inGame
+                    global.io.in(gameId).emit("playerRejoinedRoom", this.players[playerId], games[gameId]); // Notify the game room that a player has rejoined
+                }
+                else if (gameStatus === "waiting for reconnection") {
+                    games[gameId]["gameStatus"] = "playing"; // Update game status if player is playing
+                    this.players[playerId]["playerStatus"] = "playing"; // Update player status to playing
+                    global.io.in(gameId).emit("playerRejoinedGame", this.players[playerId], games[gameId]); // Notify the game room that a player has rejoined
+                }
+                console.log("Player rejoined the game room", gameId);
+            }
+        })
+    }
+
+
+    onRejoinCancel(socket, games){
+        socket.on("rejoinCancel", ({ playerId, gameId }) => {
+            if (this.players[playerId] !== undefined && games[gameId] !== undefined) {
+                global.io.in(gameId).emit("playerLeftGame", { message: "Player cancelled rejoin" }); // Notify the game room that the player cancelled rejoin
+                this.players[playerId]["gameId"] = null; // Remove the game ID from the player
+                this.players[playerId]["playerStatus"] = "online"; // Update player status to online
+                delete games[gameId]; // Remove the game from the games object
+                global.io.in(gameId).socketsLeave(gameId); // Make all sockets leave the game room
+                console.log("Player cancelled rejoin", playerId, gameId);
+            } else {
+                console.log("Player not found", playerId);
+                socket.emit("playerNotFound"); // Notify the client if player is not found
+            }
+        })
+    }
+
     onDisconnect(socket, games) {
         socket.on("Disconnect", ({ playerId }) => {
             if (this.players[playerId] !== undefined) {
@@ -77,7 +115,7 @@ export class playerFunctions {
                         games[gameId]["gameStatus"] = "waiting for reconnection"; // Update game status if player is playing
                         this.players[playerId]["playerStatus"] = "disconnected from game"; // Update player status to disconnected from game
                         console.log("player left from the game", gameId);
-                        global.io.in(gameId).emit("playerDisconnected", games[gameId])
+                        global.io.in(gameId).emit("playerDisconnected", games[gameId]["gameStatus"]); // Notify the game room that a player has disconnected
                     }
                     else if (games[gameId]["gameStatus"] === "waiting for player 2" || games[gameId]["gameStatus"] === "waiting for reconnection") {
                         console.log("Game room closed", gameId);

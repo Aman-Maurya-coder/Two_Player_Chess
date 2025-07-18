@@ -130,7 +130,6 @@ function NewGameOptions({ socket, setMenuView }) {
             gameId: gameId
         })
         updateGameState({
-            gameStatus: gameData["gameStatus"],
             gameId: gameId,
             gameStatus: gameData["gameStatus"],
             moveNumber: gameData["moveNumber"],
