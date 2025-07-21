@@ -74,7 +74,11 @@ export class playerFunctions {
                 else if (gameStatus === "waiting for reconnection") {
                     games[gameId]["gameStatus"] = "playing"; // Update game status if player is playing
                     this.players[playerId]["playerStatus"] = "playing"; // Update player status to playing
-                    global.io.in(gameId).emit("playerRejoinedGame", this.players[playerId], games[gameId]); // Notify the game room that a player has rejoined
+                    global.io.in(gameId).emit("playerRejoinedGame", {playerData: this.players[playerId], gameData: {
+                        ...games[gameId],
+                        gameFen: games[gameId].game.fen(),
+                        "gameId": gameId
+                    }}); // Notify the game room that a player has rejoined
                 }
                 console.log("Player rejoined the game room", gameId);
             }

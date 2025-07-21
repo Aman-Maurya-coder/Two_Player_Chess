@@ -35,17 +35,17 @@ export function Menu({
         }
     }, [menuView]);
     // Listening event for the player who is joining the room
-    useSocketEvent(socket, "playerJoinedRoom", (gameId, gameStatus) => {
+    useSocketEvent(socket, "roomJoined", ({gameId, gameStatus, playerSide}) => {
         console.log("Player joined room with gameId:", gameId);
         updatePlayerData({gameId: gameId});
-        updateGameState({ gameId: gameId, "gameStatus": gameStatus });
+        updateGameState({ gameId: gameId, "gameStatus": gameStatus, playerColor: playerSide });
+        console.log("emitting roomData event with gameId:", gameId);
         emitEvent("roomData", { gameId: gameId });
     });
     useSocketEvent(socket, "roomJoiningFailed", () => setMenuView("default"));
     useSocketEvent(socket, "roomDataResponse", (gameData) => {
         console.log("Received room data response:", gameData);
-        const playerSide =
-            gameData["roomPlayers"]["white"] === playerId ? "white" : "black";
+        const playerSide = gameData["roomPlayers"]["white"] === playerId ? "white" : "black";
         updateGameState({
             gameStatus: gameData["gameStatus"],
             moveNumber: gameData["moveNumber"],

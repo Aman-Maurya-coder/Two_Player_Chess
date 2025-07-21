@@ -14,7 +14,7 @@ export function Board({ socket }) {
     // ${window.innerHeight > window.innerWidth ? "" : "w-[50vh]"} have to check it for resizing of the board.
 
     // const {socket} = useSocketContext();
-    const [game, setGame] = useState(new Chess());
+    const { game, setGame } = useGameContext();
     const { gameState, updateGameState } = useGameContext();
     const { setCurrentTurn } = useTimerContext();
     const emitEvent = useSocketEmit(socket);
@@ -34,6 +34,12 @@ export function Board({ socket }) {
             });
         }
     });
+
+    // This will occur only when player reconnects
+    useSocketEmit(socket, "gameDataResponse", ( gameData ) => {
+        console.log("Received game data response:", gameData);
+        setGame(new Chess(gameData.game.fen()));
+    })
 
     useSocketEvent(socket, "gameOver", ({ winner, reason }) => {
         // Handle game over logic here (e.g., show a message, reset the game, etc.)
@@ -104,9 +110,13 @@ export function Board({ socket }) {
     return (
         <div id="chessboard" className="col-start-2 row-start-2">
             <div id="opponent-info">
-                <h2 className="text-2xl text-center font-bold">
+                <span className="text-2xl text-center font-bold">
                     {gameState["opponentName"] || "Opponent"}
-                </h2>
+                </span>
+                <Timer 
+                    socket={socket}
+                    side = {gameState["playerColor"] === "white" ? "black" : "white"} // Pass the opposite side for the opponent's timer
+                />
             </div>
             <div id="board-container" className={`flex justify-center items-center`}>
                 <Chessboard
@@ -132,9 +142,13 @@ export function Board({ socket }) {
             </div>
             {/* <Timer socket={socket} /> */}
             <div id="player-info">
-                <h2 className="text-2xl text-center font-bold">
+                <span className="text-2xl text-center font-bold">
                     {gameState["playerName"] || "You"}
-                </h2>
+                </span>
+                <Timer 
+                    socket={socket}
+                    side = {gameState["playerColor"]} // Pass the player's side for their timer
+                />
             </div>
         </div>
     );

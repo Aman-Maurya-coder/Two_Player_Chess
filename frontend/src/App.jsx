@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { io } from "socket.io-client";
-// import { Board } from "./components/ChessBoard";
+import { Chess } from "chess.js";
 import { Navbar } from "./components/Navbar";
 import { Menu } from "./components/Menu";
 import { AlertDialogBox } from "./components/utils/AlertDialogBox";
@@ -32,7 +32,7 @@ function App() {
 
     const [isConnected, setIsConnected] = useState(false);
     const { playerId, setPlayerId, playerData, updatePlayerData, resetPlayerData } = usePlayerContext();
-    const { gameState, updateGameState, resetGameState } = useGameContext();
+    const { setGame, gameState, updateGameState, resetGameState } = useGameContext();
     const { updateGameOptions } = useGameOptionsContext();
     const { setWhiteTime, setBlackTime, setCurrentTurn } = useTimerContext();
     const [menuView, setMenuView] = useState("default"); // "default", "newGameOptions", etc.
@@ -171,13 +171,13 @@ function App() {
     useSocketEvent(socket, "playerRejoinedRoom", (playerData, gameData) => {
         console.log("Player rejoined room:", playerData);
         updateGameState({
+            gameId: gameData.gameId,
             gameStatus: gameData.gameStatus,
             moveNumber: gameData.moveNumber,
-            timeData: gameData.timeData,
+            timeData: gameData.gameTimer,
         })
-        const time_min = gameData.gameTimer.white/60000;
         updateGameOptions({
-            "time": time_min,
+            "time": gameData.timer,
             "increment": gameData.gameTimer.increment,
             "playerSide": playerId === gameData.roomPlayers.white ? "white" : "black",
         })
@@ -190,26 +190,32 @@ function App() {
         setMenuView("inGameOptions");
     })
 
-    useSocketEvent(socket, "playerRejoinedGame", (playerData, gameData) => {
-        console.log("Player rejoined game:", playerData);
+    useSocketEvent(socket, "playerRejoinedGame", ({playerData, gameData}) => {
+        // console.log("Player rejoined game:", gameData);
+        setGame(new Chess(gameData.gameFen));
         updateGameState({
+            gameId: gameData.gameId,
             gameStatus: gameData.gameStatus,
             moveNumber: gameData.moveNumber,
-            timeData: gameData.timeData,
+            timeData: gameData.gameTimer,
         })
-        const time_min = gameData.gameTimer.white/60000;
         updateGameOptions({
-            "time": time_min,
+            "time": gameData.timer,
             "increment": gameData.gameTimer.increment,
             "playerSide": playerId === gameData.roomPlayers.white ? "white" : "black",
         })
         setWhiteTime(gameData.gameTimer.white);
         setBlackTime(gameData.gameTimer.black);
-        console.log(gameData.game._turn);
+        console.log(gameData.gameFen);
         const currentTurn = gameData.game._turn === "w"? "white" : "black";
         setCurrentTurn(currentTurn);
         updatePlayerData(playerData);
         setMenuView("inGameOptions");
+    })
+    useSocketEvent(socket, "rejoinCanceled", (message) => {
+        console.log(message);
+        resetPlayerData(); // Reset player data
+        resetGameState(); // Reset game state
     })
 
     useSocketEvent(socket, "playerNotFound", () => {

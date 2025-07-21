@@ -123,6 +123,12 @@ function NewGameOptions({ socket, setMenuView }) {
             });
         }
     }, [dialogState]);
+    useSocketEvent(socket, "playerJoinedRoom", ({gameId, gameStatus}) => {
+        // updatePlayerData({gameId: gameId});
+        console.log("player joined room");
+        updateGameState({ gameId: gameId, "gameStatus": gameStatus });
+        // setView("room full");
+    });
 
     useSocketEvent(socket, "gameRoomCreated", ({ gameId, gameData }) => {
         console.log("player joined the new game room :", gameId, gameData);

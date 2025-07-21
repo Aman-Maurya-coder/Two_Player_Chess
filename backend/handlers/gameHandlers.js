@@ -32,6 +32,7 @@ export class gameFunctions {
                     white: playerSide === "white" ? playerId : null,
                     black: playerSide === "black" ? playerId : null
                 },
+                timer: timerControl.time,
                 gameTimer: {
                     white: timerInMs,
                     black: timerInMs,
@@ -70,6 +71,19 @@ export class gameFunctions {
                 socket.emit("gameNotFound", "Game not found");
             }
         });
+    }
+
+    getGameData(socket) {
+        socket.on("gameData", ({ gameId}) => {
+            if (this.games[gameId] !== undefined) {
+                const gameData = this.games[gameId];
+                socket.emit("gameDataResponse", gameData); // Send game data back to the client
+                console.log("Game data sent for game", gameId);
+            } else {
+                console.log("Game not found", gameId);
+                socket.emit("gameNotFound", "Game not found");
+            }
+        })
     }
 
     joinGame(socket) {
@@ -118,7 +132,9 @@ export class gameFunctions {
                 this.games[roomId]["gameStatus"] = "room full"; // Set game status to not started
                 this.players[playerId]["playerStatus"] = "inRoom"; // Initialize player status
                 this.players[playerId]["gameId"]= roomId; // Associate the player with the game ID
-                global.io.in(roomId).emit("playerJoinedRoom", roomId, this.games[roomId]["gameStatus"]);
+                // global.io.in(roomId).emit("playerJoinedRoom", roomId, this.games[roomId]["gameStatus"]);
+                socket.to(roomId).emit("playerJoinedRoom", {"gameId": roomId,"gameStatus": this.games[roomId]["gameStatus"]});
+                socket.emit("roomJoined", {"gameId": roomId, "gameStatus": this.games[roomId]["roomStatus"], "playerSide": this.games[roomId]["roomPlayers"]["white"] === playerId ? "white" : "black"}); // Notify the client that the player has joined the room
             }
             else if (gameId["gameStatus"] === "waiting for reconnection" && this.players[playerId]["playerStatus"] === "disconnected from game") {
                 if(this.games[roomId]["roomPlayers"]["white"] === playerId || this.games[roomId]["roomPlayers"]["black"] === playerId) {
@@ -231,6 +247,7 @@ export class gameFunctions {
     makeMove(socket) {
         socket.on("move", ({ move, gameId }) => {
             const currentGameData = this.games[gameId];
+            console.log("gameId from move function:", gameId);
             if(!currentGameData){
                 socket.emit("invalidGameId", "The gameId is invalid");
                 return;

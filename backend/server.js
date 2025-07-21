@@ -9,13 +9,44 @@ const app = express();
 const httpServer = createServer(app);
 // const io = new Server(httpServer, { cors: { origin: "*" } });
 
+// const io = new Server(httpServer, {
+//     cors: {
+//         origin: [
+//             "http://localhost:3000",   // Your React dev server
+//             "http://localhost:5173",   // Vite dev server (if using Vite)
+//             "https://admin.socket.io", // Admin UI
+//             "https://nrjrsvh4-3000.inc1.devtunnels.ms/", // Your production server
+//             "https://nrjrsvh4-5173.inc1.devtunnels.ms/",
+//         ], // required for the admin UI
+//         methods: ["GET", "POST"],
+//         credentials: true,
+//     },
+// });
 const io = new Server(httpServer, {
     cors: {
-        origin: [
-            "http://localhost:3000",    // Your React dev server
-            "http://localhost:5173",    // Vite dev server (if using Vite)
-            "https://admin.socket.io"   // Admin UI
-        ], // required for the admin UI
+        origin: (origin, callback) => {
+            // Allow requests with no origin (mobile apps, curl, etc.)
+            if (!origin) return callback(null, true);
+            
+            const allowedOrigins = [
+                "http://localhost:3000",
+                "http://localhost:5173",
+                "https://admin.socket.io",
+                "https://nrjrsvh4-5173.inc1.devtunnels.ms",
+                "https://nrjrsvh4-3000.inc1.devtunnels.ms"
+            ];
+            
+            if (allowedOrigins.includes(origin)) {
+                return callback(null, true);
+            }
+            
+            // For development, allow devtunnel origins
+            if (origin.includes('devtunnels.ms')) {
+                return callback(null, true);
+            }
+            
+            callback(new Error('Not allowed by CORS'));
+        },
         methods: ["GET", "POST"],
         credentials: true,
     },
@@ -57,6 +88,7 @@ io.on("connection", (socket) => {
     // getRoomData(socket, games); // Handle getting room data
     gameHandler.createGame(socket); // Handle game creation
     gameHandler.getRoomData(socket); // Handle getting room data
+    gameHandler.getGameData(socket); // Handle getting game data
     gameHandler.joinGame(socket); // Handle joining a game
     gameHandler.makeMove(socket); // Handle moves
     gameHandler.onAbort(socket); // Handle aborting a game

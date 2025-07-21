@@ -21,8 +21,8 @@ function InGameOptions({ socket,menuView, setMenuView }) {
     const { playerId, updatePlayerData, resetPlayerData } = usePlayerContext();
 
     const emitEvent = useSocketEmit(socket);
-
     const [view, setView] = useState(gameState["gameStatus"]);
+    console.log(view);
     const [dialogState, setDialogState] = useState(false);
     const [dialogContent, setDialogContent] = useState({});
     const [isAlertDialogOpen, setIsAlertDialogOpen] = useState(false);
@@ -41,28 +41,40 @@ function InGameOptions({ socket,menuView, setMenuView }) {
             if (winner === playerId) {
                 setDialogContent({
                     title: "Congratulations!",
-                    desc: `You won the game!`,
+                    desc: `You won the game!` + reason
                 });
+                if (reason === "Player left the game") {
+                    setDialogContent((prev) => ({
+                        ...prev,
+                        onClose: () => {
+                            resetGameState();
+                            setDialogState(false);
+                            setMenuView("default");
+                        }
+                    }))
+                }
+
                 setDialogState(true);
             } else {
                 setDialogContent({
                     title: "Game Over",
-                    desc: `You lost the game.`,
+                    desc: `You lost the game.` + reason,
                 });
                 setDialogState(true);
             }
         }
     }, [view]);
 
-    useEffect(() => {
-        if ( gameState.gameStatus === "room full" ){
-            console.log("setting view to room full");
-            setView("room full");
-        }
-    },[menuView, setView, gameState.gameStatus]);
+    // useEffect(() => {
+    //     if ( gameState.gameStatus === "room full" ){
+    //         console.log("setting view to room full");
+    //         setView("room full");
+    //     }
+    // },[menuView, setView, gameState.gameStatus]);
     //Listening event for the player who is waiting in the room
-    useSocketEvent(socket, "playerJoinedRoom", (gameId, gameStatus) => {
-        updatePlayerData({gameId: gameId});
+    useSocketEvent(socket, "playerJoinedRoom", ({gameId, gameStatus}) => {
+        // updatePlayerData({gameId: gameId});
+        console.log("player joined room");
         updateGameState({ gameId: gameId, "gameStatus": gameStatus });
         setView("room full");
     });
@@ -151,6 +163,20 @@ function InGameOptions({ socket,menuView, setMenuView }) {
         })
         setDialogState(true);
         console.log("Play again rejected by the opponent");
+    })
+
+    useSocketEvent(socket, "playerLeftGame", (message) => {
+        console.log(message);
+        updateGameState({
+            gameStatus: "game over",
+            reason: "Player left the game",
+            winner: playerId,
+        });
+        resetGameOptions();
+        resetTimer();
+        resetPlayerData();
+
+        setView("game ended");
     })
 
     function handleAbort() {
@@ -287,7 +313,7 @@ function InGameOptions({ socket,menuView, setMenuView }) {
                     </div>
                 </div>
             )}
-            {view === "room full" && (
+            {(view === "room full" || view === "playing") && (
                 <div className="flex flex-col justify-center items-center w-full h-full gap-5">
                     <Button
                             className="w-[54%] h-[20%] rounded-[15px] bg-highlight text-base/5 font-semibold text-foreground"

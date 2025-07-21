@@ -1,8 +1,10 @@
+import { Chess } from "chess.js";
 import { createContext, useContext, useState } from "react";
 
 export const GameContext = createContext();
 
 export function GameProvider({ children}){
+    const [game, setGame] = useState(new Chess());
     const [gameState, setGameState] = useState({
         gameId: null,
         gameStatus: "not started", // "not started", "playing", "game over"
@@ -21,6 +23,7 @@ export function GameProvider({ children}){
     }
 
     const resetGameState = () => {
+        setGame(new Chess());
         setGameState({
             gameId: null,
             gameStatus: "not started",
@@ -30,7 +33,7 @@ export function GameProvider({ children}){
     }
 
     return (
-        <GameContext.Provider value={{ gameState, updateGameState, resetGameState }}>
+        <GameContext.Provider value={{ game, setGame, gameState, updateGameState, resetGameState }}>
             {children}
         </GameContext.Provider>
     );
