@@ -108,9 +108,10 @@ export function Board({ socket }) {
     }
 
     return (
-        <div id="chessboard" className="col-start-2 row-start-2">
-            <div id="opponent-info">
-                <span className="text-2xl text-center font-bold">
+        //IMP: To make it responsive, have to try copilot approach.
+        <div id="chessboard" className="col-start-2 row-start-2 col-end-3 row-end-3 max-w-[300px] lg:max-w-[450px] w-full">
+            <div id="opponent-info" className="flex flex-row items-center justify-between w-full mb-[4%]">
+                <span className="text-lg text-center font-bold">
                     {gameState["opponentName"] || "Opponent"}
                 </span>
                 <Timer 
@@ -141,8 +142,8 @@ export function Board({ socket }) {
                 />
             </div>
             {/* <Timer socket={socket} /> */}
-            <div id="player-info">
-                <span className="text-2xl text-center font-bold">
+            <div id="player-info" className="flex flex-row items-center justify-between w-full mt-[4%]">
+                <span className="text-lg text-center font-bold">
                     {gameState["playerName"] || "You"}
                 </span>
                 <Timer 

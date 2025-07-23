@@ -12,12 +12,13 @@ import { AlertDialogBox } from "../utils/AlertDialogBox";
 import { DialogBox } from "../utils/DialogBox";
 import { Label } from "@/components/ui/label";
 
-function InGameOptions({ socket,menuView, setMenuView }) {
+function InGameOptions({ socket, menuView, setMenuView }) {
     // const {socket} = useSocketContext();
     // console.log("now in inGameOptions");
     const { gameState, updateGameState, resetGameState } = useGameContext();
     const { gameOptions, resetGameOptions } = useGameOptionsContext();
-    const { setWhiteTime, setBlackTime, setCurrentTurn, resetTimer } = useTimerContext();
+    const { setWhiteTime, setBlackTime, setCurrentTurn, resetTimer } =
+        useTimerContext();
     const { playerId, updatePlayerData, resetPlayerData } = usePlayerContext();
 
     const emitEvent = useSocketEmit(socket);
@@ -41,7 +42,7 @@ function InGameOptions({ socket,menuView, setMenuView }) {
             if (winner === playerId) {
                 setDialogContent({
                     title: "Congratulations!",
-                    desc: `You won the game!` + reason
+                    desc: `You won the game!` + reason,
                 });
                 if (reason === "Player left the game") {
                     setDialogContent((prev) => ({
@@ -50,8 +51,8 @@ function InGameOptions({ socket,menuView, setMenuView }) {
                             resetGameState();
                             setDialogState(false);
                             setMenuView("default");
-                        }
-                    }))
+                        },
+                    }));
                 }
 
                 setDialogState(true);
@@ -72,16 +73,16 @@ function InGameOptions({ socket,menuView, setMenuView }) {
     //     }
     // },[menuView, setView, gameState.gameStatus]);
     //Listening event for the player who is waiting in the room
-    useSocketEvent(socket, "playerJoinedRoom", ({gameId, gameStatus}) => {
+    useSocketEvent(socket, "playerJoinedRoom", ({ gameId, gameStatus }) => {
         // updatePlayerData({gameId: gameId});
         console.log("player joined room");
-        updateGameState({ gameId: gameId, "gameStatus": gameStatus });
+        updateGameState({ gameId: gameId, gameStatus: gameStatus });
         setView("room full");
     });
 
     useSocketEvent(socket, "playerDisconnected", (gameStatusResponse) => {
         updateGameState({
-            "gameStatus": gameStatusResponse,
+            gameStatus: gameStatusResponse,
         });
         setView("waiting for reconnection");
     });
@@ -138,32 +139,32 @@ function InGameOptions({ socket,menuView, setMenuView }) {
             desc: "Your opponent has offered to play again. Do you accept?",
             action: "Accept",
             onAction: handlePlayAgainAccepted,
-            onClose: handlePlayAgainRejected
-        })
+            onClose: handlePlayAgainRejected,
+        });
         setIsAlertDialogOpen(true);
         console.log("Play again offered by the opponent");
-    })
+    });
     useSocketEvent(socket, "gameResetSuccessful", (data) => {
         console.log("Game reset successful, starting a new game");
-        if(dialogState){
+        if (dialogState) {
             setDialogState(false);
         }
         setWhiteTime(gameOptions["time"]);
         setBlackTime(gameOptions["time"]);
         setCurrentTurn("white");
         setView("room full");
-    })
+    });
     useSocketEvent(socket, "playAgainDenied", () => {
-        if(dialogState){
+        if (dialogState) {
             setDialogState(false);
         }
         setDialogContent({
             title: "Play Again Rejected",
             desc: "Your opponent has rejected the play again request.",
-        })
+        });
         setDialogState(true);
         console.log("Play again rejected by the opponent");
-    })
+    });
 
     useSocketEvent(socket, "playerLeftGame", (message) => {
         console.log(message);
@@ -177,7 +178,7 @@ function InGameOptions({ socket,menuView, setMenuView }) {
         resetPlayerData();
 
         setView("game ended");
-    })
+    });
 
     function handleAbort() {
         setAlertDialogContent({
@@ -246,40 +247,40 @@ function InGameOptions({ socket,menuView, setMenuView }) {
         });
     }
 
-	function handlePlayAgain(){
-		emitEvent("playAgain", {
-            "playerId": playerId,
-			"gameId": gameState["gameId"],
-		});
+    function handlePlayAgain() {
+        emitEvent("playAgain", {
+            playerId: playerId,
+            gameId: gameState["gameId"],
+        });
         setDialogContent({
             title: "Play Again Offered",
             desc: "Waiting for the opponent's response.",
-        })
+        });
         setDialogState(true);
         console.log("Play again offered to the opponent");
-	}
+    }
 
     function handlePlayAgainAccepted() {
         console.log("Play again accepted by the opponent");
         const gameData = {
-            "gameTimer": {
-                "white": gameOptions["time"],
-                "black": gameOptions["time"],
+            gameTimer: {
+                white: gameOptions["time"],
+                black: gameOptions["time"],
             },
-            "increment": gameOptions["increment"],
-        }
+            increment: gameOptions["increment"],
+        };
         emitEvent("playAgainAccepted", {
-            "gameId": gameState["gameId"],
-            "gameData": gameData,
-        })
+            gameId: gameState["gameId"],
+            gameData: gameData,
+        });
     }
 
-    function handlePlayAgainRejected(){
+    function handlePlayAgainRejected() {
         console.log("Play again rejected by the opponent");
         setIsAlertDialogOpen(false);
         emitEvent("playAgainRejected", {
-            "gameId": gameState["gameId"],
-        })
+            gameId: gameState["gameId"],
+        });
     }
 
     function exitRoom() {
@@ -297,17 +298,26 @@ function InGameOptions({ socket,menuView, setMenuView }) {
     }
 
     return (
-        
-        <div className="col-start-2 row-start-3 flex flex-col justify-center items-center h-full w-full">
+        <div className="col-start-2 lg:col-start-3 row-start-3 lg:row-start-2 flex flex-col justify-center items-center h-full w-full">
             {console.log(view)}
-            {(view === "waiting for player 2" || view === "waiting for reconnection" || view === "not started") && (
+            {(view === "waiting for player 2" ||
+                view === "waiting for reconnection" ||
+                view === "not started") && (
                 <div className="flex flex-col justify-around items-center w-full h-full">
                     <div className="flex flex-col flex-3/5 items-center justify-center">
                         <h3 className="text-xl text-center">Loading...</h3>
-                        <h3 className="text-lg text-center">{view === "waiting for reconnection" ? "Waiting for the Second Player to Reconnect" : "Waiting for the Second Player"}</h3>
+                        <h3 className="text-lg text-center">
+                            {view === "waiting for reconnection"
+                                ? "Waiting for the Second Player to Reconnect"
+                                : "Waiting for the Second Player"}
+                        </h3>
                     </div>
                     <div className="flex flex-2/5 w-full h-full items-center justify-center">
-                        <Button onClick={exitRoom} size="ui" className="px-[12%] py-[5%] font-semibold text-[17px]/5 rounded-[15px] drop-shadow-2xl">
+                        <Button
+                            onClick={exitRoom}
+                            size="ui"
+                            className="px-[10%] py-[3%] font-semibold text-base/5 rounded-[15px] drop-shadow-2xl"
+                        >
                             Exit Room
                         </Button>
                     </div>
@@ -316,35 +326,45 @@ function InGameOptions({ socket,menuView, setMenuView }) {
             {(view === "room full" || view === "playing") && (
                 <div className="flex flex-col justify-center items-center w-full h-full gap-5">
                     <Button
-                            className="w-[54%] h-[20%] rounded-[15px] bg-highlight text-base/5 font-semibold text-foreground"
-                            onClick={
-                                gameState["moveNumber"] <= 1
-                                    ? handleAbort
-                                    : handleResign
-                            }
-                        >
-                            {gameState["moveNumber"] <= 1 ? "Abort" : "Resign"}
+                        className="w-[54%] h-[20%] rounded-[15px] bg-highlight text-base/5 font-semibold text-foreground"
+                        onClick={
+                            gameState["moveNumber"] <= 1
+                                ? handleAbort
+                                : handleResign
+                        }
+                    >
+                        {gameState["moveNumber"] <= 1 ? "Abort" : "Resign"}
                     </Button>
-                    <Button 
+                    <Button
                         className="w-[54%] h-[20%] rounded-[15px] bg-destructive text-base/5 font-semibold text-foreground"
                         onClick={handleOfflerDraw}
                     >
-                            Offer Draw
+                        Offer Draw
                     </Button>
                 </div>
             )}
             {view === "game ended" && (
-                <div className="flex flex-col justify-around items-center h-full">
-                    <div className="flex flex-col flex-6/10 items-center justify-center">
-                        {/* <button></button> */}
-                        <Label></Label>
-                        <Button size="mine" onClick={handlePlayAgain}>Play Again</Button>
+                <div className="flex flex-col justify-center items-center h-full w-full">
+                    <div className="flex-3/5 flex flex-col justify-evenly items-center ">
+                        <Label>
+                            You{" "}
+                            {gameState?.winner === playerId ? "Won" : "Lost"}
+                        </Label>
+                        <Label>By {gameState?.reason}</Label>
                     </div>
-                    <div className="flex justify-center items-center flex-4/10">
-                        {/* <button></button> */}
-                        <Button onClick={exitRoom} size="mine" className="">
-                            Exit Room
-                        </Button>
+                    <div className="flex-2/5 flex flex-row-reverse justify-around items-center h-full w-full">
+                        <div className="flex items-center justify-center">
+                            {/* <button></button> */}
+                            <Button className="rounded-[15px] " onClick={handlePlayAgain}>
+                                Play Again
+                            </Button>
+                        </div>
+                        <div className="flex justify-center items-center">
+                            {/* <button></button> */}
+                            <Button onClick={exitRoom} variant="outline" className="border-[#2738A5] rounded-[15px]">
+                                Exit Room
+                            </Button>
+                        </div>
                     </div>
                 </div>
             )}

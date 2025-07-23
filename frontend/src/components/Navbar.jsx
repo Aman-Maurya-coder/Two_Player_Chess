@@ -21,7 +21,7 @@ export function Navbar() {
         //     }
 
         // </nav>
-        <div className="sticky top-0 bg-transparent w-full">
+        <div className="relative top-0 bg-transparent w-full">
             <div className="grid grid-cols-[1fr_min(calc(100%-48px),80rem)_1fr] sm:grid-cols-[1fr_min(calc(100%-85px),80rem)_1fr] border-b border-b-secondary-background shadow-nav py-[14px]">
                 <nav className="col-start-2 col-end-3 flex justify-between items-center">
                     <a href="/" className="">

@@ -41,14 +41,14 @@ export function AlertDialogBox({
                         <Button
                             type="button"
                             variant="outline"
-                            className="text-2xl"
-                            size="md"
+                            className="text-base font-poppins font-medium"
+                            size="sm"
                             {...(onClose && { onClick: onClose })}
                         >
                             Cancel
                         </Button>
                     </AlertDialogCancel>
-                    <AlertDialogAction onClick={onAction} className="text-2xl">{action}</AlertDialogAction>
+                    <AlertDialogAction onClick={onAction} className="text-base font-poppins font-medium bg-destructive">{action}</AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>

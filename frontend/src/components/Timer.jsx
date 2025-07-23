@@ -4,7 +4,7 @@ import { useGameContext } from "../context";
 import { Label } from "@/components/ui/label";
 import { cn } from  "@/lib/utils";
 
-export function Timer({socket, classes, side}){
+export function Timer({socket, side}){
     const  { whiteTime, blackTime, currentTurn } = useTimer(socket);
     const { gameState } = useGameContext();
     const [activeTimer, setActiveTimer] = useState([false, false]); // [upperTimer, lowerTimer]
@@ -48,8 +48,8 @@ export function Timer({socket, classes, side}){
     },[]);
                 // bg-(--activeTimer-background) can be used to set background with a custom css variable.
     return (
-        <div className={classes}>  
-            <Label className={cn("dark text-muted py-3 px-7 rounded-md bg-muted-foreground text-4xl",activeTimer[side === "white" ? 1 : 0] ? "bg-destructive text-background" : "bg-highlight text-secondary-background")}>{formatTime(side === "white" ? whiteTime : blackTime)}</Label>
+        <div className="w-[28%] h-[8%] text-center">  
+            <p className={cn("px-2 bg-gray-400 text-gray-700 rounded-[5px] w-full h-full text-lg font-semibold tracking-wide",activeTimer[side === "white" ? 0 : 1] ? "bg-timer-disabled text-timer-disabled-text" : "bg-secondary-foreground text-gray-800")}>{formatTime(side === "white" ? whiteTime : blackTime)}</p>
         </div>
     );
 }

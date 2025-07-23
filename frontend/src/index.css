@@ -110,6 +110,8 @@ html, body, #root{
   --secondary-foreground: #61C9AF;
   --destructive: #DC0040;
   --box-shadow: #0F153E;
+  --timer-disabled: #b3b3b3;
+  --timer-disabled-text: #4d4d4d;
   --font-fraunces: 'Fraunces', serif;
   --font-poppins: 'Poppins', sans-serif;
   --radius: 1.3rem;
@@ -128,6 +130,8 @@ html, body, #root{
   --color-destructive: var(--destructive);
   --color-highlight: var(--highlight);
   --color-box-shadow: var(--box-shadow);
+  --color-timer-disabled: var(--timer-disabled);
+  --color-timer-disabled-text: var(--timer-disabled-text);
   --font-fraunces: var(--font-fraunces);
   --font-poppins: var(--font-poppins);
 
