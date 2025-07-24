@@ -32,7 +32,8 @@ export class gameFunctions {
                     white: playerSide === "white" ? playerId : null,
                     black: playerSide === "black" ? playerId : null
                 },
-                timer: timerControl.time,
+                timer: timerControl.time,   // time control
+                increment: timerControl.increment, // Increment time in seconds
                 gameTimer: {
                     white: timerInMs,
                     black: timerInMs,
@@ -43,10 +44,7 @@ export class gameFunctions {
             this.players[playerId]["gameId"] = gameId; // Associate the player with the game ID
             this.players[playerId]["playerStatus"] = "inRoom"; // Initialize player status
             socket.join(gameId); // Join the player to the game room
-            // socket.in(gameId).emit("playerJoinedGame", {
-            //     playerData: this.players[playerId],
-            //     gameId: gameId,
-            // }); // Notify other players in the game room that a player has joined
+            
             socket.emit("gameRoomCreated", {
                 // playerData: this.players[playerId],
                 gameId: gameId,
@@ -60,10 +58,6 @@ export class gameFunctions {
         socket.on("roomData", ({ gameId }) => {
             if (this.games[gameId] !== undefined) {
                 const gameData = this.games[gameId];
-                // const playerId = this.players.entries().filter((playerData) => {
-                //     return playerData[1]["gameId"] === gameId
-                // })[0]
-                // const playerSide = gameData["roomPlayers"]["white"] === playerId ? "white" : "black";
                 socket.emit("roomDataResponse",gameData); // Send room data back to the client
                 console.log("Room data sent for game", gameId);
             } else {
@@ -215,14 +209,14 @@ export class gameFunctions {
         console.log(`Game ${gameId}: ${player} lost on time`);
     }
 
-    resetGameTimer(gameId, gameData){
+    resetGameTimer(gameId){
         if (this.games[gameId]){
             // this.stopGameTimer(gameId); // Stop any existing timer
             clearInterval(this.timers[gameId]); // Clear the timer if it exists
             this.games[gameId].gameTimer = {
-                white: gameData.gameTimer.white,
-                black: gameData.gameTimer.black,
-                increment: gameData.increment,
+                white: this.games[gameId].timer * 60 * 1000, // Reset white time to initial value in milliseconds
+                black: this.games[gameId].timer * 60 * 1000, // Reset black time to initial value in milliseconds
+                increment: this.games[gameId].increment * 1000, // Convert increment to milliseconds
                 lastMoveTime: null, // Reset last move time
             };
             // this.startGameTimer(gameId); // Start a new timer with the reset values
@@ -304,36 +298,6 @@ export class gameFunctions {
                     reason: reason
                 });
             }
-
-
-            // else if (currentGameData.gameStatus === "playing") {
-            //     const moveResult = currentGameData.game.move(move);
-            //     if (currentGameData.game.game_over()) {
-            //         currentGameData.gameStatus = "game over";
-            //         if (currentGameData.game.turn === "white") 
-            //             currentGameData.gameTimer.white -= timeTaken;
-            //         else
-            //             currentGameData.gameTimer.black -= timeTaken;
-                    
-            //         socket
-            //             .to(gameId)
-            //             .emit("gameOver", {
-            //                 winner: currentGameData.game.turn(),
-            //                 moveNumber: currentGameData.moveNumber,
-            //             });
-            //     }
-            //     if (moveResult) {
-            //         currentGameData.moveNumber++;
-            //         if (currentGameData.game.turn === "white") 
-            //             currentGameData.gameTimer.white -= timeTaken;
-            //         else
-            //             currentGameData.gameTimer.black -= timeTaken;
-            //         socket
-            //             .to(gameId)
-            //             .emit("moveInfo", {moveNumber: currentGameData.moveNumber, timeControls: currentGameData.gameTimer});
-            //     }
-                
-            // }
         });
     }
 
@@ -401,12 +365,12 @@ export class gameFunctions {
     }
 
     onPlayAgainAccept(socket) {
-        socket.on("playAgainAccepted", ({gameId, gameData}) => {
+        socket.on("playAgainAccepted", ({gameId}) => {
             if (this.games[gameId] !== undefined) {
-                this.resetGameTimer(gameId, gameData);
+                this.resetGameTimer(gameId);
                 this.resetGameData(gameId);
                 console.log("Game", gameId, "reset to play again");
-                global.io.in(gameId).emit("gameResetSuccessful", {fen: this.games[gameId]["game"].fen()});
+                global.io.in(gameId).emit("gameResetSuccessful", {gameData: {"time": this.games[gameId]["timer"], "increment": this.games[gameId]["increment"]}});
             }
         })
     }

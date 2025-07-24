@@ -42,7 +42,7 @@ export function Board({ socket }) {
 
     useSocketEvent(socket, "gameOver", ({ winner, reason }) => {
         // Handle game over logic here (e.g., show a message, reset the game, etc.)
-        updateGameState({});
+        // updateGameState({});
         console.log(`Game Over: ${winner} wins! Reason: ${reason}`);
     });
 

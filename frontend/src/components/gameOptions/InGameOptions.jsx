@@ -16,7 +16,7 @@ function InGameOptions({ socket, menuView, setMenuView }) {
     // const {socket} = useSocketContext();
     // console.log("now in inGameOptions");
     const { gameState, updateGameState, resetGameState } = useGameContext();
-    const { gameOptions, resetGameOptions } = useGameOptionsContext();
+    const { gameOptions, updateGameOptions, resetGameOptions } = useGameOptionsContext();
     const { setWhiteTime, setBlackTime, setCurrentTurn, resetTimer } =
         useTimerContext();
     const { playerId, updatePlayerData, resetPlayerData } = usePlayerContext();
@@ -144,13 +144,17 @@ function InGameOptions({ socket, menuView, setMenuView }) {
         setIsAlertDialogOpen(true);
         console.log("Play again offered by the opponent");
     });
-    useSocketEvent(socket, "gameResetSuccessful", (data) => {
+    useSocketEvent(socket, "gameResetSuccessful", ({gameData}) => {
         console.log("Game reset successful, starting a new game");
         if (dialogState) {
             setDialogState(false);
         }
-        setWhiteTime(gameOptions["time"]);
-        setBlackTime(gameOptions["time"]);
+        updateGameOptions({
+            time: gameData["time"],
+            increment: gameData["increment"],
+        })
+        setWhiteTime(gameData["time"]*60*1000);
+        setBlackTime(gameData["time"]*60*1000);
         setCurrentTurn("white");
         setView("room full");
     });
@@ -262,16 +266,9 @@ function InGameOptions({ socket, menuView, setMenuView }) {
 
     function handlePlayAgainAccepted() {
         console.log("Play again accepted by the opponent");
-        const gameData = {
-            gameTimer: {
-                white: gameOptions["time"],
-                black: gameOptions["time"],
-            },
-            increment: gameOptions["increment"],
-        };
+        
         emitEvent("playAgainAccepted", {
             gameId: gameState["gameId"],
-            gameData: gameData,
         });
     }
 
