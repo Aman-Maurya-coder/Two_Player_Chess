@@ -6,9 +6,16 @@ export const TimerContext = createContext();
 
 export function TimerProvider({ children }){
     const { gameOptions } = useGameOptionsContext();
-    const [whiteTime, setWhiteTime] = useState(gameOptions["time"] || 300000); // 5 minutes in ms
-    const [blackTime, setBlackTime] = useState(gameOptions["time"] || 300000); // 5 minutes in ms
+    console.log("using timer", gameOptions["time"]);
+    const [whiteTime, setWhiteTime] = useState(gameOptions["time"] ?? 300000); 
+    const [blackTime, setBlackTime] = useState(gameOptions["time"] ?? 300000);
     const [currentTurn, setCurrentTurn] = useState('white');
+    console.log("using timer", whiteTime, gameOptions["time"]);
+
+    useEffect(() => {
+        setWhiteTime(gameOptions["time"]);
+        setBlackTime(gameOptions["time"]);
+    }, [gameOptions["time"]]);
 
     const resetTimer = () => {
         setWhiteTime(300000);

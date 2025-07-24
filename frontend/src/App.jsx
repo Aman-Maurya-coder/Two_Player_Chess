@@ -59,9 +59,6 @@ function App() {
 
         const handleDisconnect = (reason) => {
             console.log("Socket disconnected", reason);
-            // if( reason === "io server disconnect" || reason === "transport error") {
-            //     localStorage.removeItem("playerId"); // Clear playerId on disconnect
-            // }
             setIsConnected(false); // Update connection status
         };
 
@@ -84,28 +81,12 @@ function App() {
             console.log("Reconnecting player with playerId:", playerId);
             emitEvent("onPlayerJoin", { "playerId":playerId });
             emitEvent("playerData", { playerId });
-
         } else {
             console.log("No playerId found, emitting onPlayerJoin with empty playerId");
             emitEvent("onPlayerJoin", { playerId: "" });
         }
     }, [isConnected]);
-    
-    // console.log(socket);
-    // console.log(emitEvent)
 
-    // // Layout state
-    // const [layoutView, setLayoutView] = useState("landing"); // "landing" or "game"
-
-    // if (!socket.connected) {
-    //     console.error("Socket is not connected");
-    //     return;
-    // }
-    // useSocketEvent(socket, "playerId", useCallback((newPlayerId) => {
-    //     setPlayerId(newPlayerId);
-    //     localStorage.setItem("playerId", JSON.stringify(newPlayerId));
-    //     emitEvent("playerData", { playerId: newPlayerId });
-    // },[]));
     useSocketEvent(socket, "playerId", (newPlayerId) => {
         console.log("Player ID received:", newPlayerId);
         setPlayerId(newPlayerId);
@@ -229,6 +210,7 @@ function App() {
         localStorage.removeItem("playerId");
         setPlayerId(null);
         updatePlayerData({});
+        emitEvent("onPlayerJoin", { playerId: "" }); // Notify server about player disconnection
     })
     useSocketEvent(socket, "playerReconnected", (gameData, timeData) => {
         updateGameState({

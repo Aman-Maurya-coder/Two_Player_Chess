@@ -7,6 +7,7 @@ import {
 
 export function useTimer(socket) {
     const { whiteTime, blackTime, currentTurn, setWhiteTime, setBlackTime, setCurrentTurn } = useTimerContext();
+    console.log("using timer", whiteTime);
     const { updateGameState } = useGameContext();
 
     useSocketEvent(socket, "timeUpdate", ({whiteTime, blackTime, currentTurn}) => {

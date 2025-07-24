@@ -9,6 +9,7 @@ export function GameOptionsProvider({ children }) {
         increment: 0,
         playerSide: "white", // "white" or "black"
     })
+    console.log("using timer", gameOptions.time);
 
     const updateGameOptions = (newOptions) => {
         console.log("updating game options", newOptions);

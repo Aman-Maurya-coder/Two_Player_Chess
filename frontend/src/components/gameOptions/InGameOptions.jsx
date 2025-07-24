@@ -23,7 +23,7 @@ function InGameOptions({ socket, menuView, setMenuView }) {
 
     const emitEvent = useSocketEmit(socket);
     const [view, setView] = useState(gameState["gameStatus"]);
-    console.log(view);
+    // console.log(view);
     const [dialogState, setDialogState] = useState(false);
     const [dialogContent, setDialogContent] = useState({});
     const [isAlertDialogOpen, setIsAlertDialogOpen] = useState(false);
@@ -296,7 +296,7 @@ function InGameOptions({ socket, menuView, setMenuView }) {
 
     return (
         <div className="col-start-2 md:col-start-3 row-start-3 md:row-start-2 flex flex-col justify-center items-center h-full w-full">
-            {console.log(view)}
+            {/* {console.log(view)} */}
             {(view === "waiting for player 2" ||
                 view === "waiting for reconnection" ||
                 view === "not started") && (

@@ -6,6 +6,7 @@ import { cn } from  "@/lib/utils";
 
 export function Timer({socket, side}){
     const  { whiteTime, blackTime, currentTurn } = useTimer(socket);
+    console.log("using timer", whiteTime);
     const { gameState } = useGameContext();
     const [activeTimer, setActiveTimer] = useState([false, false]); // [upperTimer, lowerTimer]
 
@@ -19,7 +20,7 @@ export function Timer({socket, side}){
             setActiveTimer([false, false]); // Deactivate both timers if not in playing state
         }
     }, [gameState["gameStatus"], currentTurn]);
-    console.log(activeTimer);
+    // console.log(activeTimer);
     const formatTime = useCallback((timeInMs) => {
         const totalSeconds = Math.max(0, Math.floor(timeInMs / 1000));
         const minutes = Math.floor(totalSeconds / 60);
@@ -28,7 +29,7 @@ export function Timer({socket, side}){
     },[]);
     
     const timerColor = (turn, side) => {
-        console.log(turn, side);
+        // console.log(turn, side);
         if ((turn === "w" && side === "white") || (turn === "b" && side === "black") ) {
             return true;
         }

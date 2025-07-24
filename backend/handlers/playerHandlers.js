@@ -22,22 +22,10 @@ export class playerFunctions {
                 socket.emit("playerDoesNotExist"); // Notify the client if player is not found
             }
             else if (this.players[playerId] !== undefined && this.players[playerId]["gameId"] !== null) {
-                const gameId = this.players[playerId]["gameId"];
                 socket.emit("askForRejoin"); // Ask the player if they want to rejoin the game
-                // else if (this.players[playerId]["playerStatus"] === "disconnected from room") {
-                //     socket.join(this.players[playerId]["gameId"]); // Join the player to the game room
-                //     games[gameId]["gameStatus"] = "room full"; // Update game status if player is in room
-                //     this.players[playerId]["playerStatus"] = "inRoom"; // Update player status to inGame
-                // } else if (this.players[playerId]["playerStatus"] === "disconnected from game") {
-                //     games[gameId]["gameStatus"] = "playing"; // Update game status if player is playing
-                //     this.players[playerId]["playerStatus"] = "playing"; // Update player status to playing
-                // }
-                // console.log(
-                //     "Player joined game room",this.players[playerId]["gameId"]
-                // );
             }
             else if (this.players[playerId] !== undefined && this.players[playerId]["gameId"] === null){
-                socket.emit("playerAlreadyJoined");
+                socket.emit("playerWithNoGame");
                 delete this.players[playerId];
             }
         });

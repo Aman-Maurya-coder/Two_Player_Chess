@@ -35,10 +35,13 @@ export function Menu({
         }
     }, [menuView]);
     // Listening event for the player who is joining the room
-    useSocketEvent(socket, "roomJoined", ({gameId, gameStatus, playerSide}) => {
+    useSocketEvent(socket, "roomJoined", ({gameId, gameStatus, playerSide, timeControl}) => {
         console.log("Player joined room with gameId:", gameId);
         updatePlayerData({gameId: gameId});
         updateGameState({ gameId: gameId, "gameStatus": gameStatus, playerColor: playerSide });
+        updateGameOptions({
+            "time": timeControl 
+        })
         console.log("emitting roomData event with gameId:", gameId);
         emitEvent("roomData", { gameId: gameId });
     });
