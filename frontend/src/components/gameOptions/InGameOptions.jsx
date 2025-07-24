@@ -40,10 +40,10 @@ function InGameOptions({ socket, menuView, setMenuView }) {
             const winner = gameState["winner"];
             const reason = gameState["reason"];
             if (winner === playerId) {
-                setDialogContent({
-                    title: "Congratulations!",
-                    desc: `You won the game!` + reason,
-                });
+                // setDialogContent({
+                //     title: "Congratulations!",
+                //     desc: `You won the game!` + reason,
+                // });
                 if (reason === "Player left the game") {
                     setDialogContent((prev) => ({
                         ...prev,
@@ -55,13 +55,13 @@ function InGameOptions({ socket, menuView, setMenuView }) {
                     }));
                 }
 
-                setDialogState(true);
+                // setDialogState(true);
             } else {
-                setDialogContent({
-                    title: "Game Over",
-                    desc: `You lost the game.` + reason,
-                });
-                setDialogState(true);
+                // setDialogContent({
+                //     title: "Game Over",
+                //     desc: `You lost the game.` + reason,
+                // });
+                // setDialogState(true);
             }
         }
     }, [view]);
@@ -298,7 +298,7 @@ function InGameOptions({ socket, menuView, setMenuView }) {
     }
 
     return (
-        <div className="col-start-2 lg:col-start-3 row-start-3 lg:row-start-2 flex flex-col justify-center items-center h-full w-full">
+        <div className="col-start-2 md:col-start-3 row-start-3 md:row-start-2 flex flex-col justify-center items-center h-full w-full">
             {console.log(view)}
             {(view === "waiting for player 2" ||
                 view === "waiting for reconnection" ||
@@ -345,23 +345,23 @@ function InGameOptions({ socket, menuView, setMenuView }) {
             )}
             {view === "game ended" && (
                 <div className="flex flex-col justify-center items-center h-full w-full">
-                    <div className="flex-3/5 flex flex-col justify-evenly items-center ">
-                        <Label>
+                    <div className="flex-3/5 flex flex-col justify-center items-center ">
+                        <Label className="font-poppins text-3xl font-bold text-highlight leading-12">
                             You{" "}
                             {gameState?.winner === playerId ? "Won" : "Lost"}
                         </Label>
-                        <Label>By {gameState?.reason}</Label>
+                        <Label className="font-poppins text-base font-normal text-[#999999]">By {gameState?.reason}</Label>
                     </div>
-                    <div className="flex-2/5 flex flex-row-reverse justify-around items-center h-full w-full">
-                        <div className="flex items-center justify-center">
+                    <div className="flex-2/5 flex flex-row-reverse justify-between items-center h-full w-full">
+                        <div className="flex items-center justify-center w-[45%] h-[55%]">
                             {/* <button></button> */}
-                            <Button className="rounded-[15px] " onClick={handlePlayAgain}>
+                            <Button className="rounded-[15px] w-full h-full" onClick={handlePlayAgain}>
                                 Play Again
                             </Button>
                         </div>
-                        <div className="flex justify-center items-center">
+                        <div className="flex justify-center items-center w-[45%] h-[55%]">
                             {/* <button></button> */}
-                            <Button onClick={exitRoom} variant="outline" className="border-[#2738A5] rounded-[15px]">
+                            <Button onClick={exitRoom} variant="outline" className="border-[#2738A5] rounded-[15px] w-full h-full">
                                 Exit Room
                             </Button>
                         </div>

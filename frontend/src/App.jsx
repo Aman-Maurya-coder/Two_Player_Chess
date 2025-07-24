@@ -293,7 +293,7 @@ function App() {
                 </div>
             )}
             {menuView === "inGameOptions" && (
-                <div id="game-container" className="flex-1 grid grid-rows-[1fr_calc(60%)_calc(30%)_1fr] grid-cols-[1fr_calc(85%)_1fr] place-items-center lg:grid-rows-[1fr_calc(80%)_1fr] lg:grid-cols-[1fr_calc(47%)_calc(47%)_1fr] bg-secondary-background">
+                <div id="game-container" className="flex-1 grid grid-rows-[1fr_calc(60%)_calc(30%)_1fr] grid-cols-[1fr_calc(85%)_1fr] place-items-center md:grid-rows-[1fr_calc(80%)_1fr] md:grid-cols-[1fr_calc(47%)_calc(47%)_1fr] bg-secondary-background">
                     <Board socket={socket} />
                     <InGameOptions socket={socket} menuView={menuView} setMenuView={setMenuView} />
                 </div>
