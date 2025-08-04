@@ -1,31 +1,59 @@
-import { createContext, useState, useEffect } from "react";
-import { useGameOptionsContext } from "./index.jsx";
+import { createContext, useState, useEffect, useContext } from "react";
+import { timerManager } from "@/components/utils/timerManager";
 
 export const TimerContext = createContext();
 
-
-export function TimerProvider({ children }){
-    const { gameOptions } = useGameOptionsContext();
-    // console.log("using timer", gameOptions["time"]);
-    const [whiteTime, setWhiteTime] = useState(gameOptions["time"] ?? 300000); 
-    const [blackTime, setBlackTime] = useState(gameOptions["time"] ?? 300000);
-    const [currentTurn, setCurrentTurn] = useState('white');
-    // console.log("using timer", whiteTime, gameOptions["time"]);
+export function TimerProvider({ children }) {
+    const [timerState, setTimerState] = useState({
+        whiteTime: 300000,
+        blackTime: 300000,
+        currentTurn: 'white'
+    });
 
     useEffect(() => {
-        setWhiteTime(gameOptions["time"]);
-        setBlackTime(gameOptions["time"]);
-    }, [gameOptions["time"]]);
+        // Subscribe to timer manager updates
+        const unsubscribe = timerManager.subscribe((newState) => {
+            setTimerState(newState);
+        });
+
+        return unsubscribe;
+    }, []);
 
     const resetTimer = () => {
-        setWhiteTime(300000);
-        setBlackTime(300000);
-        setCurrentTurn('white');
+        timerManager.reset();
+    };
+
+    const setWhiteTime = (time) => {
+        timerManager.updateTime(time, timerState.blackTime, timerState.currentTurn);
+    };
+
+    const setBlackTime = (time) => {
+        timerManager.updateTime(timerState.whiteTime, time, timerState.currentTurn);
+    };
+
+    const setCurrentTurn = (turn) => {
+        timerManager.updateTime(timerState.whiteTime, timerState.blackTime, turn);
     };
 
     return (
-        <TimerContext.Provider value={{ whiteTime, blackTime, currentTurn, setWhiteTime, setBlackTime, setCurrentTurn, resetTimer }}>
+        <TimerContext.Provider value={{ 
+            whiteTime: timerState.whiteTime,
+            blackTime: timerState.blackTime,
+            currentTurn: timerState.currentTurn,
+            setWhiteTime,
+            setBlackTime,
+            setCurrentTurn,
+            resetTimer 
+        }}>
             {children}
         </TimerContext.Provider>
     );
+}
+
+export function useTimerContext() {
+    const context = useContext(TimerContext);
+    if (!context) {
+        throw new Error('useTimerContext must be used within a TimerProvider');
+    }
+    return context;
 }

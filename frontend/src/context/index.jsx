@@ -32,9 +32,9 @@ export function ContextProvider({ children }) {
             <PlayerProvider>
                 <GameProvider>
                     <GameOptionsProvider>
-                        <TimerProvider>
+                        {/* <TimerProvider> */}
                             {children}
-                        </TimerProvider>
+                        {/* </TimerProvider> */}
                     </GameOptionsProvider>
                 </GameProvider>
             </PlayerProvider>

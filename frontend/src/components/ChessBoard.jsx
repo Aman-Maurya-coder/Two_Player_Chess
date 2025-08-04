@@ -14,14 +14,12 @@ export const Board =  memo( function Board ({ socket }) {
     // ${window.innerHeight > window.innerWidth ? "" : "w-[50vh]"} have to check it for resizing of the board.
 
     const { game, setGame, gameState, updateGameState } = useGameContext();
-    const { setCurrentTurn } = useTimerContext();
     const emitEvent = useSocketEmit(socket);
 
-    useSocketEvent(socket, "moveMade", ({ fen, currentTurn }) => {
+    useSocketEvent(socket, "moveMade", ({ fen, _ }) => {
         const gameCopy = new Chess(fen);
         setGame(gameCopy);
-        setCurrentTurn(currentTurn);
-        if (gameCopy.moveNumber() > 0) {
+        if (gameCopy.moveNumber() == 1) {
             updateGameState({
                 gameStatus: "playing",
             });
@@ -74,13 +72,13 @@ export const Board =  memo( function Board ({ socket }) {
                 to: targetSquare,
                 promotion: "q", // always promote to a queen for example simplicity
             };
-            console.log(movee);
+            // console.log(movee);
             const gameCopy = new Chess(game.fen());
             // let result;
             try {
                 const result = gameCopy.move(movee);
-                console.log(result);
-                console.log(gameState["playerColor"]);
+                // console.log(result);
+                // console.log(gameState["playerColor"]);
                 const playerColor =
                     gameState["playerColor"] === "white" ? "w" : "b";
                 if (result && result.color === playerColor) {
@@ -115,14 +113,15 @@ export const Board =  memo( function Board ({ socket }) {
                     <span className="text-lg text-center font-bold">
                         {gameState["opponentName"] || "Opponent"}
                     </span>
-                    <Timer
-                        socket={socket}
-                        side={
-                            gameState["playerColor"] === "white"
-                                ? "black"
-                                : "white"
-                        } // Pass the opposite side for the opponent's timer
-                    />
+                    <TimerProvider>
+                        <Timer
+                            side={
+                                gameState["playerColor"] === "white"
+                                    ? "black"
+                                    : "white"
+                            } // Pass the opposite side for the opponent's timer
+                        />
+                    </TimerProvider>
                 </div>
                 <div id="board-container" className="flex justify-center items-center aspect-square">
                     {console.log("rerendering Chessboard from 130 line.")}
@@ -154,7 +153,6 @@ export const Board =  memo( function Board ({ socket }) {
                     </span>
                     <TimerProvider>
                         <Timer
-                            socket={socket}
                             side={gameState["playerColor"]} // Pass the player's side for their timer
                         />
                     </TimerProvider>

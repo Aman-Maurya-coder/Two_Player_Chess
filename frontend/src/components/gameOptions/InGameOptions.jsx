@@ -5,6 +5,7 @@ import {
     useTimerContext,
     usePlayerContext,
 } from "../../context";
+import { timerManager } from "../utils/timerManager";
 import { useSocketEvent } from "../../hooks/useSocketEvent";
 import { useSocketEmit } from "@/hooks/useSocketEmit";
 import { Button } from "@/components/ui/button";
@@ -16,10 +17,8 @@ export const InGameOptions = memo(function InGameOptions({ socket, menuView, set
     // const {socket} = useSocketContext();
     // console.log("now in inGameOptions");
     const { gameState, updateGameState, resetGameState } = useGameContext();
-    const { gameOptions, updateGameOptions, resetGameOptions } = useGameOptionsContext();
-    const { setWhiteTime, setBlackTime, setCurrentTurn, resetTimer } =
-        useTimerContext();
-    const { playerId, updatePlayerData, resetPlayerData } = usePlayerContext();
+    const { updateGameOptions, resetGameOptions } = useGameOptionsContext();
+    const { playerId, resetPlayerData } = usePlayerContext();
 
     const emitEvent = useSocketEmit(socket);
     const [view, setView] = useState(gameState["gameStatus"]);
@@ -153,9 +152,6 @@ export const InGameOptions = memo(function InGameOptions({ socket, menuView, set
             time: gameData["time"],
             increment: gameData["increment"],
         })
-        setWhiteTime(gameData["time"]*60*1000);
-        setBlackTime(gameData["time"]*60*1000);
-        setCurrentTurn("white");
         setView("room full");
     });
     useSocketEvent(socket, "playAgainDenied", () => {
@@ -178,7 +174,7 @@ export const InGameOptions = memo(function InGameOptions({ socket, menuView, set
             winner: playerId,
         });
         resetGameOptions();
-        resetTimer();
+        timerManager.reset();
         resetPlayerData();
 
         setView("game ended");
@@ -288,7 +284,7 @@ export const InGameOptions = memo(function InGameOptions({ socket, menuView, set
         // Reset all game-related states
         resetGameState();
         resetGameOptions();
-        resetTimer();
+        timerManager.reset();
         resetPlayerData();
 
         setMenuView("default");

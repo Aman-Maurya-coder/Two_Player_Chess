@@ -102,7 +102,6 @@ export const NewGameOptions = memo(function NewGameOptions({ socket, setMenuView
     const { playerId, playerData, updatePlayerData } = usePlayerContext();
     const { gameState, updateGameState } = useGameContext();
     const { updateGameOptions } = useGameOptionsContext();
-    const { setWhiteTime, setBlackTime } = useTimerContext();
     const [dialogState, setDialogState] = useState(false); // State to control the dialog visibility
     const [dialogContent, setDialogContent] = useState({}); // State to hold dialog content
     const gameIdRef = useRef(null);
@@ -144,8 +143,6 @@ export const NewGameOptions = memo(function NewGameOptions({ socket, setMenuView
                     ? "white"
                     : "black",
         });
-        setWhiteTime(gameData["gameTimer"]["white"]);
-        setBlackTime(gameData["gameTimer"]["black"]);
         // console.log(gameState);
         setDialogContent({
             title: "Your Game Code",

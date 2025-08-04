@@ -11,6 +11,7 @@ import { InGameOptions } from "./components/gameOptions/InGameOptions";
 import { useSocketEmit } from "./hooks/useSocketEmit";
 import { useSocketEvent } from "./hooks/useSocketEvent";
 
+import { timerManager } from "./components/utils/timerManager";
 // Import motion (motion.dev)
 // import { AnimatePresence, motion } from "motion/react";
 // import { delay } from "motion";
@@ -34,7 +35,6 @@ export const App = memo(function App() {
     const { playerId, setPlayerId, playerData, updatePlayerData, resetPlayerData } = usePlayerContext();
     const { setGame, gameState, updateGameState, resetGameState } = useGameContext();
     const { updateGameOptions } = useGameOptionsContext();
-    const { setWhiteTime, setBlackTime, setCurrentTurn } = useTimerContext();
     const [menuView, setMenuView] = useState("default"); // "default", "newGameOptions", etc.
     const [isAlertDialogOpen, setIsAlertDialogOpen] = useState(false);
     const [alertDialogContent, setAlertDialogContent] = useState({
@@ -73,6 +73,13 @@ export const App = memo(function App() {
         };
     },[socket]);
     const emitEvent = useSocketEmit(socket);
+
+    useEffect(() => {
+        if (!socket) return;
+        
+        const cleanup = timerManager.initializeSocket(socket);
+        return cleanup;
+    }, [socket]);
 
     useEffect(() => {
         if (!isConnected) return;
@@ -162,13 +169,9 @@ export const App = memo(function App() {
             "increment": gameData.gameTimer.increment,
             "playerSide": playerId === gameData.roomPlayers.white ? "white" : "black",
         })
-        setWhiteTime(gameData.gameTimer.white);
-        setBlackTime(gameData.gameTimer.black);
-        console.log(gameData.game._turn);
-        const currentTurn = gameData.game._turn === "w"? "white" : "black";
-        setCurrentTurn(currentTurn);
         updatePlayerData(playerData);
         setMenuView("inGameOptions");
+        //Timer logic is in useTimer.jsx
     })
 
     useSocketEvent(socket, "playerRejoinedGame", ({playerData, gameData}) => {
@@ -185,13 +188,10 @@ export const App = memo(function App() {
             "increment": gameData.gameTimer.increment,
             "playerSide": playerId === gameData.roomPlayers.white ? "white" : "black",
         })
-        setWhiteTime(gameData.gameTimer.white);
-        setBlackTime(gameData.gameTimer.black);
-        console.log(gameData.gameFen);
-        const currentTurn = gameData.game._turn === "w"? "white" : "black";
-        setCurrentTurn(currentTurn);
+        
         updatePlayerData(playerData);
         setMenuView("inGameOptions");
+        //Timer logic is in useTimer.jsx
     })
     useSocketEvent(socket, "rejoinCanceled", (message) => {
         console.log(message);
@@ -218,9 +218,7 @@ export const App = memo(function App() {
             moveNumber: gameData.moveNumber,
             timeData: timeData,
         });
-        setWhiteTime(timeData.whiteTime);
-        setBlackTime(timeData.blackTime);
-        setCurrentTurn(timeData.currentTurn);
+        //Timer logic is in useTimer.jsx
     });
     useSocketEvent(socket, "reconnectionFailed", (error) => {
         console.error("Reconnection failed:", error);
