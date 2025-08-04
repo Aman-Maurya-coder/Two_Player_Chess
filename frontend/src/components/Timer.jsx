@@ -1,12 +1,12 @@
-import { useCallback, useState, useEffect } from "react";
+import { useCallback, useState, useEffect, memo } from "react";
 import { useTimer } from "../hooks/useTimer";
 import { useGameContext } from "../context";
 import { Label } from "@/components/ui/label";
 import { cn } from  "@/lib/utils";
 
-export function Timer({socket, side}){
+export const Timer =  memo(function Timer({socket, side}){
     const  { whiteTime, blackTime, currentTurn } = useTimer(socket);
-    console.log("using timer", whiteTime);
+    // console.log("using timer", whiteTime);
     const { gameState } = useGameContext();
     const [activeTimer, setActiveTimer] = useState([false, false]); // [upperTimer, lowerTimer]
 
@@ -40,6 +40,4 @@ export function Timer({socket, side}){
             <p className={cn("px-2 bg-timer-disabled text-timer-disabled-text rounded-[5px] w-full h-full text-lg font-semibold tracking-wide",timerColor(currentTurn, side) && "bg-secondary-foreground text-black")}>{formatTime(side === "white" ? whiteTime : blackTime)}</p>
         </div>
     );
-}
-{/* <Label className={cn("dark text-muted py-3 px-7 rounded-md bg-muted-foreground text-4xl",activeTimer[0] ? "bg-primary text-primary-foreground/70" : "")}>{gameState["playerColor"] === "white"?formatTime(blackTime): formatTime(whiteTime)}</Label> */}
-{/* <Label className={cn("dark text-muted py-3 px-7 rounded-md bg-muted-foreground text-4xl",activeTimer[1] ? "bg-primary text-primary-foreground/70" : "")}>{gameState["playerColor"] === "white"?formatTime(whiteTime): formatTime(blackTime)}</Label> */}
+})

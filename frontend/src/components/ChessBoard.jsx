@@ -1,20 +1,19 @@
-import { useState } from "react";
+import { useState, memo } from "react";
 import { Chess } from "chess.js";
 import { Chessboard } from "react-chessboard";
 import { Timer } from "./Timer";
 import { useSocketEvent } from "../hooks/useSocketEvent";
 import { useSocketEmit } from "../hooks/useSocketEmit";
+import { TimerProvider } from "@/context/TimerContext";
 import {
     useGameContext,
     useGameOptionsContext,
     useTimerContext,
 } from "../context";
-export function Board({ socket }) {
+export const Board =  memo( function Board ({ socket }) {
     // ${window.innerHeight > window.innerWidth ? "" : "w-[50vh]"} have to check it for resizing of the board.
 
-    // const {socket} = useSocketContext();
-    const { game, setGame } = useGameContext();
-    const { gameState, updateGameState } = useGameContext();
+    const { game, setGame, gameState, updateGameState } = useGameContext();
     const { setCurrentTurn } = useTimerContext();
     const emitEvent = useSocketEmit(socket);
 
@@ -110,6 +109,7 @@ export function Board({ socket }) {
             id="chessboard"
             className="col-start-2 row-start-2 col-end-3 row-end-3 w-full h-full flex flex-col justify-center items-center p-2"
         >
+            {console.log("rerendering chessboard.jsx")}
             <div className="w-[min(calc(100vw-2rem),calc(100vh-20rem),350px)] md:w-[min(calc(100vw-2rem),calc(100vh-20rem),450px)] lg:w-[min(calc(100vw-2rem),calc(100vh-20rem),550px)] xl:w-[min(calc(100vw-2rem),calc(100vh-20rem),1050px)] aspect-square">
             <div id="opponent-info" className="flex flex-row items-center justify-between w-full mb-[2%]">
                     <span className="text-lg text-center font-bold">
@@ -125,11 +125,12 @@ export function Board({ socket }) {
                     />
                 </div>
                 <div id="board-container" className="flex justify-center items-center aspect-square">
+                    {console.log("rerendering Chessboard from 130 line.")}
                     <Chessboard
                         // boardWidth={100}
                         customBoardStyle={{}} // Set the board size to 50vh
-                        customDarkSquareStyle={{ backgroundColor: "#769656" }} // Dark square color
-                        customLightSquareStyle={{ backgroundColor: "#EEEED2" }} // Light square color
+                        customDarkSquareStyle={{ backgroundColor: "#254CA7" }} // Dark square color
+                        customLightSquareStyle={{ backgroundColor: "#CFDCFC" }} // Light square color
                         customSquareStyles={{ border: "1px solid #000" }} // Square border style
                         position={game.fen()}
                         snapToCursor={true} // Enable snapping to cursor
@@ -151,12 +152,14 @@ export function Board({ socket }) {
                     <span className="text-lg text-center font-bold">
                         {gameState["playerName"] || "You"}
                     </span>
-                    <Timer
-                        socket={socket}
-                        side={gameState["playerColor"]} // Pass the player's side for their timer
-                    />
+                    <TimerProvider>
+                        <Timer
+                            socket={socket}
+                            side={gameState["playerColor"]} // Pass the player's side for their timer
+                        />
+                    </TimerProvider>
                 </div>
             </div>
         </div>
     );
-}
+})

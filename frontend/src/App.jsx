@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import { useState, useEffect, memo, useMemo, useRef } from "react";
 import { io } from "socket.io-client";
 import { Chess } from "chess.js";
 import { Navbar } from "./components/Navbar";
@@ -18,7 +18,7 @@ import { Board } from "./components/ChessBoard";
 // const url = "https://nrjrsvh4-3000.inc1.devtunnels.ms/";
 const url = "http://localhost:3000";
 
-function App() {
+export const App = memo(function App() {
     // const socket = io(url);
     const socket = useMemo(() => {
         return io(url, {
@@ -261,6 +261,7 @@ function App() {
 
     return (
         <div id="main-app" className={`${ menuView !== "inGameOptions" ? "bg-background" : "bg-secondary-background"} h-full flex flex-col `}>
+            {console.log("rerendering App")}
             <Navbar/>
             {menuView !== "inGameOptions" && (
                 <div id="hero-container" className="flex-1 grid grid-rows-[1fr_1fr] grid-flow-col lg:grid-rows-1 lg:grid-cols-2 min-w-[360px] w-full">
@@ -291,6 +292,6 @@ function App() {
             />
         </div>
     );
-}
+})
 
 export default App;

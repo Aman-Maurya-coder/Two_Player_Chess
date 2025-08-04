@@ -1,6 +1,6 @@
 //NOTE: have to implement the dialog box for promotion.
 
-import React, { useState, useRef, useCallback, useEffect } from "react";
+import React, { useState, useRef, useCallback, useEffect, memo } from "react";
 import { z } from "zod/v4";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -88,7 +88,7 @@ const formSchema = z.object({
     player_side: z.enum(playerSideOptions.map((option) => option.value)),
 });
 
-function NewGameOptions({ socket, setMenuView }) {
+export const NewGameOptions = memo(function NewGameOptions({ socket, setMenuView }) {
     // const {socket} = useSocketContext();
     // console.log(socket);
     const form = useForm({
@@ -362,6 +362,6 @@ function NewGameOptions({ socket, setMenuView }) {
             />
         </div>
     );
-}
+})
 
-export { NewGameOptions };
+// export { NewGameOptions };

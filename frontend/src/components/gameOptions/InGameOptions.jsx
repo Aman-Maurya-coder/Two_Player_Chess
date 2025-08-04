@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, memo } from "react";
 import {
     useGameContext,
     useGameOptionsContext,
@@ -12,7 +12,7 @@ import { AlertDialogBox } from "../utils/AlertDialogBox";
 import { DialogBox } from "../utils/DialogBox";
 import { Label } from "@/components/ui/label";
 
-function InGameOptions({ socket, menuView, setMenuView }) {
+export const InGameOptions = memo(function InGameOptions({ socket, menuView, setMenuView }) {
     // const {socket} = useSocketContext();
     // console.log("now in inGameOptions");
     const { gameState, updateGameState, resetGameState } = useGameContext();
@@ -296,7 +296,7 @@ function InGameOptions({ socket, menuView, setMenuView }) {
 
     return (
         <div className="col-start-2 md:col-start-3 row-start-3 md:row-start-2 flex flex-col justify-center items-center h-full w-full">
-            {/* {console.log(view)} */}
+            {console.log("rerendering InGameOptions")}
             {(view === "waiting for player 2" ||
                 view === "waiting for reconnection" ||
                 view === "not started") && (
@@ -388,6 +388,6 @@ function InGameOptions({ socket, menuView, setMenuView }) {
             />
         </div>
     );
-}
+})
 
-export { InGameOptions };
+// export { InGameOptions };
