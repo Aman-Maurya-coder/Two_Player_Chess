@@ -2,7 +2,6 @@ import React, { useState, useEffect, memo } from "react";
 import {
     useGameContext,
     useGameOptionsContext,
-    useTimerContext,
     usePlayerContext,
 } from "../../context";
 import { timerManager } from "../utils/timerManager";

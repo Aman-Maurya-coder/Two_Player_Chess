@@ -4,19 +4,35 @@ class TimerManager {
         this.whiteTime = 300000;
         this.blackTime = 300000;
         this.currentTurn = 'white';
+        this.pendingUpdate = null; // Store pending updates
     }
 
     subscribe(callback) {
         this.listeners.add(callback);
+        
+        // If there's a pending update, apply it immediately
+        if (this.pendingUpdate) {
+            callback(this.pendingUpdate);
+            this.pendingUpdate = null;
+        }
         return () => this.listeners.delete(callback);
     }
 
     notify() {
-        this.listeners.forEach(callback => callback({
-            whiteTime: this.whiteTime,
-            blackTime: this.blackTime,
-            currentTurn: this.currentTurn
-        }));
+        if (this.listeners.size === 0) {
+            // Store the update if no listeners yet
+            this.pendingUpdate = {
+                whiteTime: this.whiteTime,
+                blackTime: this.blackTime,
+                currentTurn: this.currentTurn
+            };
+        } else {
+            this.listeners.forEach(callback => callback({
+                whiteTime: this.whiteTime,
+                blackTime: this.blackTime,
+                currentTurn: this.currentTurn
+            }));
+        }
     }
 
     updateTime(whiteTime, blackTime, currentTurn) {
@@ -67,8 +83,23 @@ class TimerManager {
             this.updateTime(
                 gameData.gameTimer.white,
                 gameData.gameTimer.black,
-                'white'
+                gameData.roomPlayers.white === null ? "black" : "white"
             );
+        };
+        // Handle room joined (for second player joining)
+        const handleRoomJoined = ({ gameId, gameStatus, timeControl }) => {
+            console.log("TimerManager - roomJoined received:", { gameId, gameStatus, timeControl });
+            if (timeControl) {
+                console.log("TimerManager - Updating timer from roomJoined:", timeControl);
+                this.updateTime(timeControl, timeControl, 'white');
+            }
+        };
+
+        // Handle when another player joins your room (for room creator when 2nd player joins)
+        const handlePlayerJoinedRoom = ({ gameId, gameStatus }) => {
+            console.log("TimerManager - playerJoinedRoom received:", { gameId, gameStatus });
+            // This event doesn't contain timer data, so we don't update timer here
+            // The timer should already be set from gameRoomCreated
         };
 
         const handleMoveMade = ({ currentTurn }) => {
@@ -103,11 +134,13 @@ class TimerManager {
         };
 
         // Add all listeners
+        socket.on("gameRoomCreated", handleGameRoomCreated);
+        socket.on("roomJoined", handleRoomJoined);
+        socket.on("playerJoinedRoom", handlePlayerJoinedRoom);
         socket.on("timeUpdate", handleTimeUpdate);
         socket.on("incrementedTime", handleIncrementedTime);
         socket.on("gameTimeout", handleGameTimeout);
         socket.on("playerReconnected", handlePlayerReconnected);
-        socket.on("gameRoomCreated", handleGameRoomCreated);
         socket.on("moveMade", handleMoveMade);
         socket.on("playerRejoinedRoom", handlePlayerRejoinedRoom);
         socket.on("playerRejoinedGame", handlePlayerRejoinedGame);

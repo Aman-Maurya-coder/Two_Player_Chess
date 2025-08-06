@@ -113,7 +113,7 @@ export const Board =  memo( function Board ({ socket }) {
                     <span className="text-lg text-center font-bold">
                         {gameState["opponentName"] || "Opponent"}
                     </span>
-                    <TimerProvider>
+                    {/* <TimerProvider> */}
                         <Timer
                             side={
                                 gameState["playerColor"] === "white"
@@ -121,7 +121,7 @@ export const Board =  memo( function Board ({ socket }) {
                                     : "white"
                             } // Pass the opposite side for the opponent's timer
                         />
-                    </TimerProvider>
+                    {/* </TimerProvider> */}
                 </div>
                 <div id="board-container" className="flex justify-center items-center aspect-square">
                     {console.log("rerendering Chessboard from 130 line.")}
@@ -151,11 +151,11 @@ export const Board =  memo( function Board ({ socket }) {
                     <span className="text-lg text-center font-bold">
                         {gameState["playerName"] || "You"}
                     </span>
-                    <TimerProvider>
+                    {/* <TimerProvider> */}
                         <Timer
                             side={gameState["playerColor"]} // Pass the player's side for their timer
                         />
-                    </TimerProvider>
+                    {/* </TimerProvider> */}
                 </div>
             </div>
         </div>

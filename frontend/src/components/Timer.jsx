@@ -1,27 +1,10 @@
-import { useCallback, useState, useEffect, memo } from "react";
+import { useCallback, memo } from "react";
 import { useTimer } from "../hooks/useTimer";
-import { useGameContext } from "../context";
 import { cn } from "@/lib/utils";
 
 export const Timer = memo(function Timer({ side }) {
     const { whiteTime, blackTime, currentTurn } = useTimer();
-    // console.log("using timer", whiteTime);
-    // const { gameState } = useGameContext();
-    // const [activeTimer, setActiveTimer] = useState([false, false]); // [upperTimer, lowerTimer]
 
-    // useEffect(() => {
-    //     // console.log(gameState["gameStatus"])
-    //     if (gameState["gameStatus"] === "playing") {
-    //         const isWhiteTurn = currentTurn === "w";
-    //         const isPlayerWhite = gameState["playerColor"] === "white";
-    //         setActiveTimer(
-    //             isWhiteTurn && isPlayerWhite ? [false, true] : [true, false]
-    //         );
-    //     } else {
-    //         setActiveTimer([false, false]); // Deactivate both timers if not in playing state
-    //     }
-    // }, [gameState["gameStatus"], currentTurn]);
-    // console.log(activeTimer);
     const formatTime = useCallback((timeInMs) => {
         const totalSeconds = Math.max(0, Math.floor(timeInMs / 1000));
         const minutes = Math.floor(totalSeconds / 60);
@@ -49,6 +32,7 @@ export const Timer = memo(function Timer({ side }) {
                 )}
             >
                 {formatTime(side === "white" ? whiteTime : blackTime)}
+                {console.log(side === "white" ? "whiteTime" : "blackTime")}
             </p>
         </div>
     );

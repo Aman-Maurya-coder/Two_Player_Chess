@@ -4,23 +4,19 @@ import { Chess } from "chess.js";
 import { Navbar } from "./components/Navbar";
 import { Menu } from "./components/Menu";
 import { AlertDialogBox } from "./components/utils/AlertDialogBox";
-// import { Footer } from "./components/Footer";
-// import { Timer } from "./components/Timer";
 import {usePlayerContext, useGameContext,useGameOptionsContext , useTimerContext } from "./context/index.jsx";
 import { InGameOptions } from "./components/gameOptions/InGameOptions";
 import { useSocketEmit } from "./hooks/useSocketEmit";
 import { useSocketEvent } from "./hooks/useSocketEvent";
-
 import { timerManager } from "./components/utils/timerManager";
-// Import motion (motion.dev)
-// import { AnimatePresence, motion } from "motion/react";
-// import { delay } from "motion";
 import { Board } from "./components/ChessBoard";
+
+
 // const url = "https://nrjrsvh4-3000.inc1.devtunnels.ms/";
 const url = "http://localhost:3000";
 
+
 export const App = memo(function App() {
-    // const socket = io(url);
     const socket = useMemo(() => {
         return io(url, {
             reconnection: true,
@@ -29,7 +25,7 @@ export const App = memo(function App() {
             reconnectionDelayMax: 5000,
         });
     }, []);
-    const askForRejoinRef = useRef(false); // Ref to track if rejoin is valid
+    const askForRejoinRef = useRef(false);
 
     const [isConnected, setIsConnected] = useState(false);
     const { playerId, setPlayerId, playerData, updatePlayerData, resetPlayerData } = usePlayerContext();
@@ -49,17 +45,17 @@ export const App = memo(function App() {
         if (!socket) return;
         const handleConnect = () => {
             console.log("Socket connected:", socket.id);
-            setIsConnected(true); // Update connection status
+            setIsConnected(true);
         };
 
         const handleConnectError = (error) => {
             console.error("Socket connection error:", error);
-            setIsConnected(false); // Update connection status
+            setIsConnected(false);
         };
 
         const handleDisconnect = (reason) => {
             console.log("Socket disconnected", reason);
-            setIsConnected(false); // Update connection status
+            setIsConnected(false);
         };
 
         socket.on("connect", handleConnect);
@@ -106,7 +102,7 @@ export const App = memo(function App() {
         updatePlayerData(data);
 
         if (askForRejoinRef.current && data && data.gameId){
-            askForRejoinRef.current = false; // Reset the ref after handling rejoin
+            askForRejoinRef.current = false; 
 
             setTimeout(() => {
                 setAlertDialogContent({
@@ -120,9 +116,9 @@ export const App = memo(function App() {
                     },
                     onClose: () => {
                         setIsAlertDialogOpen(false);
-                        emitEvent("rejoinCancel", { playerId, gameId: data.gameId }); // Notify server about rejoin cancellation
-                        resetPlayerData(); // Reset player data
-                        resetGameState(); // Reset game state
+                        emitEvent("rejoinCancel", { playerId, gameId: data.gameId });cancellation
+                        resetPlayerData(); 
+                        resetGameState(); 
                     },
                 })
                 setIsAlertDialogOpen(true);
@@ -131,10 +127,10 @@ export const App = memo(function App() {
     });
 
     useSocketEvent(socket, "askForRejoin", () => {
-        askForRejoinRef.current = true; // Set the ref to indicate a rejoin is valid
+        askForRejoinRef.current = true;
 
         if (playerData && playerData.gameId){
-            askForRejoinRef.current = false; // Reset the ref if player data is available
+            askForRejoinRef.current = false; 
             setAlertDialogContent({
                 title: "Rejoin Game",
                 desc: "You were disconnected. Do you want to rejoin the game?",
@@ -146,9 +142,9 @@ export const App = memo(function App() {
                 },
                 onClose: () => {
                     setIsAlertDialogOpen(false);
-                    emitEvent("rejoinCancel", { playerId, gameId: playerData.gameId }); // Notify server about rejoin cancellation
-                    resetPlayerData(); // Reset player data
-                    resetGameState(); // Reset game state
+                    emitEvent("rejoinCancel", { playerId, gameId: playerData.gameId }); 
+                    resetPlayerData(); 
+                    resetGameState(); 
                 },
             })
             setIsAlertDialogOpen(true);
@@ -171,11 +167,10 @@ export const App = memo(function App() {
         })
         updatePlayerData(playerData);
         setMenuView("inGameOptions");
-        //Timer logic is in useTimer.jsx
+        //Timer logic is in timerManager.jsx
     })
 
     useSocketEvent(socket, "playerRejoinedGame", ({playerData, gameData}) => {
-        // console.log("Player rejoined game:", gameData);
         setGame(new Chess(gameData.gameFen));
         updateGameState({
             gameId: gameData.gameId,
@@ -191,12 +186,12 @@ export const App = memo(function App() {
         
         updatePlayerData(playerData);
         setMenuView("inGameOptions");
-        //Timer logic is in useTimer.jsx
+        //Timer logic is in timerManager.jsx
     })
     useSocketEvent(socket, "rejoinCanceled", (message) => {
         console.log(message);
-        resetPlayerData(); // Reset player data
-        resetGameState(); // Reset game state
+        resetPlayerData(); 
+        resetGameState();
     })
 
     useSocketEvent(socket, "playerNotFound", () => {
@@ -210,7 +205,7 @@ export const App = memo(function App() {
         localStorage.removeItem("playerId");
         setPlayerId(null);
         updatePlayerData({});
-        emitEvent("onPlayerJoin", { playerId: "" }); // Notify server about player disconnection
+        emitEvent("onPlayerJoin", { playerId: "" });
     })
     useSocketEvent(socket, "playerReconnected", (gameData, timeData) => {
         updateGameState({
@@ -218,7 +213,7 @@ export const App = memo(function App() {
             moveNumber: gameData.moveNumber,
             timeData: timeData,
         });
-        //Timer logic is in useTimer.jsx
+        //Timer logic is in timerManager.jsx
     });
     useSocketEvent(socket, "reconnectionFailed", (error) => {
         console.error("Reconnection failed:", error);
@@ -229,13 +224,11 @@ export const App = memo(function App() {
         if (
             ["playing", "room full", "waiting for reconnection"].includes(gameState.gameStatus)
         ) {
-            // setLayoutView("game");
             setMenuView("inGameOptions");
         } else if (
             gameState.gameStatus === "not started" ||
             gameState.gameStatus === undefined
         ) {
-            // setLayoutView("landing");
             setMenuView("default");
         }
     }, [gameState.gameStatus]);
