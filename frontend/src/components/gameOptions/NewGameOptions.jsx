@@ -218,10 +218,11 @@ export const NewGameOptions = memo(function NewGameOptions({ socket, setMenuView
     );
 
     return (
-        <div className="h-full w-full">
+        <div id="newGameForm" className="h-full w-[90%]">
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
+                    id="form-container"
                     className="grid h-full grid-rows-[25%_25%_25%_25%]"
                 >
                     <FormField
@@ -231,7 +232,7 @@ export const NewGameOptions = memo(function NewGameOptions({ socket, setMenuView
                         render={({ field }) => (
                             <FormItem className="">
                                 <FormLabel htmlFor="time_control">
-                                    Time Control
+                                    Timer
                                 </FormLabel>
                                 <FormControl>
                                     <RadioGroup
@@ -247,7 +248,7 @@ export const NewGameOptions = memo(function NewGameOptions({ socket, setMenuView
                                             >
                                                 <span 
                                                     htmlFor={`t${option.value}`} 
-                                                    className="text-md/2 font-bold tracking-tight"
+                                                    className="text-md/2 font-bold tracking-tight font-fraunces md:text-base/3"
                                                 >
                                                     {option.label}
                                                 </span>

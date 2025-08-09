@@ -26,7 +26,6 @@ export const App = memo(function App() {
         });
     }, []);
     const askForRejoinRef = useRef(false);
-
     const [isConnected, setIsConnected] = useState(false);
     const { playerId, setPlayerId, playerData, updatePlayerData, resetPlayerData } = usePlayerContext();
     const { setGame, gameState, updateGameState, resetGameState } = useGameContext();
@@ -256,7 +255,7 @@ export const App = memo(function App() {
             <Navbar/>
             {menuView !== "inGameOptions" && (
                 <div id="hero-container" className="flex-1 grid grid-rows-[1fr_1fr] grid-flow-col lg:grid-rows-1 lg:grid-cols-2 min-w-[360px] w-full">
-                    <Menu 
+                    <Menu
                         socket={socket}
                         menuView={menuView}
                         setMenuView={setMenuView}
@@ -269,7 +268,7 @@ export const App = memo(function App() {
             {menuView === "inGameOptions" && (
                 <div id="game-container" className="flex-1 grid grid-rows-[1fr_calc(60%)_calc(30%)_1fr] grid-cols-[1fr_calc(85%)_1fr] place-items-center md:grid-rows-[1fr_calc(80%)_1fr] md:grid-cols-[1fr_calc(47%)_calc(47%)_1fr] bg-secondary-background">
                     <Board socket={socket} />
-                    <InGameOptions socket={socket} menuView={menuView} setMenuView={setMenuView} />
+                    <InGameOptions socket={socket} setMenuView={setMenuView} />
                 </div>
             )}
             <AlertDialogBox

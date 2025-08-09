@@ -103,11 +103,11 @@ export function Menu({
                 >
                     <div
                         id="heroHeading"
-                        className="flex justify-center items-center mx-auto"
+                        className="flex justify-center items-center mx-auto md:mb-8"
                     >
-                        <h1 className="text-4xl/13 text-foreground font-black font-fraunces tracking-normal text-center inline lg:text-left lg:text-6xl/19 ">
+                        <h1 className="text-4xl/13 text-foreground font-black font-fraunces tracking-normal text-center inline md:text-6xl/11 md:font-semibold lg:text-left lg:text-5xl/19 ">
                             Welcome to
-                            <span className="font-fraunces text-foreground text-4xl/13 font-black tracking-normal inline lg:text-6xl/19">
+                            <span className="font-fraunces text-foreground text-4xl/13 font-black tracking-normal inline md:bg-gradient-to-b md:from-foreground md:to-highlight md:text-transparent md:bg-clip-text md:from-40% md:to-80% md:text-5xl/11 md:font-bold md:tracking-normal lg:text-6xl/19">
                                 {" "}
                                 Two Player Chess
                             </span>
@@ -115,10 +115,10 @@ export function Menu({
                     </div>
                     <div
                         id="sub-heading"
-                        className="flex justify-center items-start lg:justify-start"
+                        className="flex justify-center items-start lg:justify-start md:mb-[15%]"
                     >
-                        <h3 className="text-highlight text-xl/13 font-fraunces inline text-center font-bold tracking-tight lg:text-left">
-                            Create.Share.Play.Repeat
+                        <h3 className="text-highlight text-xl/13 font-fraunces inline text-center font-bold tracking-tight md:text-2xl/13 lg:text-left">
+                            Create Share Play
                         </h3>
                     </div>
                     <div
@@ -130,7 +130,8 @@ export function Menu({
                             onClick={handleNewGame}
                             className="text-foreground col-start-2 col-end-3"
                         >
-                            <p className="p-0 m-0">New Game</p>
+                            New Game
+                            {/* <p className="p-0 m-0"></p> */}
                         </Button>
                         <Button
                             variant="outline"

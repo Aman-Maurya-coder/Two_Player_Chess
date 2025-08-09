@@ -12,16 +12,12 @@ import { AlertDialogBox } from "../utils/AlertDialogBox";
 import { DialogBox } from "../utils/DialogBox";
 import { Label } from "@/components/ui/label";
 
-export const InGameOptions = memo(function InGameOptions({ socket, menuView, setMenuView }) {
-    // const {socket} = useSocketContext();
-    // console.log("now in inGameOptions");
+export const InGameOptions = memo(function InGameOptions({ socket, setMenuView }) {
     const { gameState, updateGameState, resetGameState } = useGameContext();
     const { updateGameOptions, resetGameOptions } = useGameOptionsContext();
     const { playerId, resetPlayerData } = usePlayerContext();
-
     const emitEvent = useSocketEmit(socket);
     const [view, setView] = useState(gameState["gameStatus"]);
-    // console.log(view);
     const [dialogState, setDialogState] = useState(false);
     const [dialogContent, setDialogContent] = useState({});
     const [isAlertDialogOpen, setIsAlertDialogOpen] = useState(false);
@@ -38,10 +34,6 @@ export const InGameOptions = memo(function InGameOptions({ socket, menuView, set
             const winner = gameState["winner"];
             const reason = gameState["reason"];
             if (winner === playerId) {
-                // setDialogContent({
-                //     title: "Congratulations!",
-                //     desc: `You won the game!` + reason,
-                // });
                 if (reason === "Player left the game") {
                     setDialogContent((prev) => ({
                         ...prev,
@@ -52,27 +44,11 @@ export const InGameOptions = memo(function InGameOptions({ socket, menuView, set
                         },
                     }));
                 }
-
-                // setDialogState(true);
-            } else {
-                // setDialogContent({
-                //     title: "Game Over",
-                //     desc: `You lost the game.` + reason,
-                // });
-                // setDialogState(true);
             }
         }
     }, [view]);
-
-    // useEffect(() => {
-    //     if ( gameState.gameStatus === "room full" ){
-    //         console.log("setting view to room full");
-    //         setView("room full");
-    //     }
-    // },[menuView, setView, gameState.gameStatus]);
     //Listening event for the player who is waiting in the room
     useSocketEvent(socket, "playerJoinedRoom", ({ gameId, gameStatus }) => {
-        // updatePlayerData({gameId: gameId});
         console.log("player joined room");
         updateGameState({ gameId: gameId, gameStatus: gameStatus });
         setView("room full");
@@ -195,7 +171,6 @@ export const InGameOptions = memo(function InGameOptions({ socket, menuView, set
             playerId: playerId,
             gameId: gameState["gameId"],
         });
-        // setMenuView("default");
     }
 
     function handleResign() {
@@ -280,7 +255,6 @@ export const InGameOptions = memo(function InGameOptions({ socket, menuView, set
             gameId: gameState["gameId"],
         });
 
-        // Reset all game-related states
         resetGameState();
         resetGameOptions();
         timerManager.reset();
@@ -346,13 +320,11 @@ export const InGameOptions = memo(function InGameOptions({ socket, menuView, set
                     </div>
                     <div className="flex-2/5 flex flex-row-reverse justify-between items-center h-full w-full">
                         <div className="flex items-center justify-center w-[45%] h-[55%]">
-                            {/* <button></button> */}
                             <Button className="rounded-[15px] w-full h-full" onClick={handlePlayAgain}>
                                 Play Again
                             </Button>
                         </div>
                         <div className="flex justify-center items-center w-[45%] h-[55%]">
-                            {/* <button></button> */}
                             <Button onClick={exitRoom} variant="outline" className="border-[#2738A5] rounded-[15px] w-full h-full">
                                 Exit Room
                             </Button>
@@ -384,5 +356,3 @@ export const InGameOptions = memo(function InGameOptions({ socket, menuView, set
         </div>
     );
 })
-
-// export { InGameOptions };
