@@ -150,10 +150,10 @@ export function Menu({
             )}
 
             {menuView === "joinGameOptions" && (
-                <div id="join-game" className="my-auto w-full">
-                    <div className="flex justify-start items-start">
-                        <h3 className="text-lg font-fraunces font-bold">
-                            Room Code:
+                <div id="join-game" className="my-auto w-full md:w-[90%] md:flex md:flex-col md:h-[90%]">
+                    <div className="flex justify-start items-start md:flex-1/3 md:items-end md:mb-4">
+                        <h3 className="text-lg md:text-3xl font-fraunces font-regular">
+                            Room Code :
                         </h3>
                     </div>
                     <Input
@@ -161,21 +161,21 @@ export function Menu({
                         placeholder="Enter Room Code"
                         value={gameCode}
                         onChange={(e) => setGameCode(e.target.value)}
-                        className="text-black rounded-[10px] bg-foreground" //my-3 text-2xl h-16 text-foreground border-[hsl(26,9%,40%)] border placeholder:text-[#B5A89E] focus-visible:shadow-primary bg-background
+                        className="text-black rounded-[10px] bg-foreground md:h-18" //my-3 text-2xl h-16 text-foreground border-[hsl(26,9%,40%)] border placeholder:text-[#B5A89E] focus-visible:shadow-primary bg-background
                         ref={joinGameRef}
                     />
-                    <div className="grid grid-cols-[calc(7%)_1fr_calc(10%)_1fr_calc(7%)] items-center bottom-0">
+                    <div className="grid grid-cols-[calc(7%)_1fr_calc(10%)_1fr_calc(7%)] items-center bottom-0 md:grid-cols-[calc(35%)_1fr_calc(35%)] md:flex-1/3 md:items-end ">
                         <Button
                             variant="outline"
                             size={"ui"}
-                            className="col-start-2 col-end-3 text-foreground"
+                            className="col-start-2 col-end-3 text-foreground md:col-start-1 md:col-end-2"
                             onClick={() => setMenuView("default")}
                         >
                             Back
                         </Button>
                         <Button
                             size={"ui"}
-                            className="col-start-4 col-end-5 text-foreground"
+                            className="col-start-4 col-end-5 text-foreground md:col-start-3"
                             onClick={handleGameCodeSubmit}
                         >
                             Submit

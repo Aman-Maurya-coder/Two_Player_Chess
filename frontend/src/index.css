@@ -142,6 +142,7 @@ html, body, #root{
   --radius-xl: calc(var(--radius) + 4px);
 
   --shadow-nav: 0px 4px 10px 7px rgba(0, 0, 0, 0.25);
+  --shadow-button: 0 4px 10px 0 var(--color-background); 
 
 
   --tracking-tighter: calc(var(--tracking-normal) - 0.05em);

@@ -10,7 +10,7 @@ import {
     useGameOptionsContext,
     useTimerContext,
 } from "../context";
-export const Board =  memo( function Board ({ socket }) {
+export const Board = memo(function Board({ socket }) {
     // ${window.innerHeight > window.innerWidth ? "" : "w-[50vh]"} have to check it for resizing of the board.
 
     const { game, setGame, gameState, updateGameState } = useGameContext();
@@ -105,25 +105,31 @@ export const Board =  memo( function Board ({ socket }) {
         //IMP: To make it responsive, have to try copilot approach.
         <div
             id="chessboard"
-            className="col-start-2 row-start-2 col-end-3 row-end-3 w-full h-full flex flex-col justify-center items-center p-2"
+            className="col-start-2 row-start-2 col-end-3 row-end-3 w-full h-full flex flex-col justify-center items-center p-2 md:p-0 md:justify-start"
         >
             {console.log("rerendering chessboard.jsx")}
-            <div className="w-[min(calc(100vw-2rem),calc(100vh-20rem),350px)] md:w-[min(calc(100vw-2rem),calc(100vh-20rem),450px)] lg:w-[min(calc(100vw-2rem),calc(100vh-20rem),550px)] xl:w-[min(calc(100vw-2rem),calc(100vh-20rem),1050px)] aspect-square">
-            <div id="opponent-info" className="flex flex-row items-center justify-between w-full mb-[2%]">
+            <div className="h-full flex flex-col">
+                <div
+                    id="opponent-info"
+                    className="flex flex-row items-center justify-between w-full mb-[2%] bg-background md:mb-[5%]"
+                >
                     <span className="text-lg text-center font-bold">
                         {gameState["opponentName"] || "Opponent"}
                     </span>
                     {/* <TimerProvider> */}
-                        <Timer
-                            side={
-                                gameState["playerColor"] === "white"
-                                    ? "black"
-                                    : "white"
-                            } // Pass the opposite side for the opponent's timer
-                        />
+                    <Timer
+                        side={
+                            gameState["playerColor"] === "white"
+                                ? "black"
+                                : "white"
+                        } // Pass the opposite side for the opponent's timer
+                    />
                     {/* </TimerProvider> */}
                 </div>
-                <div id="board-container" className="flex justify-center items-center aspect-square">
+                <div
+                    id="board-container"
+                    className="flex justify-center items-center  w-[min(calc(100vw-4rem),calc(100vh-20rem),350px)] md:w-[min(calc(100vw-2rem),calc(100vh-20rem),450px)] lg:w-[min(calc(100vw-2rem),calc(100vh-20rem),550px)] xl:w-[min(calc(100vw-2rem),calc(100vh-20rem),1050px)] aspect-square"
+                >
                     {console.log("rerendering Chessboard from 130 line.")}
                     <Chessboard
                         // boardWidth={100}
@@ -147,17 +153,20 @@ export const Board =  memo( function Board ({ socket }) {
                     />
                 </div>
                 {/* <Timer socket={socket} /> */}
-                <div id="player-info" className="flex flex-row items-center justify-between w-full mt-[2%]">
+                <div
+                    id="player-info"
+                    className="flex flex-row items-center justify-between w-full mt-[2%] bg-background md:mt-[5%]"
+                >
                     <span className="text-lg text-center font-bold">
                         {gameState["playerName"] || "You"}
                     </span>
                     {/* <TimerProvider> */}
-                        <Timer
-                            side={gameState["playerColor"]} // Pass the player's side for their timer
-                        />
+                    <Timer
+                        side={gameState["playerColor"]} // Pass the player's side for their timer
+                    />
                     {/* </TimerProvider> */}
                 </div>
             </div>
         </div>
     );
-})
+});

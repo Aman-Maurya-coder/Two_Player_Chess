@@ -25,7 +25,7 @@ export function DialogBox({
                 if (onClose) onClose(); // Call the onClose handler if provided
             }
         }}> 
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="sm:max-w-md md:items-center">
                 <DialogHeader>
                     <DialogTitle>{title}</DialogTitle>
                     <DialogDescription>{desc}</DialogDescription>
@@ -33,11 +33,11 @@ export function DialogBox({
 
                 {content && content}
 
-                <DialogFooter className="sm:justify-end">
+                <DialogFooter className="mt-2 md:mt-8">
                     <DialogClose asChild>
                         <Button
                             type="button"
-                            className="col-start-2 col-end-3 "
+                            className="col-start-3 col-end-4 md:col-start-4 md:col-end-7"
                             size="ui"
                             {...(onClose && { onClick: onClose })}
                         >

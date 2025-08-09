@@ -148,20 +148,20 @@ export const NewGameOptions = memo(function NewGameOptions({ socket, setMenuView
             title: "Your Game Code",
             desc: "Share this code with your friend to play with them.",
             content: (
-                <div id="content" className="flex w-full items-center gap-2 mb-2">
+                <div id="content" className="flex w-full items-center gap-2">
                     <Input
                         readOnly
                         type="text"
                         value={gameId || ""}
                         placeholder="Game Code"
-                        className="flex-3/4 h-fit px-10 rounded-full text-lg text-foreground shadow-input border border-[hsl(26,9%,40%)] placeholder:text-[#B5A89E]"
+                        className="flex-3/4 h-fit px-10 rounded-full text-lg text-foreground shadow-input border border-[hsl(26,9%,40%)] placeholder:text-[#B5A89E] md:text-xl"
                         ref={gameIdRef}
                     />
                     <Popover>
                         <PopoverTrigger asChild>
                             <Button
                                 type="submit"
-                                className={"flex-1/4 rounded-full"}
+                                className={"flex-1/4 rounded-full text-center md:h-11 md:text-xl"}
                                 onClick={() => {
                                     window.navigator.clipboard.writeText(
                                         gameIdRef.current.value
@@ -171,7 +171,7 @@ export const NewGameOptions = memo(function NewGameOptions({ socket, setMenuView
                                 Copy
                             </Button>
                         </PopoverTrigger>
-                        <PopoverContent className="flex justify-center items-center w-28 h-6 text-sm">
+                        <PopoverContent className="flex justify-center items-center w-28 h-6 text-sm md:text-xl ">
                             <p>Code Copied</p>
                         </PopoverContent>
                     </Popover>
@@ -218,7 +218,7 @@ export const NewGameOptions = memo(function NewGameOptions({ socket, setMenuView
     );
 
     return (
-        <div id="newGameForm" className="h-full w-[90%]">
+        <div id="newGameForm" className="h-full w-full md:w-[90%]">
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
@@ -244,7 +244,7 @@ export const NewGameOptions = memo(function NewGameOptions({ socket, setMenuView
                                                 key={option.value}
                                                 value={option.value}
                                                 id={`t${option.value}`}
-                                                className="flex justify-center items-center ring-[1px] ring-border data-[state=checked]:ring-2 data-[state=checked]:ring-blue-500"
+                                                className="flex justify-center items-center data-[state=checked]:ring-2 data-[state=checked]:ring-blue-500"
                                             >
                                                 <span 
                                                     htmlFor={`t${option.value}`} 
@@ -278,11 +278,11 @@ export const NewGameOptions = memo(function NewGameOptions({ socket, setMenuView
                                                 key={option.value}
                                                 value={option.value}
                                                 id={`i${option.value}`}
-                                                className="flex justify-center items-center ring-[1px] ring-border py-1 px-3 data-[state=checked]:ring-2 data-[state=checked]:ring-blue-500"
+                                                className="flex justify-center items-center py-1 px-3 data-[state=checked]:ring-2 data-[state=checked]:ring-blue-500"
                                             >
                                                 <span 
                                                     htmlFor={`i${option.value}`}
-                                                    className="text-md font-semibold tracking-tight"
+                                                    className="text-md/2 font-bold tracking-tight font-fraunces md:text-base/3"
                                                 >
                                                     {option.label}
                                                 </span>
@@ -306,17 +306,18 @@ export const NewGameOptions = memo(function NewGameOptions({ socket, setMenuView
                                 <RadioGroup
                                         onValueChange={field.onChange}
                                         defaultValue={field.value}
+                                        className={"md:grid-cols-4"}
                                     >
                                         {playerSideOptions.map((option) => (
                                             <RadioGroupItem 
                                                 key={option.value}
                                                 value={option.value}
                                                 id={`p${option.value}`}
-                                                className="flex justify-center items-center ring-[1px] ring-border py-1 px-3 data-[state=checked]:ring-2 data-[state=checked]:ring-blue-500"
+                                                className=""
                                             >
                                                 <span 
                                                     htmlFor={`p${option.value}`}
-                                                    className="text-md font-semibold tracking-tight"
+                                                    className="text-md/2 font-bold tracking-tight font-fraunces md:text-base/3"
                                                 >
                                                     {option.label}
                                                 </span>
@@ -327,7 +328,7 @@ export const NewGameOptions = memo(function NewGameOptions({ socket, setMenuView
                             </FormItem>
                         )}
                     />
-                    <div className="grid grid-cols-[calc(7%)_1fr_calc(10%)_1fr_calc(7%)] items-center">
+                    <div className="grid grid-cols-[calc(7%)_1fr_calc(10%)_1fr_calc(7%)] md:grid-cols-[calc(36%)_1fr_calc(36%)] items-center">
                         <Button
                             type="button"
                             variant="outline"
@@ -336,11 +337,11 @@ export const NewGameOptions = memo(function NewGameOptions({ socket, setMenuView
                                 setDialogState(false); // Close the dialog if open
                                 setTimeout(() => setMenuView("default"), 50);
                             }}
-                            className="col-start-2 col-end-3 text-foreground"
+                            className="col-start-2 col-end-3 text-foreground md:col-start-1 md:col-end-2 md:shadow-button"
                         >
                             Back
                         </Button>
-                        <Button type="Submit" className="col-start-4 col-end-5 text-foreground" size={"ui"}>
+                        <Button type="Submit" className="col-start-4 col-end-5 text-foreground md:col-start-3 md:shadow-button" size={"ui"}>
                             Submit
                         </Button>
                     </div>
