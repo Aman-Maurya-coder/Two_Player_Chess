@@ -1,8 +1,17 @@
 import { Chess } from "chess.js";
 import { createContext, useContext, useState } from "react";
 
+/**
+ * Game context for managing chess game state throughout the application
+ * Provides game state, chess instance, and state management functions
+ */
 export const GameContext = createContext();
 
+/**
+ * Game context provider component
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Child components
+ */
 export function GameProvider({ children}){
     const [game, setGame] = useState(new Chess());
     const [gameState, setGameState] = useState({
@@ -14,6 +23,10 @@ export function GameProvider({ children}){
         reason: null // Reason for game end, e.g., "checkmate", "stalemate", "resignation", "draw"
     });
 
+    /**
+     * Update game state with new properties
+     * @param {Object} newState - New state properties to merge
+     */
     const updateGameState = (newState) => {
         console.log("Updating game state:", newState);
         setGameState((prevState) => ({
@@ -22,6 +35,9 @@ export function GameProvider({ children}){
         }))
     }
 
+    /**
+     * Reset game state to initial values and create new chess instance
+     */
     const resetGameState = () => {
         setGame(new Chess());
         setGameState({

@@ -1,11 +1,24 @@
 import { randomUUID } from "crypto";
 
-
+/**
+ * Player handler class for managing player operations
+ * Handles player registration, authentication, and connection management
+ */
 export class playerFunctions {
+    /**
+     * Initialize player handler with shared state reference
+     * @param {Object} players - Reference to global players object
+     */
     constructor(players) {
         this.players = players;
     }
 
+    /**
+     * Handle player joining the application
+     * Creates new player ID for new players or validates existing players
+     * @param {Socket} socket - Socket.io socket instance
+     * @param {Object} games - Reference to global games object
+     */
     onPlayerJoin(socket, games) {
         socket.on("onPlayerJoin", ({playerId}) => {
             console.log("player joined", playerId);  
