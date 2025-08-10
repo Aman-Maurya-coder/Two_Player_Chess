@@ -3,11 +3,20 @@ import { time } from "console";
 import { randomUUID } from "crypto";
 import { SocketAddress } from "net";
 
+/**
+ * Game handler class for managing chess game operations
+ * Handles game creation, moves, game state, and real-time communication
+ */
 export class gameFunctions {
+    /**
+     * Initialize game handler with shared state references
+     * @param {Object} players - Reference to global players object
+     * @param {Object} games - Reference to global games object
+     */
     constructor(players, games) {
         this.players = players;
         this.games = games;
-        this.timers = {}; // Store actice timers
+        this.timers = {}; // Store active timers for each game
     }
 
     createGame(socket) {
