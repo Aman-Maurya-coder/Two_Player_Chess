@@ -218,7 +218,7 @@ export const NewGameOptions = memo(function NewGameOptions({ socket, setMenuView
     );
 
     return (
-        <div id="newGameForm" className="h-full w-full md:w-[90%]">
+        <div id="newGameForm" className="h-full w-full md:w-[90%] lg:h-[75%] lg:my-auto ">
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
@@ -248,7 +248,7 @@ export const NewGameOptions = memo(function NewGameOptions({ socket, setMenuView
                                             >
                                                 <span 
                                                     htmlFor={`t${option.value}`} 
-                                                    className="text-md/2 font-bold tracking-tight font-fraunces md:text-base/3"
+                                                    className="text-md/2 font-bold tracking-tight font-fraunces md:text-base/3 lg:text-md/3"
                                                 >
                                                     {option.label}
                                                 </span>
@@ -282,7 +282,7 @@ export const NewGameOptions = memo(function NewGameOptions({ socket, setMenuView
                                             >
                                                 <span 
                                                     htmlFor={`i${option.value}`}
-                                                    className="text-md/2 font-bold tracking-tight font-fraunces md:text-base/3"
+                                                    className="text-md/2 font-bold tracking-tight font-fraunces md:text-base/3 lg:text-md/3"
                                                 >
                                                     {option.label}
                                                 </span>
@@ -317,7 +317,7 @@ export const NewGameOptions = memo(function NewGameOptions({ socket, setMenuView
                                             >
                                                 <span 
                                                     htmlFor={`p${option.value}`}
-                                                    className="text-md/2 font-bold tracking-tight font-fraunces md:text-base/3"
+                                                    className="text-md/2 font-bold tracking-tight font-fraunces md:text-base/3 lg:text-md/3"
                                                 >
                                                     {option.label}
                                                 </span>

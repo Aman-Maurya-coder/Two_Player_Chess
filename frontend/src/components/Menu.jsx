@@ -92,8 +92,8 @@ export function Menu({
             id="menu"
             className={`lg:order-2 flex justify-center ${
                 menuView === "newGameOptions" || menuView === "joinGameOptions"
-                    ? "m-[calc(100vh*0.04)]"
-                    : "m-[6%]"
+                    ? "m-[calc(100vh*0.04)] lg:m-0"
+                    : "m-[6%] lg:mr-[12%] lg:m-0"
             } h-full overflow-x-hidden`}
         >
             {menuView === "default" && (
@@ -103,11 +103,11 @@ export function Menu({
                 >
                     <div
                         id="heroHeading"
-                        className="flex justify-center items-center mx-auto md:mb-8"
+                        className="flex justify-center items-center mx-auto md:mb-8 lg:mb-2"
                     >
-                        <h1 className="text-4xl/13 text-foreground font-black font-fraunces tracking-normal text-center inline md:text-6xl/11 md:font-semibold lg:text-left lg:text-5xl/19 ">
+                        <h1 className="text-4xl/13 text-foreground font-black font-fraunces tracking-normal text-center inline md:text-6xl/11 md:font-semibold lg:text-left lg:text-3xl/12 lg:tracking-wide ">
                             Welcome to
-                            <span className="font-fraunces text-foreground text-4xl/13 font-black tracking-normal inline md:bg-gradient-to-b md:from-foreground md:to-highlight md:text-transparent md:bg-clip-text md:from-40% md:to-80% md:text-5xl/11 md:font-bold md:tracking-normal lg:text-6xl/19">
+                            <span className="font-fraunces text-foreground text-4xl/13 font-black tracking-normal inline md:bg-gradient-to-b md:from-foreground md:to-highlight md:text-transparent md:bg-clip-text md:from-40% md:to-80% md:text-5xl/11 md:font-bold md:tracking-normal lg:text-3xl/12 lg:tracking-wide">
                                 {" "}
                                 Two Player Chess
                             </span>
@@ -117,18 +117,18 @@ export function Menu({
                         id="sub-heading"
                         className="flex justify-center items-start lg:justify-start md:mb-[15%]"
                     >
-                        <h3 className="text-highlight text-xl/13 font-fraunces inline text-center font-bold tracking-tight md:text-2xl/13 lg:text-left">
+                        <h3 className="text-highlight text-xl/13 font-fraunces inline text-center font-bold tracking-tight md:text-2xl/13 lg:text-left lg:text-lg/13">
                             Create Share Play
                         </h3>
                     </div>
                     <div
                         id="hero-buttons"
-                        className="grid grid-cols-[calc(7%)_1fr_calc(10%)_1fr_calc(7%)] w-full h-full items-center bottom-0"
+                        className="grid grid-cols-[calc(7%)_1fr_calc(10%)_1fr_calc(7%)] w-full h-full items-center bottom-0 lg:grid-cols-[1fr_calc(10%)_1fr]"
                     >
                         <Button
                             size="ui"
                             onClick={handleNewGame}
-                            className="text-foreground col-start-2 col-end-3"
+                            className="text-foreground col-start-2 col-end-3 md:shadow-button lg:col-start-1 lg:col-end-2"
                         >
                             New Game
                             {/* <p className="p-0 m-0"></p> */}
@@ -137,7 +137,7 @@ export function Menu({
                             variant="outline"
                             size="ui"
                             onClick={handleJoinGame}
-                            className="text-foreground col-start-4 col-end-5"
+                            className="text-foreground col-start-4 col-end-5 md:shadow-button lg:col-start-3 lg:col-end-4"
                         >
                             Join Game
                         </Button>
@@ -150,9 +150,9 @@ export function Menu({
             )}
 
             {menuView === "joinGameOptions" && (
-                <div id="join-game" className="my-auto w-full md:w-[90%] md:flex md:flex-col md:h-[90%]">
-                    <div className="flex justify-start items-start md:flex-1/3 md:items-end md:mb-4">
-                        <h3 className="text-lg md:text-3xl font-fraunces font-regular">
+                <div id="join-game" className="my-auto w-full md:w-[90%] md:flex md:flex-col md:h-[90%] lg:h-[70%] ">
+                    <div className="flex justify-start items-start md:flex-1/3 md:items-end md:mb-4 lg:mb-2 ">
+                        <h3 className="text-lg md:text-3xl font-fraunces font-regular lg:text-lg">
                             Room Code :
                         </h3>
                     </div>
@@ -161,21 +161,21 @@ export function Menu({
                         placeholder="Enter Room Code"
                         value={gameCode}
                         onChange={(e) => setGameCode(e.target.value)}
-                        className="text-black rounded-[10px] bg-foreground md:h-18" //my-3 text-2xl h-16 text-foreground border-[hsl(26,9%,40%)] border placeholder:text-[#B5A89E] focus-visible:shadow-primary bg-background
+                        className="text-black rounded-[10px] bg-foreground md:h-18 lg:h-10 " //my-3 text-2xl h-16 text-foreground border-[hsl(26,9%,40%)] border placeholder:text-[#B5A89E] focus-visible:shadow-primary bg-background
                         ref={joinGameRef}
                     />
-                    <div className="grid grid-cols-[calc(7%)_1fr_calc(10%)_1fr_calc(7%)] items-center bottom-0 md:grid-cols-[calc(35%)_1fr_calc(35%)] md:flex-1/3 md:items-end ">
+                    <div className="grid grid-cols-[calc(7%)_1fr_calc(10%)_1fr_calc(7%)] items-center bottom-0 md:grid-cols-[calc(35%)_1fr_calc(35%)] md:flex-3/5 md:items-end lg:grid-cols-[calc(45%)_1fr_calc(45%)] lg:pb-15 ">
                         <Button
                             variant="outline"
                             size={"ui"}
-                            className="col-start-2 col-end-3 text-foreground md:col-start-1 md:col-end-2"
+                            className="col-start-2 col-end-3 text-foreground md:col-start-1 md:col-end-2 md:shadow-button"
                             onClick={() => setMenuView("default")}
                         >
                             Back
                         </Button>
                         <Button
                             size={"ui"}
-                            className="col-start-4 col-end-5 text-foreground md:col-start-3"
+                            className="col-start-4 col-end-5 text-foreground md:col-start-3 md:shadow-button"
                             onClick={handleGameCodeSubmit}
                         >
                             Submit

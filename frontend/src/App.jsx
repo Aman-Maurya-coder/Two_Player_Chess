@@ -254,14 +254,14 @@ export const App = memo(function App() {
             {console.log("rerendering App")}
             <Navbar/>
             {menuView !== "inGameOptions" && (
-                <div id="hero-container" className="flex-1 grid grid-rows-[1fr_1fr] grid-flow-col lg:grid-rows-1 lg:grid-cols-2 min-w-[360px] w-full">
+                <div id="hero-container" className="flex-1 grid grid-rows-[1fr_1fr] grid-flow-col lg:grid-rows-1 lg:grid-cols-[6fr_4fr] min-w-[360px] w-full ">
                     <Menu
                         socket={socket}
                         menuView={menuView}
                         setMenuView={setMenuView}
                     />
-                    <div id="hero-image" className="flex items-center justify-center h-full lg:order-1">
-                        <img src="../src/assets/hero_image_v2.svg" alt="chess image" width={821} height={380} className="" />
+                    <div id="hero-image" className="flex items-center justify-center h-full lg:order-1 lg:object-cover lg:[mask-image:linear-gradient(to_left,transparent_25%,black_40%)] lg:[mask-repeat:no-repeat] lg:[mask-size:130%_100%]">
+                        <img src="../src/assets/hero_image_v2.svg" alt="chess image" width={821} height={380} className="lg:h-[250px] " />
                     </div>
                 </div>
             )}

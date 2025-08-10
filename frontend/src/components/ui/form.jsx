@@ -54,7 +54,7 @@ function FormItem({
 
   return (
     <FormItemContext.Provider value={{ id }}>
-      <div data-slot="form-item" className={cn("", className)} {...props} />
+      <div data-slot="form-item" className={cn("lg:mr-5", className)} {...props} />
     </FormItemContext.Provider>
   );
 }
@@ -69,7 +69,7 @@ function FormLabel({
     <Label
       data-slot="form-label"
       data-error={!!error}
-      className={cn("data-[error=true]:text-destructive text-lg/13 font-bold md:text-2xl/15 md:tracking-widest font-fraunces", className)}
+      className={cn("data-[error=true]:text-destructive text-lg/13 font-fraunces font-bold md:text-2xl/15 md:tracking-widest lg:text-lg/10 lg:tracking-normal", className)}
       htmlFor={formItemId}
       {...props} />
   );
