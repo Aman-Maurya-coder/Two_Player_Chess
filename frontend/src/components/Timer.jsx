@@ -23,7 +23,7 @@ export const Timer = memo(function Timer({ side }) {
     }, []);
 
     return (
-        <div className={cn("w-[28%] h-8 flex items-center flex-col justify-center px-2 bg-timer-disabled text-timer-disabled-text rounded-[5px] text-lg font-semibold tracking-wide text-center md:shadow-[0_0_8px_5px_rgba(0,0,0,0.3)] md:h-10 md:text-xl md:tracking-normal", timerColor(currentTurn, side) && "bg-secondary-foreground text-black")}>
+        <div className={cn("w-[28%] h-8 flex items-center flex-col justify-center px-2 bg-timer-disabled text-timer-disabled-text rounded-[5px] text-lg font-semibold tracking-wide text-center md:shadow-[0_0_8px_5px_rgba(0,0,0,0.3)] md:h-10 md:text-xl md:tracking-normal lg:h-7 lg:text-base", timerColor(currentTurn, side) && "bg-secondary-foreground text-black")}>
                 {formatTime(side === "white" ? whiteTime : blackTime)}
                 {console.log(side === "white" ? "whiteTime" : "blackTime")}
         </div>

@@ -264,15 +264,15 @@ export const InGameOptions = memo(function InGameOptions({ socket, setMenuView }
     }
 
     return (
-        <div className="col-start-2 lg:col-start-3 row-start-3 lg:row-start-2 flex flex-col justify-center items-center h-full w-full">
+        <div className="col-start-2 lg:col-start-3 row-start-3 lg:row-start-2 flex flex-col justify-center items-center h-full w-full ">
             {console.log("rerendering InGameOptions")}
             {(view === "waiting for player 2" ||
                 view === "waiting for reconnection" ||
                 view === "not started") && (
-                <div className="flex flex-col justify-around items-center w-full h-full">
+                <div className="flex flex-col justify-around items-center w-full h-full lg:h-[70%] ">
                     <div className="flex flex-col flex-3/5 items-center justify-center">
                         {/* <h3 className="text-xl text-center">Loading...</h3> */}
-                        <h3 className="text-lg text-center text-foreground md:text-2xl md:font-semibold md:tracking-normal ">
+                        <h3 className="text-lg text-center text-foreground md:text-2xl md:font-semibold md:tracking-normal lg:text-xl lg:tracking-normal">
                             {view === "waiting for reconnection"
                                 ? "Waiting for the Second Player to Reconnect"
                                 : "Waiting for the Second Player"}
@@ -282,7 +282,7 @@ export const InGameOptions = memo(function InGameOptions({ socket, setMenuView }
                         <Button
                             onClick={exitRoom}
                             size="ui"
-                            className="px-[10%] py-[3%] font-semibold text-base/5 rounded-[15px] drop-shadow-2xl md:col-start-2 md:col-end-3 md:py-7 md:shadow-button "
+                            className="px-[10%] py-[3%] font-semibold text-base/5 rounded-[15px] drop-shadow-2xl md:col-start-2 md:col-end-3 md:py-7 md:shadow-button lg:py-3"
                         >
                             Exit Room
                         </Button>
@@ -290,9 +290,9 @@ export const InGameOptions = memo(function InGameOptions({ socket, setMenuView }
                 </div>
             )}
             {(view === "room full" || view === "playing") && (
-                <div className="flex flex-col-reverse justify-center items-center w-full h-full gap-5 md:gap-10 md:pt-10">
+                <div className="flex flex-col-reverse justify-center items-center w-full h-full gap-5 md:gap-10 md:pt-10 lg:p-0">
                     <Button
-                        className="w-[54%] h-[20%] rounded-[15px] bg-destructive text-base/5 font-semibold text-foreground md:w-[34%] md:h-[25%] md:shadow-button"
+                        className="w-[54%] h-[20%] rounded-[15px] bg-destructive text-base/5 font-semibold text-foreground md:w-[34%] md:h-[25%] md:shadow-button lg:h-[13%]"
                         onClick={
                             gameState["moveNumber"] <= 1
                                 ? handleAbort
@@ -302,7 +302,7 @@ export const InGameOptions = memo(function InGameOptions({ socket, setMenuView }
                         {gameState["moveNumber"] <= 1 ? "Abort" : "Resign"}
                     </Button>
                     <Button
-                        className="w-[54%] h-[20%] rounded-[15px] bg-highlight text-base/5 font-semibold text-foreground md:w-[34%] md:h-[25%] md:shadow-button"
+                        className="w-[54%] h-[20%] rounded-[15px] bg-highlight text-base/5 font-semibold text-foreground md:w-[34%] md:h-[25%] md:shadow-button lg:h-[13%] "
                         onClick={handleOfflerDraw}
                     >
                         Offer Draw

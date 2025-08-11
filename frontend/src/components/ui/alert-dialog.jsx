@@ -47,7 +47,7 @@ function AlertDialogContent({
       <AlertDialogPrimitive.Content
         data-slot="alert-dialog-content"
         className={cn(
-          "bg-background p-6 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border shadow-lg duration-200 sm:max-w-lg md:max-w-xl",
+          "bg-background p-6 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border shadow-lg duration-200 sm:max-w-lg md:max-w-xl lg:max-w-md",
           className
         )}
         {...props} />
@@ -86,7 +86,7 @@ function AlertDialogTitle({
   return (
     <AlertDialogPrimitive.Title
       data-slot="alert-dialog-title"
-      className={cn("text-2xl font-bold font-fraunces md:text-3xl/normal", className)}
+      className={cn("text-2xl font-bold font-fraunces md:text-3xl/normal lg:text-xl/5", className)}
       {...props} />
   );
 }
@@ -98,7 +98,7 @@ function AlertDialogDescription({
   return (
     <AlertDialogPrimitive.Description
       data-slot="alert-dialog-description"
-      className={cn("text-muted-foreground font-fraunces font-normal text-base md:text-lg md:tracking-tight", className)}
+      className={cn("text-muted-foreground font-fraunces font-normal text-base md:text-lg md:tracking-tight lg:text-md", className)}
       {...props} />
   );
 }

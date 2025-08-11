@@ -148,20 +148,20 @@ export const NewGameOptions = memo(function NewGameOptions({ socket, setMenuView
             title: "Your Game Code",
             desc: "Share this code with your friend to play with them.",
             content: (
-                <div id="content" className="flex w-full items-center gap-2">
+                <div id="content" className="flex w-full items-center gap-2 h-fit">
                     <Input
                         readOnly
                         type="text"
                         value={gameId || ""}
                         placeholder="Game Code"
-                        className="flex-3/4 h-fit px-10 rounded-full text-lg text-foreground shadow-input border border-[hsl(26,9%,40%)] placeholder:text-[#B5A89E] md:text-xl"
+                        className="flex-3/4 h-fit px-10 rounded-full text-lg text-foreground shadow-input border border-[hsl(26,9%,40%)] placeholder:text-[#B5A89E] md:text-xl "
                         ref={gameIdRef}
                     />
                     <Popover>
                         <PopoverTrigger asChild>
                             <Button
                                 type="submit"
-                                className={"flex-1/4 rounded-full text-center md:h-11 md:text-xl"}
+                                className={"flex-1/4 rounded-full text-center md:h-11 md:text-xl lg:text-md lg:h-7"}
                                 onClick={() => {
                                     window.navigator.clipboard.writeText(
                                         gameIdRef.current.value
@@ -171,8 +171,8 @@ export const NewGameOptions = memo(function NewGameOptions({ socket, setMenuView
                                 Copy
                             </Button>
                         </PopoverTrigger>
-                        <PopoverContent className="flex justify-center items-center w-28 h-6 text-sm md:text-xl ">
-                            <p>Code Copied</p>
+                        <PopoverContent className="flex justify-center items-center w-28 h-6 text-sm md:text-xl lg:w-fit lg:px-4">
+                            <p className="lg:text-sm">Code Copied</p>
                         </PopoverContent>
                     </Popover>
                 </div>
