@@ -12,7 +12,10 @@ import { AlertDialogBox } from "../utils/AlertDialogBox";
 import { DialogBox } from "../utils/DialogBox";
 import { Label } from "@/components/ui/label";
 
-export const InGameOptions = memo(function InGameOptions({ socket, setMenuView }) {
+export const InGameOptions = memo(function InGameOptions({
+    socket,
+    setMenuView,
+}) {
     const { gameState, updateGameState, resetGameState } = useGameContext();
     const { updateGameOptions, resetGameOptions } = useGameOptionsContext();
     const { playerId, resetPlayerData } = usePlayerContext();
@@ -118,7 +121,7 @@ export const InGameOptions = memo(function InGameOptions({ socket, setMenuView }
         setIsAlertDialogOpen(true);
         console.log("Play again offered by the opponent");
     });
-    useSocketEvent(socket, "gameResetSuccessful", ({gameData}) => {
+    useSocketEvent(socket, "gameResetSuccessful", ({ gameData }) => {
         console.log("Game reset successful, starting a new game");
         if (dialogState) {
             setDialogState(false);
@@ -126,7 +129,7 @@ export const InGameOptions = memo(function InGameOptions({ socket, setMenuView }
         updateGameOptions({
             time: gameData["time"],
             increment: gameData["increment"],
-        })
+        });
         setView("room full");
     });
     useSocketEvent(socket, "playAgainDenied", () => {
@@ -236,7 +239,7 @@ export const InGameOptions = memo(function InGameOptions({ socket, setMenuView }
 
     function handlePlayAgainAccepted() {
         console.log("Play again accepted by the opponent");
-        
+
         emitEvent("playAgainAccepted", {
             gameId: gameState["gameId"],
         });
@@ -312,20 +315,34 @@ export const InGameOptions = memo(function InGameOptions({ socket, setMenuView }
             {view === "game ended" && (
                 <div className="flex flex-col justify-center items-center h-full w-full">
                     <div className="flex-3/5 flex flex-col justify-center items-center">
-                        <Label className="font-poppins text-3xl font-bold text-highlight leading-12">
+                        <Label
+                            className={`font-poppins text-3xl font-bold text-highlight leading-12 ${
+                                gameState?.winner !== playerId &&
+                                "text-destructive/60"
+                            }`}
+                        >
                             You{" "}
                             {gameState?.winner === playerId ? "Won" : "Lost"}
                         </Label>
-                        <Label className="font-poppins text-base font-normal text-[#999999]">By {gameState?.reason}</Label>
+                        <Label className="font-poppins text-base font-normal text-[#999999]">
+                            By {gameState?.reason}
+                        </Label>
                     </div>
-                    <div className="flex-2/5 flex flex-row-reverse justify-between items-center h-full w-full md:grid md:grid-cols-3 md:[direction:rtl]">
-                        <div className="flex items-center justify-center w-[45%] h-[55%] md:col-start-1 md:col-end-2 md:w-full">
-                            <Button className="rounded-[15px] w-full h-full shadow-button" onClick={handlePlayAgain}>
+                    <div className="flex-2/5 flex flex-row-reverse justify-between items-center h-full w-full md:grid md:grid-cols-[1fr_calc(10%)_1fr] md:[direction:rtl] lg:[direction:initial]">
+                        <div className="flex items-center justify-center w-[45%] h-[55%] md:col-start-1 md:col-end-2 md:w-full lg:h-[30%] lg:w-[75%] lg:mx-auto">
+                            <Button
+                                className="rounded-[15px] w-full h-full md:shadow-button "
+                                onClick={handlePlayAgain}
+                            >
                                 Play Again
                             </Button>
                         </div>
-                        <div className="flex justify-center items-center w-[45%] h-[55%] md:col-start-3 md:col-end-4 md:w-full">
-                            <Button onClick={exitRoom} variant="outline" className="border-[#2738A5] rounded-[15px] w-full h-full shadow-button">
+                        <div className="flex justify-center items-center w-[45%] h-[55%] md:col-start-3 md:col-end-4 md:w-full lg:h-[30%] lg:w-[75%] lg:mx-auto">
+                            <Button
+                                onClick={exitRoom}
+                                variant="outline"
+                                className="border-[#2738A5] rounded-[15px] w-full h-full md:shadow-button"
+                            >
                                 Exit Room
                             </Button>
                         </div>
@@ -355,4 +372,4 @@ export const InGameOptions = memo(function InGameOptions({ socket, setMenuView }
             />
         </div>
     );
-})
+});

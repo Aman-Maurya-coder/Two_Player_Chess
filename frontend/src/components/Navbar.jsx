@@ -25,11 +25,11 @@ export const Navbar = memo(function Navbar() {
                             />
                         </button>
                     ) : (
-                        <div className="flex flex-row space-x-25  font-sans ">
+                        <div className="flex flex-row space-x-25 items-center font-sans sm:text-lg md:text-xl lg:text-base">
                             <button onClick={toggleMenu}>Close</button>
-                            <Label>Home</Label>
-                            <Label>About</Label>
-                            <Label>Help</Label>
+                            <a className="sm:text-lg md:text-lg lg:text-base text-center">Home</a>
+                            <a className="sm:text-lg md:text-lg lg:text-base text-center">About</a>
+                            <a className="sm:text-lg md:text-lg lg:text-base text-center">Help</a>
                         </div>
                     )}
                 </nav>
