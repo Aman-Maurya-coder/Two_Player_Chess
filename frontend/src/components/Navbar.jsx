@@ -20,7 +20,7 @@ export const Navbar = memo(function Navbar() {
                     </a>
                     
                     {/* Desktop Menu - Hidden on mobile */}
-                    <div className="hidden md:flex flex-row space-x-6 items-center font-sans text-base">
+                    <div className="hidden md:flex flex-row space-x-16 items-center font-sans text-base">
                         <a href="#" className="text-center hover:text-gray-600 transition-colors">Home</a>
                         <a href="#" className="text-center hover:text-gray-600 transition-colors">About</a>
                         <a href="#" className="text-center hover:text-gray-600 transition-colors">Help</a>
