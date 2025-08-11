@@ -105,10 +105,10 @@ export const Board = memo(function Board({ socket }) {
         //IMP: To make it responsive, have to try copilot approach.
         <div
             id="chessboard"
-            className="col-start-2 row-start-2 col-end-3 row-end-3 w-full h-full flex flex-col justify-center items-center p-2 md:p-0 md:justify-start "
+            className="col-start-2 row-start-2 col-end-3 row-end-3 w-full h-full flex flex-col justify-center items-center p-2 md:p-0 md:justify-start lg:row-start-1 lg:row-end-4"
         >
             {console.log("rerendering chessboard.jsx")}
-            <div className="h-full flex flex-col">
+            <div className="h-full flex flex-col justify-center">
                 <div
                     id="opponent-info"
                     className="flex flex-row items-center justify-between w-full mb-[2%] md:mb-[5%]"
@@ -128,7 +128,7 @@ export const Board = memo(function Board({ socket }) {
                 </div>
                 <div
                     id="board-container"
-                    className="flex justify-center items-center  w-[min(calc(100vw-4rem),calc(100vh-20rem),350px)] md:w-[min(calc(100vw-2rem),calc(100vh-20rem),450px)] lg:w-[min(calc(100vw-2rem),calc(100vh-15rem),550px)] xl:w-[min(calc(100vw-2rem),calc(100vh-20rem),1050px)] aspect-square md:shadow-button"
+                    className="flex justify-center items-center  w-[min(calc(100vw-4rem),calc(100vh-20rem),350px)] md:w-[min(calc(100vw-2rem),calc(100vh-20rem),450px)] lg:w-[min(calc(100vw-2rem),calc(100vh-12rem),550px)] xl:w-[min(calc(100vw-2rem),calc(100vh-20rem),1050px)] aspect-square md:shadow-button"
                 >
                     {console.log("rerendering Chessboard from 130 line.")}
                     <Chessboard
