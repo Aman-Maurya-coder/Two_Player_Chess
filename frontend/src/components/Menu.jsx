@@ -11,6 +11,8 @@ import {
 } from "../context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import * as motion from "motion/react-client"
+import { animate, easeInOut } from "motion";
 
 export function Menu({
     socket,
@@ -137,9 +139,20 @@ export function Menu({
                             variant="outline"
                             size="ui"
                             onClick={handleJoinGame}
-                            className="text-foreground col-start-4 col-end-5 md:shadow-button lg:col-start-3 lg:col-end-4"
+                            className="text-foreground col-start-4 col-end-5 md:shadow-button lg:col-start-3 lg:col-end-4 box-border"
+                            asChild
                         >
-                            Join Game
+                            <motion.button
+                                whileHover={{
+                                  scale: 1.01,
+                                  borderColor: "#3b82f6", // blue-500
+                                  transition: { duration:0.1  }
+                                }}
+                                whileTap={{ scale: 0.95 }}
+                            >
+                                Join Game
+                            </motion.button>
+                            {/* Join Game */}
                         </Button>
                     </div>
                 </div>
