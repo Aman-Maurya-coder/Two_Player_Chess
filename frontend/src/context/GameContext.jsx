@@ -1,5 +1,5 @@
 import { Chess } from "chess.js";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useRef } from "react";
 
 /**
  * Game context for managing chess game state throughout the application
@@ -13,7 +13,8 @@ export const GameContext = createContext();
  * @param {React.ReactNode} props.children - Child components
  */
 export function GameProvider({ children}){
-    const [game, setGame] = useState(new Chess());
+    const gameRef = useRef(new Chess());
+    const game = gameRef.current;
     const [gameState, setGameState] = useState({
         gameId: null,
         gameStatus: "not started", // "not started", "playing", "game over"
@@ -39,7 +40,7 @@ export function GameProvider({ children}){
      * Reset game state to initial values and create new chess instance
      */
     const resetGameState = () => {
-        setGame(new Chess());
+        game.reset(); // Reset the chess instance to its initial state
         setGameState({
             gameId: null,
             gameStatus: "not started",
@@ -49,7 +50,7 @@ export function GameProvider({ children}){
     }
 
     return (
-        <GameContext.Provider value={{ game, setGame, gameState, updateGameState, resetGameState }}>
+        <GameContext.Provider value={{ game, gameState, updateGameState, resetGameState }}>
             {children}
         </GameContext.Provider>
     );

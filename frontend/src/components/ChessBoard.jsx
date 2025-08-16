@@ -1,4 +1,4 @@
-import { useState, memo } from "react";
+import { useState, memo, useCallback } from "react";
 import { Chess } from "chess.js";
 import { Chessboard } from "react-chessboard";
 import { Timer } from "./Timer";
@@ -13,18 +13,149 @@ import {
 export const Board = memo(function Board({ socket }) {
     // ${window.innerHeight > window.innerWidth ? "" : "w-[50vh]"} have to check it for resizing of the board.
 
-    const { game, setGame, gameState, updateGameState } = useGameContext();
+    const { game, gameState, updateGameState } = useGameContext();
+    const { gameOptions } = useGameOptionsContext();
     const emitEvent = useSocketEmit(socket);
 
+    const [chessPosition, setChessPosition] = useState(game.fen());
+    const [moveFrom, setMoveFrom] = useState('');
+    const [optionSquares, setOptionSquares] = useState({});
+
+    const getMoveOptions = useCallback((square) => {
+        // get the moves for the square
+        if (game.turn() !== (gameOptions.playerSide === "white" ? "w" : "b")) {
+            // if it's not the player's turn, clear the option squares and return false
+            setOptionSquares({});
+            return false;
+        }
+        const moves = game.moves({
+            square,
+            verbose: true,
+        });
+        console.log("Moves for square:", square,":\n", moves);
+
+        // if no moves, clear the option squares
+        if (moves.length === 0) {
+            setOptionSquares({});
+            return false;
+        }
+
+        // create a new object to store the option squares
+        const newSquares= {};
+
+        // loop through the moves and set the option squares
+        for (const move of moves) {
+            newSquares[move.to] = {
+                background:
+                    game.get(move.to) &&
+                    game.get(move.to)?.color !==
+                        game.get(square)?.color
+                        ? "radial-gradient(circle, rgba(0,0,0,.1) 85%, transparent 85%)" // larger circle for capturing
+                        : "radial-gradient(circle, rgba(0,0,0,.1) 25%, transparent 25%)",
+                // smaller circle for moving
+                borderRadius: "50%",
+            };
+        }
+
+        // set the square clicked to move from to yellow
+        newSquares[square] = {
+            background: "rgba(255, 255, 0, 0.4)",
+        };
+
+        // set the option squares
+        setOptionSquares(newSquares);
+
+        // return true to indicate that there are move options
+        return true;
+    },[game, optionSquares, gameOptions.playerSide]);
+
+    const onSquareClick = useCallback((square, piece) => {
+        // piece clicked to move
+        if (!moveFrom && !piece) {
+            return;
+        }
+
+        if (!moveFrom && piece) {
+            // get the move options for the square
+            const hasMoveOptions = getMoveOptions(square);
+
+            // if move options, set the moveFrom to the square
+            if (hasMoveOptions) {
+                setMoveFrom(square);
+            }
+
+            // return early
+            return;
+        }
+
+        // square clicked to move to, check if valid move
+        const moves = game.moves({
+            square: moveFrom,
+            verbose: true,
+        });
+        const foundMove = moves.find(
+            (m) => m.from === moveFrom && m.to === square
+        );
+
+        // not a valid move
+        if (!foundMove) {
+            // check if clicked on new piece
+            const hasMoveOptions = getMoveOptions(square);
+
+            // if new piece, setMoveFrom, otherwise clear moveFrom
+            setMoveFrom(hasMoveOptions ? square : "");
+
+            // return early
+            return;
+        }
+
+        // is normal move
+        try {
+            const gameCopy = new Chess(chessPosition);
+            gameCopy.move({
+                from: moveFrom,
+                to: square,
+                promotion: "q",
+            });
+        } catch {
+            // if invalid, setMoveFrom and getMoveOptions
+            const hasMoveOptions = getMoveOptions(square);
+
+            // if new piece, setMoveFrom, otherwise clear moveFrom
+            if (hasMoveOptions) {
+                setMoveFrom(square);
+            }
+
+            // return early
+            return;
+        }
+
+        // update the position state
+        const movee = game.move({
+            from: moveFrom,
+            to: square,
+            promotion: 'q'
+        });
+        emitEvent("move", {
+            move: movee,
+            gameId: gameState["gameId"], // Assuming gameId is available in the scope
+        });
+        // setChessPosition(chessGame.fen());
+
+        // clear moveFrom and optionSquares
+        setMoveFrom("");
+        setOptionSquares({});
+    },[moveFrom, game, gameState, gameOptions.playerSide, emitEvent]);
+
     useSocketEvent(socket, "moveMade", ({ fen, _ }) => {
-        const gameCopy = new Chess(fen);
-        setGame(gameCopy);
-        if (gameCopy.moveNumber() == 1) {
+        setChessPosition(fen);
+        game.load(fen); // Update the chess instance with the new FEN
+        if (game.moveNumber() == 1) {
             updateGameState({
                 gameStatus: "playing",
             });
         }
-        if (gameCopy.turn() === "w") {
+        if (game.turn() === "w") {
             updateGameState({
                 moveNumber: gameState["moveNumber"] + 1,
             });
@@ -132,12 +263,11 @@ export const Board = memo(function Board({ socket }) {
                 >
                     {console.log("rerendering Chessboard from 130 line.")}
                     <Chessboard
-                        // boardWidth={100}
                         customBoardStyle={{}} // Set the board size to 50vh
                         customDarkSquareStyle={{ backgroundColor: "#254CA7" }} // Dark square color
                         customLightSquareStyle={{ backgroundColor: "#CFDCFC" }} // Light square color
-                        customSquareStyles={{ border: "1px solid #000" }} // Square border style
-                        position={game.fen()}
+                         // Square border style
+                        position={chessPosition}
                         snapToCursor={true} // Enable snapping to cursor
                         showBoardNotation={true} // Show board notation
                         showPromotionDialog={true} // Show promotion dialog when a pawn is promoted
@@ -150,6 +280,8 @@ export const Board = memo(function Board({ socket }) {
                             gameState["gameStatus"] === "room full" ||
                             gameState["gameStatus"] === "playing"
                         } // Disable dragging when game is over
+                        onSquareClick={onSquareClick}
+                        customSquareStyles={optionSquares} // Apply custom styles to option squares
                     />
                 </div>
                 {/* <Timer socket={socket} /> */}
