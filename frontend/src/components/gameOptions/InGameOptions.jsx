@@ -254,10 +254,16 @@ export const InGameOptions = memo(function InGameOptions({
     }
 
     function exitRoom() {
-        emitEvent("closeRoom", {
-            gameId: gameState["gameId"],
-        });
-
+        if (view === "waiting for player 2" ||
+            view === "waiting for reconnection" ||
+            view === "not started"){
+                emitEvent("closeRoom", {
+                    gameId: gameState["gameId"],
+                });
+        }
+        else{
+            emitEvent("Disconnect", {playerId});
+        }
         resetGameState();
         resetGameOptions();
         timerManager.reset();
