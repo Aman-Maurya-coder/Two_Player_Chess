@@ -13,7 +13,7 @@ import {
 export const Board = memo(function Board({ socket }) {
     // ${window.innerHeight > window.innerWidth ? "" : "w-[50vh]"} have to check it for resizing of the board.
 
-    const { game, gameState, updateGameState } = useGameContext();
+    const { game, gameState, updateGameState, resetGameState } = useGameContext();
     const { gameOptions } = useGameOptionsContext();
     const emitEvent = useSocketEmit(socket);
 
@@ -185,10 +185,26 @@ export const Board = memo(function Board({ socket }) {
 
     useSocketEvent(socket, "gameResetSuccessful", ({ fen }) => {
         console.log("Game reset successful");
-        setGame(new Chess(fen)); // Reset the game state with the provided FEN
+    
+        // Store values to preserve
+        const preservedData = {
+            gameId: gameState.gameId,
+            playerColor: gameState.playerColor
+        };
+        
+        // Reset using context method
+        resetGameState();
+        
+        // Restore preserved data
         updateGameState({
-            gameStatus: "room full",
+            ...preservedData,
+            gameStatus: "room full"
         });
+        
+        // Sync visual board
+        setChessPosition(game.fen());
+        setMoveFrom("");
+        setOptionSquares({});
     });
 
     useSocketEvent(socket, "roomClosed", (_) => {

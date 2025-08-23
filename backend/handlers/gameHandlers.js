@@ -461,11 +461,9 @@ export class gameFunctions {
     onPlayAgainReject(socket) {
         socket.on("playAgainRejected", ({ gameId }) => {
             if (this.games[gameId] !== undefined) {
-                global.io
-                    .in(gameId)
-                    .emit("playAgainDenied", {
-                        message: "Play again offer rejected",
-                    });
+                socket.in(gameId).emit("playAgainDenied", {
+                    message: "Play again offer rejected",
+                });
                 console.log("Play again offer rejected for game", gameId);
             } else {
                 console.log("Game not found for play again rejection", gameId);
