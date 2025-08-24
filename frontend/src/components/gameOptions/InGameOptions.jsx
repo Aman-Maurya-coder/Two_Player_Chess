@@ -110,6 +110,12 @@ export const InGameOptions = memo(function InGameOptions({
     useSocketEvent(socket, "drawDenied", (data) => {
         console.log("Draw offer rejected by the opponent");
     });
+    useSocketEvent(socket, "playerRejoinedGame", ({playerData, gameData}) => {
+        updateGameState({
+            gameStatus: gameData["gameStatus"],
+        })
+        setView("playing");
+    })
     useSocketEvent(socket, "playAgainOffered", () => {
         setAlertDialogContent({
             title: "Play Again Offered",

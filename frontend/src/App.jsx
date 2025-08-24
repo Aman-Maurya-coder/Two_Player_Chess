@@ -28,7 +28,7 @@ export const App = memo(function App() {
     const askForRejoinRef = useRef(false);
     const [isConnected, setIsConnected] = useState(false);
     const { playerId, setPlayerId, playerData, updatePlayerData, resetPlayerData } = usePlayerContext();
-    const { setGame, gameState, updateGameState, resetGameState } = useGameContext();
+    const { game, gameState, updateGameState, resetGameState } = useGameContext();
     const { updateGameOptions } = useGameOptionsContext();
     const [menuView, setMenuView] = useState("default"); // "default", "newGameOptions", etc.
     const [isAlertDialogOpen, setIsAlertDialogOpen] = useState(false);
@@ -170,7 +170,7 @@ export const App = memo(function App() {
     })
 
     useSocketEvent(socket, "playerRejoinedGame", ({playerData, gameData}) => {
-        setGame(new Chess(gameData.gameFen));
+        game.load(gameData.gameFen);
         updateGameState({
             gameId: gameData.gameId,
             gameStatus: gameData.gameStatus,
