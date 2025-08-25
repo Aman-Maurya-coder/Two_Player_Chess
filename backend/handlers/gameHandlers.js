@@ -429,6 +429,12 @@ export class gameFunctions {
         socket.on("playAgain", ({ playerId, gameId }) => {
             console.log("play Again request recieved");
             if (this.games[gameId] !== undefined) {
+                console.log("Game found for play again request", gameId);
+                if (global.io.of("/").adapter.rooms.get(gameId)?.size <= 2){
+                    console.log("No player in room to offer play again");
+                    socket.emit("playAgainFailed");
+                }
+                else{
                 socket.in(gameId).emit("playAgainOffered");
                 console.log(
                     "Play again offered by player",
@@ -436,6 +442,7 @@ export class gameFunctions {
                     "for game",
                     gameId
                 );
+                }
             }
         });
     }

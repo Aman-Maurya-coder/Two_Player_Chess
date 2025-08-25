@@ -90,11 +90,18 @@ export class playerFunctions {
     onRejoinCancel(socket, games){
         socket.on("rejoinCancel", ({ playerId, gameId }) => {
             if (this.players[playerId] !== undefined && games[gameId] !== undefined) {
-                global.io.in(gameId).emit("playerLeftGame", { message: "Player cancelled rejoin" }); // Notify the game room that the player cancelled rejoin
                 this.players[playerId]["gameId"] = null; // Remove the game ID from the player
                 this.players[playerId]["playerStatus"] = "online"; // Update player status to online
-                delete games[gameId]; // Remove the game from the games object
-                global.io.in(gameId).socketsLeave(gameId); // Make all sockets leave the game room
+                if (global.io.of("/").adapter.rooms.get(gameId)?.size === 0){
+                    console.log("Game room closed", gameId);
+                    global.io.in(gameId).socketsLeave(gameId); // Make all sockets leave the game room
+                    delete games[gameId]; // Remove the game from the games object
+                }
+                else{
+                    console.log("Player has left the room and not rejoininig", gameId);
+                    games[gameId]["gameStatus"] = "waiting for player 2"; // Update game status if player is in room
+                    global.io.in(gameId).emit("playerLeftGame", { message: "Player cancelled rejoin" }); // Notify the game room that the player cancelled rejoin
+                }
                 console.log("Player cancelled rejoin", playerId, gameId);
             } else {
                 console.log("Player not found", playerId);

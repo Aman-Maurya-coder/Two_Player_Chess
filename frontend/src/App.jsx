@@ -1,10 +1,9 @@
 import { useState, useEffect, memo, useMemo, useRef } from "react";
 import { io } from "socket.io-client";
-import { Chess } from "chess.js";
 import { Navbar } from "./components/Navbar";
 import { Menu } from "./components/Menu";
 import { AlertDialogBox } from "./components/utils/AlertDialogBox";
-import {usePlayerContext, useGameContext,useGameOptionsContext , useTimerContext } from "./context/index.jsx";
+import {usePlayerContext, useGameContext,useGameOptionsContext } from "./context/index.jsx";
 import { InGameOptions } from "./components/gameOptions/InGameOptions";
 import { useSocketEmit } from "./hooks/useSocketEmit";
 import { useSocketEvent } from "./hooks/useSocketEvent";

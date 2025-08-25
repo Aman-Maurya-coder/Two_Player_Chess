@@ -127,6 +127,20 @@ export const InGameOptions = memo(function InGameOptions({
         setIsAlertDialogOpen(true);
         console.log("Play again offered by the opponent");
     });
+    useSocketEvent(socket, "playAgainFailed", () => {
+        console.log("No other player in room to offer play again request.");
+        if (dialogState){
+            setDialogState(false);
+        }
+        setDialogContent({
+            title: "Play Again Failed",
+            desc: "No other player in the room to offer play again request.",
+            onClose: () => {
+                setDialogState(false);
+            },
+        });
+        setDialogState(true);
+    })
     useSocketEvent(socket, "gameResetSuccessful", ({ gameData }) => {
         console.log("Game reset successful, starting a new game");
         if (dialogState) {
@@ -157,9 +171,9 @@ export const InGameOptions = memo(function InGameOptions({
             reason: "Player left the game",
             winner: playerId,
         });
-        resetGameOptions();
-        timerManager.reset();
-        resetPlayerData();
+        // resetGameOptions();
+        // timerManager.reset();
+        // resetPlayerData();
 
         setView("game ended");
     });

@@ -84,6 +84,7 @@ export function Menu({
             roomId: gameCode,
             playerId: localPlayerId,
         });
+        setGameCode(""); // Clear the game code input after submission
     };
     
 
@@ -169,7 +170,10 @@ export function Menu({
                             variant="outline"
                             size={"ui"}
                             className="col-start-2 col-end-3 text-foreground md:col-start-1 md:col-end-2 md:shadow-button"
-                            onClick={() => setMenuView("default")}
+                            onClick={() => {
+                                setGameCode("");
+                                setMenuView("default");
+                            }}
                         >
                             Back
                         </Button>
