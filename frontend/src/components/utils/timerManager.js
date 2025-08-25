@@ -70,7 +70,9 @@ class TimerManager {
         };
 
         const handleGameTimeout = ({ loser, winner, reason }) => {
-            alert(`${loser} lost on time! ${winner} wins!`);
+            // alert(`${loser} lost on time! ${winner} wins!`);
+            // debugger;
+            // console.log("Game timeout:",  this.whiteTime, this.blackTime );
         };
 
         const handlePlayerReconnected = (gameData, timeData) => {

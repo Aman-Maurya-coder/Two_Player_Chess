@@ -116,6 +116,15 @@ export const InGameOptions = memo(function InGameOptions({
         })
         setView("playing");
     })
+    useSocketEvent(socket, "gameTimeout", ({loser, winner, reason}) => {
+        updateGameState({
+            gameStatus: "timeout",
+            reason: reason,
+            winner: winner,
+        })
+        console.log("Game timeout, winner:", winner, reason);
+        setView("game ended");
+    })
     useSocketEvent(socket, "playAgainOffered", () => {
         setAlertDialogContent({
             title: "Play Again Offered",

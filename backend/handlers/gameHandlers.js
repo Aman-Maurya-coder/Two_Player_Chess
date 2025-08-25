@@ -122,8 +122,8 @@ export class gameFunctions {
                         return;
                     }
                 } else {
-                    console.log(this.players[playerId]["playerStatus"]);
-                    console.log(this.games[roomId]["roomPlayers"]);
+                    // console.log(this.players[playerId]["playerStatus"]);
+                    // console.log(this.games[roomId]["roomPlayers"]);
                     if (this.games[roomId]["roomPlayers"]["white"] === null) {
                         this.games[roomId]["roomPlayers"]["white"] = playerId;
                         console.log("Player joined as white");
@@ -143,6 +143,14 @@ export class gameFunctions {
                 this.players[playerId]["playerStatus"] = "inRoom"; // Initialize player status
                 this.players[playerId]["gameId"] = roomId; // Associate the player with the game ID
                 // global.io.in(roomId).emit("playerJoinedRoom", roomId, this.games[roomId]["gameStatus"]);
+                setTimeout(() => {
+                    this.games[roomId]["gameStatus"] = "playing";
+                    const room_players = this.games[roomId]["roomPlayers"];
+                    this.players[room_players["white"]]["playerStatus"] = "playing";
+                    this.players[room_players["black"]]["playerStatus"] = "playing";
+                    this.startGameTimer(roomId);
+                    this.broadcastTimeUpdate(roomId);
+                }, 5000);
                 socket
                     .to(roomId)
                     .emit("playerJoinedRoom", {
@@ -236,7 +244,11 @@ export class gameFunctions {
         game.gameStatus = "timeout";
 
         // Determine winner
-        const winner = player === "white" ? "black" : "white";
+        // player === "white" ? "black" : "white";
+        let winner;
+        if (game["gameTimer"].white <= 0) {
+            winner = game["roomPlayers"].black;
+        }
 
         // Broadcast timeout event
         global.io.in(gameId).emit("gameTimeout", {
@@ -289,10 +301,8 @@ export class gameFunctions {
             const moveResult = currentGameData.game.move(move);
             if (moveResult) {
                 if (currentGameData.gameTimer.lastMoveTime) {
-                    const currentPlayer =
-                        currentGameData.game.turn() === "w" ? "black" : "white";
-                    currentGameData.gameTimer[currentPlayer] +=
-                        currentGameData.gameTimer.increment;
+                    const currentPlayer = currentGameData.game.turn() === "w" ? "black" : "white";
+                    currentGameData.gameTimer[currentPlayer] += currentGameData.gameTimer.increment;
                 }
 
                 currentGameData.gameTimer.lastMoveTime = currentTime;
@@ -430,7 +440,7 @@ export class gameFunctions {
             console.log("play Again request recieved");
             if (this.games[gameId] !== undefined) {
                 console.log("Game found for play again request", gameId);
-                if (global.io.of("/").adapter.rooms.get(gameId)?.size <= 2){
+                if (global.io.of("/").adapter.rooms.get(gameId)?.size < 2){
                     console.log("No player in room to offer play again");
                     socket.emit("playAgainFailed");
                 }
@@ -460,7 +470,15 @@ export class gameFunctions {
                             time: this.games[gameId]["timer"],
                             increment: this.games[gameId]["increment"],
                         },
-                    });
+                });
+                setTimeout(() => {
+                    this.games[gameId]["gameStatus"] = "playing";
+                    const room_players = this.games[gameId]["roomPlayers"];
+                    this.players[room_players["white"]]["playerStatus"] = "playing";
+                    this.players[room_players["black"]]["playerStatus"] = "playing";
+                    this.startGameTimer(gameId);
+                    this.broadcastTimeUpdate(gameId);
+                }, 5000);
             }
         });
     }
