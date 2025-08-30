@@ -50,7 +50,7 @@ export const Board = memo(function Board({ socket }) {
                     game.get(move.to) &&
                     game.get(move.to)?.color !==
                         game.get(square)?.color
-                        ? "radial-gradient(circle, rgba(0,0,0,.1) 85%, transparent 85%)" // larger circle for capturing
+                        ? "radial-gradient(circle, rgba(0,0,0,.2) 85%, transparent 85%)" // larger circle for capturing
                         : "radial-gradient(circle, rgba(0,0,0,.1) 25%, transparent 25%)",
                 // smaller circle for moving
                 borderRadius: "50%",
@@ -59,7 +59,7 @@ export const Board = memo(function Board({ socket }) {
 
         // set the square clicked to move from to yellow
         newSquares[square] = {
-            background: "rgba(255, 255, 0, 0.4)",
+            background: "rgba(7, 148, 219, 1)",
         };
 
         // set the option squares

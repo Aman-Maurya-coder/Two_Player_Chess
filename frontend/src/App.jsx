@@ -9,6 +9,8 @@ import { useSocketEmit } from "./hooks/useSocketEmit";
 import { useSocketEvent } from "./hooks/useSocketEvent";
 import { timerManager } from "./components/utils/timerManager";
 import { Board } from "./components/ChessBoard";
+import Spline from '@splinetool/react-spline';
+
 
 
 // const url = "https://nrjrsvh4-3000.inc1.devtunnels.ms/";
@@ -249,7 +251,7 @@ export const App = memo(function App() {
     }
 
     return (
-        <div id="main-app" className={`${ menuView !== "inGameOptions" ? "bg-gradient-to-b from-20% from-background to-secondary-background" : "bg-secondary-background"} h-full flex flex-col `}>
+        <div id="main-app" className={`${ menuView !== "inGameOptions" ? "bg-gradient-to-b from-20% from-background to-secondary-background" : "bg-secondary-background"} ${ menuView !== "newGameOptions" ? "h-full" : ""} flex flex-col `}>
             {console.log("rerendering App")}
             <Navbar/>
             {menuView !== "inGameOptions" && (
@@ -259,8 +261,11 @@ export const App = memo(function App() {
                         menuView={menuView}
                         setMenuView={setMenuView}
                     />
-                    <div id="hero-image" className="flex items-center justify-center h-full lg:order-1 lg:object-cover lg:[mask-image:linear-gradient(to_left,transparent_25%,black_40%)] lg:[mask-repeat:no-repeat] lg:[mask-size:130%_100%]">
-                        <img src="../src/assets/hero_image_v2.svg" alt="chess image" width={821} height={380} className="lg:h-[250px] " />
+                    <div id="hero-image" className="flex items-center justify-center h-full [mask-image:linear-gradient(to_top,transparent_25%,black_40%)] [mask-size:100%_115%] order-1 object-cover lg:[mask-image:linear-gradient(to_left,transparent_25%,black_40%)] [mask-repeat:no-repeat] lg:[mask-size:110%_100%]">
+                        {/* <img src="../src/assets/hero_image_v2.svg" alt="chess image" width={821} height={380} className="lg:h-[250px] " /> */}
+                        {/* <Spline scene="https://prod.spline.design/25Syvwpt2lAb3AAi/scene.splinecode" /> */}
+                        <Spline scene="https://prod.spline.design/CjKrcwUKRXadajAn/scene.splinecode" />
+
                     </div>
                 </div>
             )}

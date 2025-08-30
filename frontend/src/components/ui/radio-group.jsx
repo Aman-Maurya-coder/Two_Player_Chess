@@ -11,7 +11,7 @@ function RadioGroup({
   return (
     <RadioGroupPrimitive.Root
       data-slot="radio-group"
-      className={cn("flex flex-row justify-start md:grid md:grid-flow-col md:auto-cols-max md:justify-between md:w-full flex-wrap items-start space-x-[calc(100vw*0.03)] md:space-x-0 box-border", className)}
+      className={cn("flex flex-row justify-start md:grid md:grid-flow-col md:auto-cols-max md:justify-between md:w-full flex-wrap items-start space-x-[calc(100vw*0.02)] md:space-x-0 box-border pl-1", className)}
       {...props} />
   );
 }

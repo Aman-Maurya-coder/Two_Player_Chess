@@ -34,7 +34,7 @@ import { DialogBox } from "../utils/DialogBox.jsx";
 const timer_options = [
     {
         label: "5 min",
-        value: "1",
+        value: "5",
     },
     {
         label: "10 min",

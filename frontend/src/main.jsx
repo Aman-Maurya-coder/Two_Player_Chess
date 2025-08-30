@@ -11,3 +11,6 @@ createRoot(document.getElementById('root')).render(
     </ContextProvider>
   //</StrictMode>,
 )
+
+
+// "Chess set" (https://skfb.ly/ooxAN) by Brendan Wood is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
