@@ -11,7 +11,8 @@ import { timerManager } from "./components/utils/timerManager";
 import { Board } from "./components/ChessBoard";
 
 
-const url = import.meta.env.REACT_APP_SOCKET_URL || "http://localhost:8000";
+const url = import.meta.env.VITE_SOCKET_URL || "http://localhost:8000";
+console.log(url);
 
 export const App = memo(function App() {
     const socket = useMemo(() => {
