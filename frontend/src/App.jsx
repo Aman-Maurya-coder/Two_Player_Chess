@@ -9,12 +9,9 @@ import { useSocketEmit } from "./hooks/useSocketEmit";
 import { useSocketEvent } from "./hooks/useSocketEvent";
 import { timerManager } from "./components/utils/timerManager";
 import { Board } from "./components/ChessBoard";
-// import Spline from '@splinetool/react-spline';
-// import dotenv from "dotenv";
 
 
-const url = import.meta.env.REACT_APP_SOCKET_URL || "http://localhost:3000";
-// console.log(process.env.SOCKET_URL);
+const url = import.meta.env.REACT_APP_SOCKET_URL || "http://localhost:8000";
 
 export const App = memo(function App() {
     const socket = useMemo(() => {

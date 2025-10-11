@@ -7,9 +7,7 @@ import { gameFunctions } from "./handlers/gameHandlers.js";
 import dotenv from "dotenv";
 
 dotenv.config();
-// const PORT = process.env.PORT || 8000;
-const CORS_ORIGIN = process.env.CORS_ORIGIN || "http://localhost:8000";
-console.log(process.env.CORS_ORIGIN);
+const CORS_ORIGIN = process.env.CORS_ORIGIN || "http://localhost:5173";
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
@@ -19,11 +17,8 @@ const io = new Server(httpServer, {
             if (!origin) return callback(null, true);
             
             const allowedOrigins = [
-                // "http://localhost:3000",
-                "http://localhost:4173",
+                // "http://localhost:4173",
                 // "https://admin.socket.io",
-                // "https://nrjrsvh4-5173.inc1.devtunnels.ms",
-                // "https://nrjrsvh4-3000.inc1.devtunnels.ms"
                 CORS_ORIGIN,
             ];
             
