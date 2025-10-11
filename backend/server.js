@@ -4,24 +4,14 @@ import { Server } from "socket.io";
 import { instrument } from "@socket.io/admin-ui";
 import { playerFunctions } from "./handlers/playerHandlers.js";
 import { gameFunctions } from "./handlers/gameHandlers.js";
+import dotenv from "dotenv";
 
+dotenv.config();
+// const PORT = process.env.PORT || 8000;
+const CORS_ORIGIN = process.env.CORS_ORIGIN || "http://localhost:8000";
+console.log(process.env.CORS_ORIGIN);
 const app = express();
 const httpServer = createServer(app);
-// const io = new Server(httpServer, { cors: { origin: "*" } });
-
-// const io = new Server(httpServer, {
-//     cors: {
-//         origin: [
-//             "http://localhost:3000",   // Your React dev server
-//             "http://localhost:5173",   // Vite dev server (if using Vite)
-//             "https://admin.socket.io", // Admin UI
-//             "https://nrjrsvh4-3000.inc1.devtunnels.ms/", // Your production server
-//             "https://nrjrsvh4-5173.inc1.devtunnels.ms/",
-//         ], // required for the admin UI
-//         methods: ["GET", "POST"],
-//         credentials: true,
-//     },
-// });
 const io = new Server(httpServer, {
     cors: {
         origin: (origin, callback) => {
@@ -29,21 +19,22 @@ const io = new Server(httpServer, {
             if (!origin) return callback(null, true);
             
             const allowedOrigins = [
-                "http://localhost:3000",
-                "http://localhost:5173",
-                "https://admin.socket.io",
-                "https://nrjrsvh4-5173.inc1.devtunnels.ms",
-                "https://nrjrsvh4-3000.inc1.devtunnels.ms"
+                // "http://localhost:3000",
+                "http://localhost:4173",
+                // "https://admin.socket.io",
+                // "https://nrjrsvh4-5173.inc1.devtunnels.ms",
+                // "https://nrjrsvh4-3000.inc1.devtunnels.ms"
+                CORS_ORIGIN,
             ];
             
             if (allowedOrigins.includes(origin)) {
                 return callback(null, true);
             }
             
-            // For development, allow devtunnel origins
-            if (origin.includes('devtunnels.ms')) {
-                return callback(null, true);
-            }
+            // // For development, allow devtunnel origins
+            // if (origin.includes('devtunnels.ms')) {
+            //     return callback(null, true);
+            // }
             
             callback(new Error('Not allowed by CORS'));
         },
@@ -70,22 +61,12 @@ instrument(io, {
 io.on("connection", (socket) => {
     console.log("connection succesfull", socket.id);
 
-    // onPlayerJoin(socket, players); // Handle player joining
-    // onDisconnect(socket, players, games); // Handle player disconnection
-    // getPlayerData(socket, players); // Handle getting player data
     playerHandler.onPlayerJoin(socket, games); // Handle player joining
     playerHandler.getPlayerData(socket); // Handle getting player data
     playerHandler.onRejoinGame(socket, games); // Handle player rejoining
     playerHandler.onRejoinCancel(socket, games); // Handle player canceling rejoin
     playerHandler.onDisconnect(socket, games); // Handle player disconnection
 
-    // createGame(socket, players, games); // Handle game creation
-    // joinGame(socket, players, games); // Handle joining a game
-    // makeMove(socket, games); // Handle moves
-    // onAbort(socket, games); // Handle aborting a game
-    // onResign(socket, games); // Handle resigning
-    // onGameOver(socket, games); // Handle game over
-    // getRoomData(socket, games); // Handle getting room data
     gameHandler.createGame(socket); // Handle game creation
     gameHandler.getRoomData(socket); // Handle getting room data
     gameHandler.getGameData(socket); // Handle getting game data
@@ -107,5 +88,5 @@ io.on("connection", (socket) => {
 });
 
 httpServer.listen(3000, () => {
-    console.log("Server is running on port 3000");
+    console.log("Server is running on port 8000");
 });

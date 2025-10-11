@@ -11,7 +11,6 @@ import {
     useTimerContext,
 } from "../context";
 export const Board = memo(function Board({ socket }) {
-    // ${window.innerHeight > window.innerWidth ? "" : "w-[50vh]"} have to check it for resizing of the board.
 
     const { game, gameState, updateGameState, resetGameState } = useGameContext();
     const { gameOptions } = useGameOptionsContext();

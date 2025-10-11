@@ -1,5 +1,3 @@
-//NOTE: have to implement the dialog box for promotion.
-
 import React, { useState, useRef, useCallback, useEffect, memo } from "react";
 import { z } from "zod/v4";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,8 +7,7 @@ import { useSocketEvent } from "../../hooks/useSocketEvent.js";
 import {
     usePlayerContext,
     useGameContext,
-    useGameOptionsContext,
-    useTimerContext,
+    useGameOptionsContext
 } from "../../context/index.jsx";
 import {
     Form,
@@ -25,10 +22,8 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button.jsx";
-import { Label } from "@/components/ui/label.jsx";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group.jsx";
 import { Input } from "@/components/ui/input.jsx";
-import { AlertDialogBox } from "../utils/AlertDialogBox.jsx";
 import { DialogBox } from "../utils/DialogBox.jsx";
 
 const timer_options = [
