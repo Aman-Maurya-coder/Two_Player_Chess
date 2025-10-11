@@ -8,6 +8,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 const CORS_ORIGIN = process.env.CORS_ORIGIN || "http://localhost:5173";
+console.log("CORS_ORIGIN:", CORS_ORIGIN);
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
