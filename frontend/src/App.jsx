@@ -9,6 +9,7 @@ import { useSocketEmit } from "./hooks/useSocketEmit";
 import { useSocketEvent } from "./hooks/useSocketEvent";
 import { timerManager } from "./components/utils/timerManager";
 import { Board } from "./components/ChessBoard";
+import { Analytics } from "@vercel/analytics/react"
 
 
 const url = import.meta.env.VITE_SOCKET_URL || "http://localhost:8000";
@@ -64,6 +65,7 @@ export const App = memo(function App() {
             socket.off("disconnect", handleDisconnect);
         };
     },[socket]);
+    
     const emitEvent = useSocketEmit(socket);
 
     useEffect(() => {
@@ -280,6 +282,7 @@ export const App = memo(function App() {
                 onAction={alertDialogContent.onAction}
                 onClose={alertDialogContent.onClose}
             />
+            <Analytics />
         </div>
     );
 })
