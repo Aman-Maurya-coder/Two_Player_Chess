@@ -3,14 +3,17 @@ import { io } from "socket.io-client";
 import { Navbar } from "./components/Navbar";
 import { Menu } from "./components/Menu";
 import { AlertDialogBox } from "./components/utils/AlertDialogBox";
-import {usePlayerContext, useGameContext,useGameOptionsContext } from "./context/index.jsx";
+import {
+    usePlayerContext,
+    useGameContext,
+    useGameOptionsContext,
+} from "./context/index.jsx";
 import { InGameOptions } from "./components/gameOptions/InGameOptions";
 import { useSocketEmit } from "./hooks/useSocketEmit";
 import { useSocketEvent } from "./hooks/useSocketEvent";
 import { timerManager } from "./components/utils/timerManager";
 import { Board } from "./components/ChessBoard";
-import { Analytics } from "@vercel/analytics/react"
-
+import { Analytics } from "@vercel/analytics/react";
 
 const url = import.meta.env.VITE_SOCKET_URL || "http://localhost:8000";
 
@@ -25,8 +28,15 @@ export const App = memo(function App() {
     }, []);
     const askForRejoinRef = useRef(false);
     const [isConnected, setIsConnected] = useState(false);
-    const { playerId, setPlayerId, playerData, updatePlayerData, resetPlayerData } = usePlayerContext();
-    const { game, gameState, updateGameState, resetGameState } = useGameContext();
+    const {
+        playerId,
+        setPlayerId,
+        playerData,
+        updatePlayerData,
+        resetPlayerData,
+    } = usePlayerContext();
+    const { game, gameState, updateGameState, resetGameState } =
+        useGameContext();
     const { updateGameOptions } = useGameOptionsContext();
     const [menuView, setMenuView] = useState("default"); // "default", "newGameOptions", etc.
     const [isAlertDialogOpen, setIsAlertDialogOpen] = useState(false);
@@ -64,13 +74,13 @@ export const App = memo(function App() {
             socket.off("connect_error", handleConnectError);
             socket.off("disconnect", handleDisconnect);
         };
-    },[socket]);
-    
+    }, [socket]);
+
     const emitEvent = useSocketEmit(socket);
 
     useEffect(() => {
         if (!socket) return;
-        
+
         const cleanup = timerManager.initializeSocket(socket);
         return cleanup;
     }, [socket]);
@@ -80,10 +90,12 @@ export const App = memo(function App() {
 
         if (playerId) {
             console.log("Reconnecting player with playerId:", playerId);
-            emitEvent("onPlayerJoin", { "playerId":playerId });
+            emitEvent("onPlayerJoin", { playerId: playerId });
             emitEvent("playerData", { playerId });
         } else {
-            console.log("No playerId found, emitting onPlayerJoin with empty playerId");
+            console.log(
+                "No playerId found, emitting onPlayerJoin with empty playerId",
+            );
             emitEvent("onPlayerJoin", { playerId: "" });
         }
     }, [isConnected]);
@@ -92,15 +104,15 @@ export const App = memo(function App() {
         console.log("Player ID received:", newPlayerId);
         setPlayerId(newPlayerId);
         localStorage.setItem("playerId", JSON.stringify(newPlayerId));
-        emitEvent("playerData", { "playerId": newPlayerId });
+        emitEvent("playerData", { playerId: newPlayerId });
     });
 
     useSocketEvent(socket, "playerDataResponse", (data) => {
         console.log("Player data received:", data);
         updatePlayerData(data);
 
-        if (askForRejoinRef.current && data && data.gameId){
-            askForRejoinRef.current = false; 
+        if (askForRejoinRef.current && data && data.gameId) {
+            askForRejoinRef.current = false;
 
             setTimeout(() => {
                 setAlertDialogContent({
@@ -108,17 +120,27 @@ export const App = memo(function App() {
                     desc: "You were disconnected. Do you want to rejoin the game?",
                     action: "Rejoin",
                     onAction: () => {
-                        console.log("rejoining the game from playerDataResponse", data["gameId"]);
-                        emitEvent("rejoinGame", { "playerId":playerId , "gameId": data.gameId });
+                        console.log(
+                            "rejoining the game from playerDataResponse for gameId:",
+                            data["gameId"],
+                        );
+                        emitEvent("rejoinGame", {
+                            playerId: playerId,
+                            gameId: data.gameId,
+                        });
                         setIsAlertDialogOpen(false);
                     },
                     onClose: () => {
                         setIsAlertDialogOpen(false);
-                        emitEvent("rejoinCancel", { playerId, gameId: data.gameId });cancellation
-                        resetPlayerData(); 
-                        resetGameState(); 
+                        emitEvent("rejoinCancel", {
+                            playerId,
+                            gameId: data.gameId,
+                        });
+                        cancellation;
+                        resetPlayerData();
+                        resetGameState();
                     },
-                })
+                });
                 setIsAlertDialogOpen(true);
             }, 0);
         }
@@ -127,28 +149,36 @@ export const App = memo(function App() {
     useSocketEvent(socket, "askForRejoin", () => {
         askForRejoinRef.current = true;
 
-        if (playerData && playerData.gameId){
-            askForRejoinRef.current = false; 
+        if (playerData && playerData.gameId) {
+            askForRejoinRef.current = false;
             setAlertDialogContent({
                 title: "Rejoin Game",
                 desc: "You were disconnected. Do you want to rejoin the game?",
                 action: "Rejoin",
                 onAction: () => {
-                    console.log("rejoining the game from askForRejoin", playerData["gameId"]);
-                    emitEvent("rejoinGame", { "playerId":playerId , "gameId": playerData.gameId });
+                    console.log(
+                        "rejoining the game from askForRejoin",
+                        playerData["gameId"],
+                    );
+                    emitEvent("rejoinGame", {
+                        playerId: playerId,
+                        gameId: playerData.gameId,
+                    });
                     setIsAlertDialogOpen(false);
                 },
                 onClose: () => {
                     setIsAlertDialogOpen(false);
-                    emitEvent("rejoinCancel", { playerId, gameId: playerData.gameId }); 
-                    resetPlayerData(); 
-                    resetGameState(); 
+                    emitEvent("rejoinCancel", {
+                        playerId,
+                        gameId: playerData.gameId,
+                    });
+                    resetPlayerData();
+                    resetGameState();
                 },
-            })
+            });
             setIsAlertDialogOpen(true);
         }
-        
-    })
+    });
 
     useSocketEvent(socket, "playerRejoinedRoom", (playerData, gameData) => {
         console.log("Player rejoined room:", playerData);
@@ -157,40 +187,42 @@ export const App = memo(function App() {
             gameStatus: gameData.gameStatus,
             moveNumber: gameData.moveNumber,
             timeData: gameData.gameTimer,
-        })
+        });
         updateGameOptions({
-            "time": gameData.timer,
-            "increment": gameData.gameTimer.increment,
-            "playerSide": playerId === gameData.roomPlayers.white ? "white" : "black",
-        })
+            time: gameData.timer,
+            increment: gameData.gameTimer.increment,
+            playerSide:
+                playerId === gameData.roomPlayers.white ? "white" : "black",
+        });
         updatePlayerData(playerData);
         setMenuView("inGameOptions");
         //Timer logic is in timerManager.jsx
-    })
+    });
 
-    useSocketEvent(socket, "playerRejoinedGame", ({playerData, gameData}) => {
+    useSocketEvent(socket, "playerRejoinedGame", ({ playerData, gameData }) => {
         game.load(gameData.gameFen);
         updateGameState({
             gameId: gameData.gameId,
             gameStatus: gameData.gameStatus,
             moveNumber: gameData.moveNumber,
             timeData: gameData.gameTimer,
-        })
+        });
         updateGameOptions({
-            "time": gameData.timer,
-            "increment": gameData.gameTimer.increment,
-            "playerSide": playerId === gameData.roomPlayers.white ? "white" : "black",
-        })
-        
+            time: gameData.timer,
+            increment: gameData.gameTimer.increment,
+            playerSide:
+                playerId === gameData.roomPlayers.white ? "white" : "black",
+        });
+
         updatePlayerData(playerData);
         setMenuView("inGameOptions");
         //Timer logic is in timerManager.jsx
-    })
+    });
     useSocketEvent(socket, "rejoinCanceled", (message) => {
         console.log(message);
-        resetPlayerData(); 
+        resetPlayerData();
         resetGameState();
-    })
+    });
 
     useSocketEvent(socket, "playerNotFound", () => {
         console.log("Player not found");
@@ -204,7 +236,7 @@ export const App = memo(function App() {
         setPlayerId(null);
         updatePlayerData({});
         emitEvent("onPlayerJoin", { playerId: "" });
-    })
+    });
     useSocketEvent(socket, "playerReconnected", (gameData, timeData) => {
         updateGameState({
             gameStatus: gameData.gameStatus,
@@ -217,10 +249,12 @@ export const App = memo(function App() {
         console.error("Reconnection failed:", error);
         localStorage.removeItem("playerId");
     });
-    
+
     useEffect(() => {
         if (
-            ["playing", "room full", "waiting for reconnection"].includes(gameState.gameStatus)
+            ["playing", "room full", "waiting for reconnection"].includes(
+                gameState.gameStatus,
+            )
         ) {
             setMenuView("inGameOptions");
         } else if (
@@ -234,41 +268,65 @@ export const App = memo(function App() {
         const handleBeforeUnload = () => {
             console.log(playerData);
             console.log(gameState);
-            if (playerData["gameId"] === null || gameState.gameStatus === "waiting for player 2" || gameState.gameStatus === "waiting for reconnection") {
-                console.log("Removing playerId from localStorage before unload");
+            if (
+                playerData["gameId"] === null ||
+                gameState.gameStatus === "waiting for player 2" ||
+                gameState.gameStatus === "waiting for reconnection"
+            ) {
+                console.log(
+                    "Removing playerId from localStorage before unload",
+                );
                 localStorage.removeItem("playerId");
             }
             emitEvent("Disconnect", { playerId });
         };
 
         window.addEventListener("beforeunload", handleBeforeUnload);
-        return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+        return () =>
+            window.removeEventListener("beforeunload", handleBeforeUnload);
     }, [playerId, emitEvent]);
     if (!isConnected) {
         return <div>Connecting to the server...</div>;
     }
 
     return (
-        <div id="main-app" className={`${ menuView !== "inGameOptions" ? "bg-gradient-to-b from-20% from-background to-secondary-background" : "bg-secondary-background"} ${ menuView !== "newGameOptions" ? "h-full" : "h-full"} flex flex-col `}>
+        <div
+            id="main-app"
+            className={`${menuView !== "inGameOptions" ? "bg-gradient-to-b from-20% from-background to-secondary-background" : "bg-secondary-background"} ${menuView !== "newGameOptions" ? "h-full" : "h-full"} flex flex-col `}
+        >
             {console.log("rerendering App")}
-            <Navbar/>
+            <Navbar />
             {menuView !== "inGameOptions" && (
-                <div id="hero-container" className="flex-1 grid grid-rows-[1fr_1fr] grid-flow-col lg:grid-rows-1 lg:grid-cols-[6fr_4fr] min-w-[360px] w-full ">
+                <div
+                    id="hero-container"
+                    className="flex-1 grid grid-rows-[1fr_1fr] grid-flow-col lg:grid-rows-1 lg:grid-cols-[6fr_4fr] min-w-[360px] w-full "
+                >
                     <Menu
                         socket={socket}
                         menuView={menuView}
                         setMenuView={setMenuView}
                     />
-                    <div id="hero-image" className="flex items-center justify-center h-full [mask-image:linear-gradient(to_top,transparent_25%,black_40%)] [mask-size:100%_115%] order-1 object-cover lg:[mask-image:linear-gradient(to_left,transparent_25%,black_40%)] [mask-repeat:no-repeat] lg:[mask-size:110%_100%]">
-                        <img src="/images/hero_image_v2.svg" alt="chess image" width={821} height={380} className="lg:h-[250px] " />
+                    <div
+                        id="hero-image"
+                        className="flex items-center justify-center h-full [mask-image:linear-gradient(to_top,transparent_25%,black_40%)] [mask-size:100%_115%] order-1 object-cover lg:[mask-image:linear-gradient(to_left,transparent_25%,black_40%)] [mask-repeat:no-repeat] lg:[mask-size:110%_100%]"
+                    >
+                        <img
+                            src="/images/hero_image_v2.svg"
+                            alt="chess image"
+                            width={821}
+                            height={380}
+                            className="lg:h-[250px] "
+                        />
                         {/* <Spline scene="https://prod.spline.design/25Syvwpt2lAb3AAi/scene.splinecode" /> */}
                         {/* <Spline scene="https://prod.spline.design/CjKrcwUKRXadajAn/scene.splinecode" /> */}
-
                     </div>
                 </div>
             )}
             {menuView === "inGameOptions" && (
-                <div id="game-container" className="flex-1 grid grid-rows-[1fr_calc(60%)_calc(30%)_1fr] grid-cols-[1fr_calc(85%)_1fr] place-items-center lg:grid-rows-[1fr_calc(80%)_1fr] lg:grid-cols-[1fr_calc(47%)_calc(47%)_1fr] bg-secondary-background">
+                <div
+                    id="game-container"
+                    className="flex-1 grid grid-rows-[1fr_calc(60%)_calc(30%)_1fr] grid-cols-[1fr_calc(85%)_1fr] place-items-center lg:grid-rows-[1fr_calc(80%)_1fr] lg:grid-cols-[1fr_calc(47%)_calc(47%)_1fr] bg-secondary-background"
+                >
                     <Board socket={socket} />
                     <InGameOptions socket={socket} setMenuView={setMenuView} />
                 </div>
@@ -285,6 +343,6 @@ export const App = memo(function App() {
             <Analytics />
         </div>
     );
-})
+});
 
 export default App;
